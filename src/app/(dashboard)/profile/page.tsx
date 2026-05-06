@@ -2,13 +2,15 @@
 
 import { User, Mail, Award, Zap } from "lucide-react";
 
-import { Badge, Card, LoadingSpinner } from "@/components/ui";
+import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
+import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
 import { trpc } from "@/lib/trpcClient";
 import { LEVEL_LABELS } from "@/constants";
 
 export default function ProfilePage() {
 	const meQuery = trpc.auth.me.useQuery();
 	const statsQuery = trpc.progress.getUserStats.useQuery();
+	const { isSigningOut, toast, handleSignOut } = useLogoutWithToast();
 
 	if (meQuery.isLoading) {
 		return (
@@ -33,6 +35,7 @@ export default function ProfilePage() {
 		.join("")
 		.toUpperCase()
 		.slice(0, 2);
+
 
 	return (
 		<div className="space-y-6">
@@ -95,6 +98,17 @@ export default function ProfilePage() {
 					</div>
 				</Card>
 			</div>
+
+			<Button
+				variant="danger"
+				isLoading={isSigningOut}
+				onClick={handleSignOut}
+			>
+				Keluar
+			</Button>
+			{toast ? (
+				<Toast message={toast.message} variant={toast.variant} />
+			) : null}
 		</div>
 	);
 }

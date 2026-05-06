@@ -3,8 +3,8 @@
 import * as React from "react";
 import { Sparkles } from "lucide-react";
 
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { TutorWindow } from "@/components/tutor/TutorWindow";
-import { Button } from "@/components/ui";
 
 const SUGGESTIONS = [
 	"Koreksi kalimat saya",
@@ -48,7 +48,9 @@ export default function TutorPage() {
 				))}
 			</div>
 
-			<TutorWindow key={key} initialMessage={initialMessage} />
+			<ErrorBoundary>
+				<TutorWindow key={key} initialMessage={initialMessage} />
+			</ErrorBoundary>
 		</div>
 	);
 }

@@ -14,6 +14,15 @@ export type Message = {
 	content: string;
 };
 
+export type SessionUser = {
+	id: string;
+	email: string;
+	name: string;
+	image?: string;
+	level: string;
+	xp: number;
+};
+
 export type Correction = {
 	original: string;
 	corrected: string;

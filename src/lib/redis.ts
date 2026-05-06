@@ -1,19 +1,35 @@
 import Redis from "ioredis";
 
-const redisUrl = process.env.REDIS_URL;
-
-if (!redisUrl) {
-	throw new Error("REDIS_URL is not set");
-}
-
 const globalForRedis = globalThis as unknown as {
 	redis?: Redis;
 };
 
-const redis = globalForRedis.redis ?? new Redis(redisUrl);
+export function getRedisClient(): Redis {
+	const redisUrl = process.env.REDIS_URL;
+	if (!redisUrl) {
+		throw new Error(
+			"REDIS_URL is not set. Add it to your environment variables."
+		);
+	}
 
-if (process.env.NODE_ENV !== "production") {
-	globalForRedis.redis = redis;
+	if (!globalForRedis.redis) {
+		globalForRedis.redis = new Redis(redisUrl, {
+			maxRetriesPerRequest: 3,
+			lazyConnect: true,
+		});
+	}
+
+	return globalForRedis.redis;
+}
+
+function getRedisClientOrNull(): Redis | null {
+	try {
+		return getRedisClient();
+	} catch (error) {
+		const message = error instanceof Error ? error.message : "Unknown error";
+		console.warn(`Redis disabled: ${message}`);
+		return null;
+	}
 }
 
 function toKey(key: string): string {
@@ -25,9 +41,13 @@ function toKey(key: string): string {
  */
 export async function get<T>(key: string): Promise<T | null> {
 	const finalKey = toKey(key);
+	const client = getRedisClientOrNull();
+	if (!client) {
+		return null;
+	}
 
 	try {
-		const rawValue = await redis.get(finalKey);
+		const rawValue = await client.get(finalKey);
 
 		if (rawValue === null) {
 			return null;
@@ -36,7 +56,8 @@ export async function get<T>(key: string): Promise<T | null> {
 		return JSON.parse(rawValue) as T;
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`Failed to read Redis key ${finalKey}: ${message}`);
+		console.warn(`Failed to read Redis key ${finalKey}: ${message}`);
+		return null;
 	}
 }
 
@@ -49,13 +70,17 @@ export async function set(
 	ttlSeconds: number
 ): Promise<void> {
 	const finalKey = toKey(key);
+	const client = getRedisClientOrNull();
+	if (!client) {
+		return;
+	}
 
 	try {
 		const payload = JSON.stringify(value);
-		await redis.set(finalKey, payload, "EX", ttlSeconds);
+		await client.set(finalKey, payload, "EX", ttlSeconds);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`Failed to write Redis key ${finalKey}: ${message}`);
+		console.warn(`Failed to write Redis key ${finalKey}: ${message}`);
 	}
 }
 
@@ -64,12 +89,16 @@ export async function set(
  */
 export async function del(key: string): Promise<void> {
 	const finalKey = toKey(key);
+	const client = getRedisClientOrNull();
+	if (!client) {
+		return;
+	}
 
 	try {
-		await redis.del(finalKey);
+		await client.del(finalKey);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`Failed to delete Redis key ${finalKey}: ${message}`);
+		console.warn(`Failed to delete Redis key ${finalKey}: ${message}`);
 	}
 }
 
@@ -78,14 +107,28 @@ export async function del(key: string): Promise<void> {
  */
 export async function exists(key: string): Promise<boolean> {
 	const finalKey = toKey(key);
+	const client = getRedisClientOrNull();
+	if (!client) {
+		return false;
+	}
 
 	try {
-		const result = await redis.exists(finalKey);
+		const result = await client.exists(finalKey);
 		return result > 0;
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`Failed to check Redis key ${finalKey}: ${message}`);
+		console.warn(`Failed to check Redis key ${finalKey}: ${message}`);
+		return false;
 	}
 }
 
-export default redis;
+export default {
+	get: (key: string) => getRedisClient().get(key),
+	set: (...args: Parameters<Redis["set"]>) => getRedisClient().set(...args),
+	del: (...args: Parameters<Redis["del"]>) => getRedisClient().del(...args),
+	exists: (...args: Parameters<Redis["exists"]>) =>
+		getRedisClient().exists(...args),
+	consume: (...args: unknown[]) =>
+		(getRedisClient() as unknown as { consume?: (...args: unknown[]) => unknown })
+			.consume?.(...args),
+} as unknown as Redis;

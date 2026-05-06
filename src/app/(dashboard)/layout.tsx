@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const MOBILE_NAV = [
 	{ label: "Home", href: "/dashboard", icon: LayoutDashboard },
-	{ label: "Pelajaran", href: "/lesson/1", icon: BookOpen },
+	{ label: "Pelajaran", href: "/lesson", icon: BookOpen },
 	{ label: "Kartu", href: "/flashcards", icon: Layers },
 	{ label: "Tutor", href: "/tutor", icon: Bot },
 	{ label: "Profil", href: "/profile", icon: User },

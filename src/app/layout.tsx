@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 	description: "Belajar Bahasa Jerman dengan AI",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
 	children,
 }: {

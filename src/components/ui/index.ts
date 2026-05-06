@@ -5,3 +5,4 @@ export { Input } from "./Input";
 export { LoadingSpinner } from "./LoadingSpinner";
 export { Modal } from "./Modal";
 export { ProgressBar } from "./ProgressBar";
+export { Toast } from "./Toast";

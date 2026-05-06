@@ -1,24 +1,60 @@
-import { RateLimiterRedis } from "rate-limiter-flexible";
+import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
 import { TRPCError } from "@trpc/server";
+import type Redis from "ioredis";
+import type { RedisOptions } from "ioredis";
 
-import redis from "@/lib/redis";
+type RedisConstructor = new (
+	url: string,
+	options?: RedisOptions
+) => Redis;
 
-const authLimiter = new RateLimiterRedis({
-	storeClient: redis,
+type LimiterOptions = {
+	points: number;
+	duration: number;
+	keyPrefix: string;
+};
+
+function createLimiter(opts: LimiterOptions) {
+	try {
+		const redisUrl = process.env.REDIS_URL;
+		if (!redisUrl) {
+			throw new Error("no redis");
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const RedisModule = require("ioredis") as
+			| { default?: RedisConstructor }
+			| RedisConstructor;
+		const RedisClient =
+			"default" in RedisModule && RedisModule.default
+				? RedisModule.default
+				: (RedisModule as RedisConstructor);
+		const client = new RedisClient(redisUrl, {
+			maxRetriesPerRequest: 3,
+			lazyConnect: true,
+		});
+		return new RateLimiterRedis({ storeClient: client, ...opts });
+	} catch {
+		console.warn(
+			`[RateLimit] Redis unavailable, using in-memory limiter for ${opts.keyPrefix}`
+		);
+		return new RateLimiterMemory(opts);
+	}
+}
+
+const authLimiter = createLimiter({
 	points: 5,
 	duration: 15 * 60,
 	keyPrefix: "dl:auth",
 });
 
-const apiLimiter = new RateLimiterRedis({
-	storeClient: redis,
+const apiLimiter = createLimiter({
 	points: 100,
 	duration: 60,
 	keyPrefix: "dl:api",
 });
 
-const aiLimiter = new RateLimiterRedis({
-	storeClient: redis,
+const aiLimiter = createLimiter({
 	points: 20,
 	duration: 60 * 60,
 	keyPrefix: "dl:ai",

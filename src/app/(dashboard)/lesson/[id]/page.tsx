@@ -4,9 +4,11 @@ import * as React from "react";
 import { useParams } from "next/navigation";
 
 import type { Exercise } from "@/generated/prisma/client";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ExerciseBlock } from "@/components/lesson/ExerciseBlock";
 import { LessonProgress } from "@/components/lesson/LessonProgress";
-import { Button, Card, LoadingSpinner, Modal } from "@/components/ui";
+import { Button, Card, LoadingSpinner, Modal, Toast } from "@/components/ui";
+import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 
 export default function LessonPage() {
@@ -20,6 +22,7 @@ export default function LessonPage() {
 	const [correctCount, setCorrectCount] = React.useState(0);
 	const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 	const [isModalOpen, setIsModalOpen] = React.useState(false);
+	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
 		const timer = setInterval(() => {
@@ -29,7 +32,16 @@ export default function LessonPage() {
 		return () => clearInterval(timer);
 	}, []);
 
-	const exercises: Exercise[] = (lessonQuery.data?.exercises ?? []) as Exercise[];
+	React.useEffect(() => {
+		if (lessonQuery.error) {
+			showToast("Gagal memuat pelajaran. Coba lagi.", "error");
+		} else {
+			clearToast();
+		}
+	}, [clearToast, lessonQuery.error, showToast]);
+
+	const lesson = lessonQuery.data as { exercises?: Exercise[] } | undefined;
+	const exercises = lesson?.exercises ?? [];
 	const current = exercises[currentIndex];
 
 	const handleComplete = async (correct: boolean) => {
@@ -57,9 +69,14 @@ export default function LessonPage() {
 
 	if (lessonQuery.error || !lessonQuery.data) {
 		return (
-			<Card className="text-sm text-destructive">
-				{lessonQuery.error?.message ?? "Pelajaran tidak ditemukan."}
-			</Card>
+			<div className="space-y-3">
+				<Card className="text-sm text-destructive">
+					{lessonQuery.error?.message ?? "Pelajaran tidak ditemukan."}
+				</Card>
+				{toast ? (
+					<Toast message={toast.message} variant={toast.variant} />
+				) : null}
+			</div>
 		);
 	}
 
@@ -74,7 +91,9 @@ export default function LessonPage() {
 
 			<Card variant="elevated" className="min-h-[280px]">
 				{current ? (
-					<ExerciseBlock exercise={current} onComplete={handleComplete} />
+					<ErrorBoundary>
+						<ExerciseBlock exercise={current} onComplete={handleComplete} />
+					</ErrorBoundary>
 				) : (
 					<p className="text-sm text-muted-foreground">Tidak ada latihan.</p>
 				)}
@@ -106,6 +125,9 @@ export default function LessonPage() {
 					</Button>
 				</div>
 			</Modal>
+			{toast ? (
+				<Toast message={toast.message} variant={toast.variant} />
+			) : null}
 		</div>
 	);
 }

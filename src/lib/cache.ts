@@ -7,6 +7,70 @@ export const VOCAB_TTL = 60 * 60 * 24;
 export const USER_STATS_TTL = 60 * 5;
 export const SRS_QUEUE_TTL = 60;
 
+let cacheWarningShown = false;
+
+function warnCacheDisabledOnce() {
+	if (process.env.NODE_ENV === "production") {
+		return;
+	}
+
+	if (cacheWarningShown) {
+		return;
+	}
+
+	cacheWarningShown = true;
+	console.warn("[Cache] Redis tidak tersedia, cache dinonaktifkan");
+}
+
+function isRedisAvailable(): boolean {
+	if (!process.env.REDIS_URL) {
+		warnCacheDisabledOnce();
+		return false;
+	}
+
+	return true;
+}
+
+async function safeGet<T>(key: string): Promise<T | null> {
+	if (!isRedisAvailable()) {
+		return null;
+	}
+
+	try {
+		return await get<T>(key);
+	} catch {
+		return null;
+	}
+}
+
+async function safeSet(
+	key: string,
+	value: unknown,
+	ttlSeconds: number
+): Promise<void> {
+	if (!isRedisAvailable()) {
+		return;
+	}
+
+	try {
+		await set(key, value, ttlSeconds);
+	} catch {
+		return;
+	}
+}
+
+async function safeDel(key: string): Promise<void> {
+	if (!isRedisAvailable()) {
+		return;
+	}
+
+	try {
+		await del(key);
+	} catch {
+		return;
+	}
+}
+
 function lessonKey(id: string): string {
 	return `lesson:${id}`;
 }
@@ -27,12 +91,12 @@ export async function getCachedLesson(id: string) {
 		throw new Error("Lesson id is required");
 	}
 
-	const cached = await get<
+	const safeCached = await safeGet<
 		Awaited<ReturnType<typeof prisma.lesson.findUnique>>
 	>(lessonKey(id));
 
-	if (cached) {
-		return cached;
+	if (safeCached) {
+		return safeCached;
 	}
 
 	const lesson = await prisma.lesson.findUnique({
@@ -41,7 +105,7 @@ export async function getCachedLesson(id: string) {
 	});
 
 	if (lesson) {
-		await set(lessonKey(id), lesson, LESSON_TTL);
+		await safeSet(lessonKey(id), lesson, LESSON_TTL);
 	}
 
 	return lesson;
@@ -51,7 +115,7 @@ export async function getCachedLesson(id: string) {
  * Reads vocab list from cache, then falls back to Prisma.
  */
 export async function getCachedVocabList(level: Level) {
-	const cached = await get<
+	const cached = await safeGet<
 		Awaited<ReturnType<typeof prisma.vocabWord.findMany>>
 	>(vocabKey(level));
 
@@ -64,7 +128,7 @@ export async function getCachedVocabList(level: Level) {
 		orderBy: { german: "asc" },
 	});
 
-	await set(vocabKey(level), vocab, VOCAB_TTL);
+	await safeSet(vocabKey(level), vocab, VOCAB_TTL);
 	return vocab;
 }
 
@@ -76,7 +140,7 @@ export async function getCachedUserStats(userId: string): Promise<UserStats> {
 		throw new Error("userId is required");
 	}
 
-	const cached = await get<UserStats>(userStatsKey(userId));
+	const cached = await safeGet<UserStats>(userStatsKey(userId));
 	if (cached) {
 		return cached;
 	}
@@ -103,7 +167,7 @@ export async function getCachedUserStats(userId: string): Promise<UserStats> {
 		wordsLearned,
 	};
 
-	await set(userStatsKey(userId), stats, USER_STATS_TTL);
+	await safeSet(userStatsKey(userId), stats, USER_STATS_TTL);
 	return stats;
 }
 
@@ -115,5 +179,5 @@ export async function invalidateUserStats(userId: string): Promise<void> {
 		throw new Error("userId is required");
 	}
 
-	await del(userStatsKey(userId));
+	await safeDel(userStatsKey(userId));
 }

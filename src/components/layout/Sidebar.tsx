@@ -10,13 +10,14 @@ import {
 	User,
 } from "lucide-react";
 
-import { Badge, Card, LoadingSpinner } from "@/components/ui";
+import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
+import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
 import { trpc } from "@/lib/trpcClient";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
 	{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-	{ label: "Pelajaran", href: "/lesson/1", icon: BookOpen },
+	{ label: "Pelajaran", href: "/lesson", icon: BookOpen },
 	{ label: "Flashcards", href: "/flashcards", icon: Layers },
 	{ label: "AI Tutor", href: "/tutor", icon: Bot },
 	{ label: "Profil", href: "/profile", icon: User },
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
 export function Sidebar() {
 	const pathname = usePathname();
 	const { data, isLoading } = trpc.progress.getUserStats.useQuery();
+	const { isSigningOut, toast, handleSignOut } = useLogoutWithToast();
 
 	return (
 		<aside className="hidden w-64 flex-col justify-between border-r border-border bg-white md:flex">
@@ -90,9 +92,20 @@ export function Sidebar() {
 						<Badge variant={data?.level ?? "neutral"}>
 							{data?.level ?? "A1"}
 						</Badge>
+							<Button
+								variant="danger"
+								size="sm"
+								isLoading={isSigningOut}
+								onClick={handleSignOut}
+							>
+								Keluar
+							</Button>
 					</Card>
 				)}
 			</div>
+			{toast ? (
+				<Toast message={toast.message} variant={toast.variant} />
+			) : null}
 		</aside>
 	);
 }

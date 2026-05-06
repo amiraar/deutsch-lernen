@@ -1,34 +1,30 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { Content, GenerateContentRequest } from "@google/generative-ai";
 
 import type { Message } from "@/types";
 import { AIRateLimitError, AIResponseParseError } from "@/lib/ai/errors";
 
 const MODEL_CANDIDATES = [
-	"gemini-2.5-flash",
+	"gemini-1.5-flash",
+	"gemini-1.5-flash-latest",
 	"gemini-2.0-flash",
-	"gemini-2.0-flash-001",
-	"gemini-flash-latest",
+	"gemini-2.5-flash",
 ];
 
-let model:
-	| ReturnType<GoogleGenerativeAI["getGenerativeModel"]>
-	| null = null;
-let modelName = MODEL_CANDIDATES[0];
+const REQUEST_TIMEOUT_MS = 30_000;
 
-function getModel(name: string = modelName) {
+function getModel(name: string, systemInstruction?: string) {
 	const apiKey = process.env.GEMINI_API_KEY;
 
 	if (!apiKey) {
 		throw new Error("GEMINI_API_KEY is not set");
 	}
 
-	if (!model || modelName !== name) {
-		const client = new GoogleGenerativeAI(apiKey);
-		modelName = name;
-		model = client.getGenerativeModel({ model: name });
-	}
-
-	return model;
+	const client = new GoogleGenerativeAI(apiKey);
+	return client.getGenerativeModel({
+		model: name,
+		systemInstruction,
+	});
 }
 
 function isModelNotFound(error: unknown): boolean {
@@ -36,12 +32,27 @@ function isModelNotFound(error: unknown): boolean {
 	return message.includes("is not found") || message.includes("404");
 }
 
-async function generateWithFallback(prompt: string) {
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+	Promise.race([
+		promise,
+		new Promise<never>((_, reject) =>
+			setTimeout(() => reject(new Error("Request timeout")), ms)
+		),
+	]);
+
+async function generateWithFallback(
+	prompt: string | GenerateContentRequest,
+	systemInstruction?: string
+) {
 	let lastError: unknown = null;
 
 	for (const candidate of MODEL_CANDIDATES) {
 		try {
-			return await getModel(candidate).generateContent(prompt);
+			const model = getModel(candidate, systemInstruction);
+			return await withTimeout(
+				model.generateContent(prompt),
+				REQUEST_TIMEOUT_MS
+			);
 		} catch (error) {
 			if (!isModelNotFound(error)) {
 				throw error;
@@ -54,12 +65,23 @@ async function generateWithFallback(prompt: string) {
 	throw lastError ?? new Error("Gemini model not available");
 }
 
-function buildChatPrompt(messages: Message[], systemPrompt: string): string {
-	const conversation = messages
-		.map((message) => `${message.role.toUpperCase()}: ${message.content}`)
-		.join("\n");
+function buildChatRequest(messages: Message[], systemPrompt: string) {
+	const systemParts = [systemPrompt]
+		.concat(messages.filter((message) => message.role === "system").map((message) => message.content))
+		.filter(Boolean)
+		.join("\n\n");
 
-	return `${systemPrompt}\n\n${conversation}`.trim();
+	const contents: Content[] = messages
+		.filter((message) => message.role !== "system")
+		.map((message) => ({
+			role: message.role === "assistant" ? "model" : "user",
+			parts: [{ text: message.content }],
+		}));
+
+	return {
+		contents,
+		systemInstruction: systemParts || undefined,
+	};
 }
 
 function isRateLimitError(error: unknown): boolean {
@@ -91,8 +113,14 @@ export async function generateChatResponse(
 	console.info("[AI] gemini");
 
 	try {
-		const prompt = buildChatPrompt(messages, systemPrompt);
-		const result = await generateWithFallback(prompt);
+		const { contents, systemInstruction } = buildChatRequest(
+			messages,
+			systemPrompt
+		);
+		const result = await generateWithFallback(
+			{ contents },
+			systemInstruction
+		);
 		const text = result.response.text();
 		return ensureText(text, "gemini");
 	} catch (error) {

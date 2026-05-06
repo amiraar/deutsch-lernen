@@ -1,17 +1,46 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { CalendarCheck } from "lucide-react";
 
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Toast } from "@/components/ui";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { FlashcardDeck } from "@/components/flashcard/FlashcardDeck";
+import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 
 export default function FlashcardsPage() {
 	const dueQuery = trpc.flashcard.getDueCards.useQuery();
+	const { toast, showToast, clearToast } = useToastMessage();
+
+	React.useEffect(() => {
+		if (dueQuery.error) {
+			showToast("Gagal memuat flashcard. Coba lagi.", "error");
+		} else {
+			clearToast();
+		}
+	}, [clearToast, dueQuery.error, showToast]);
 
 	if (dueQuery.isLoading) {
-		return <FlashcardDeck />;
+		return (
+			<ErrorBoundary>
+				<FlashcardDeck />
+			</ErrorBoundary>
+		);
+	}
+
+	if (dueQuery.error) {
+		return (
+			<div className="space-y-3">
+				<Card className="text-sm text-destructive">
+					Gagal memuat flashcard. Coba refresh halaman.
+				</Card>
+				{toast ? (
+					<Toast message={toast.message} variant={toast.variant} />
+				) : null}
+			</div>
+		);
 	}
 
 	if (dueQuery.data && dueQuery.data.length === 0) {
@@ -39,7 +68,12 @@ export default function FlashcardsPage() {
 				<h1 className="text-xl font-bold text-foreground">Flashcard Review</h1>
 				<p className="text-sm text-muted-foreground">Review kartu-kartumu sebelum terlupakan.</p>
 			</div>
-			<FlashcardDeck />
+			<ErrorBoundary>
+				<FlashcardDeck />
+			</ErrorBoundary>
+			{toast ? (
+				<Toast message={toast.message} variant={toast.variant} />
+			) : null}
 		</div>
 	);
 }

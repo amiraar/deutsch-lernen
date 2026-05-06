@@ -38,7 +38,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 	if (!userId) {
 		throw new TRPCError({
 			code: "UNAUTHORIZED",
-			message: "Anda perlu login untuk melanjutkan.",
+			message: "Login diperlukan.",
 		});
 	}
 
@@ -52,9 +52,25 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 	});
 });
 
-export const aiProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	await checkAiLimit(ctx.userId);
-	return next({ ctx: { ...ctx, userId: ctx.userId } });
+export const aiProcedure = t.procedure.use(async ({ ctx, next }) => {
+	const userId = ctx.session?.user?.id;
+
+	if (!userId) {
+		throw new TRPCError({
+			code: "UNAUTHORIZED",
+			message: "Login diperlukan.",
+		});
+	}
+
+	await checkApiLimit(userId);
+	await checkAiLimit(userId);
+
+	return next({
+		ctx: {
+			...ctx,
+			userId,
+		},
+	});
 });
 
 export const router = t.router;
