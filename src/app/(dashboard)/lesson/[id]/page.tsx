@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useParams } from "next/navigation";
 
+import type { Exercise } from "@/generated/prisma/client";
 import { ExerciseBlock } from "@/components/lesson/ExerciseBlock";
 import { LessonProgress } from "@/components/lesson/LessonProgress";
 import { Button, Card, LoadingSpinner, Modal } from "@/components/ui";
@@ -28,7 +29,7 @@ export default function LessonPage() {
 		return () => clearInterval(timer);
 	}, []);
 
-	const exercises = lessonQuery.data?.exercises ?? [];
+	const exercises: Exercise[] = (lessonQuery.data?.exercises ?? []) as Exercise[];
 	const current = exercises[currentIndex];
 
 	const handleComplete = async (correct: boolean) => {
