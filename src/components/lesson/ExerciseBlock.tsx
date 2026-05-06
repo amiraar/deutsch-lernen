@@ -5,6 +5,7 @@ import * as React from "react";
 import type { Exercise } from "@/generated/prisma";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpcClient";
+import { speak } from "@/lib/ai/tts";
 import { Button, Card, Input } from "@/components/ui";
 
 type ExerciseBlockProps = {
@@ -60,7 +61,7 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 		<div className="space-y-4">
 			<p className="text-base font-medium text-foreground">{exercise.prompt}</p>
 			<div className="grid gap-3 sm:grid-cols-2">
-				{exercise.options.map((option) => {
+				{(exercise.options as string[]).map((option) => {
 					const isSelected = selected === option;
 					const isAnswer = option === exercise.correctAnswer;
 					const stateClass =
@@ -171,7 +172,7 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 				onChange={(event) => setValue(event.target.value)}
 				disabled={isCorrect !== null}
 			/>
-			<Button type="submit" isLoading={evaluateMutation.isLoading}>
+			<Button type="submit" isLoading={evaluateMutation.isPending}>
 				Kirim
 			</Button>
 			{feedback ? (
@@ -194,7 +195,17 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 	const [isRecording, setIsRecording] = React.useState(false);
 	const [audioUrl, setAudioUrl] = React.useState<string | null>(null);
 	const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
+	const [isSpeaking, setIsSpeaking] = React.useState(false);
 	const recorderRef = React.useRef<MediaRecorder | null>(null);
+
+	const handleListen = async () => {
+		setIsSpeaking(true);
+		try {
+			await speak(exercise.prompt, { rate: 0.85 });
+		} finally {
+			setIsSpeaking(false);
+		}
+	};
 
 	const handleRecordToggle = async () => {
 		if (isRecording) {
@@ -231,9 +242,23 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 	return (
 		<div className="space-y-4">
 			<p className="text-base font-medium text-foreground">{exercise.prompt}</p>
-			<Button onClick={handleRecordToggle} variant="secondary">
-				{isRecording ? "Stop" : "Rekam"}
-			</Button>
+			<div className="flex gap-2">
+				<Button
+					variant="secondary"
+					onClick={handleListen}
+					isLoading={isSpeaking}
+					disabled={isRecording}
+				>
+					{isSpeaking ? "Memutar…" : "🔊 Dengarkan"}
+				</Button>
+				<Button
+					variant="secondary"
+					onClick={handleRecordToggle}
+					disabled={isSpeaking}
+				>
+					{isRecording ? "⏹ Stop" : "🎙 Rekam"}
+				</Button>
+			</div>
 			{audioUrl ? (
 				<audio controls className="w-full">
 					<source src={audioUrl} type="audio/webm" />

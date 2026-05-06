@@ -4,21 +4,53 @@ import * as React from "react";
 
 import type { VocabWord } from "@/generated/prisma";
 import { cn } from "@/lib/utils";
-import { Button, Card } from "@/components/ui";
+import { Badge } from "@/components/ui";
 
 export type FlashcardItemProps = {
 	word: VocabWord;
 	onRate: (quality: 0 | 1 | 3 | 5) => void;
 };
 
+const RATING_BUTTONS: {
+	quality: 0 | 1 | 3 | 5;
+	label: string;
+	className: string;
+}[] = [
+	{
+		quality: 0,
+		label: "Lagi",
+		className:
+			"border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100",
+	},
+	{
+		quality: 1,
+		label: "Sulit",
+		className:
+			"border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100",
+	},
+	{
+		quality: 3,
+		label: "Oke",
+		className:
+			"border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-100",
+	},
+	{
+		quality: 5,
+		label: "Mudah",
+		className:
+			"border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100",
+	},
+];
+
 /**
- * Flashcard with flip animation and SM-2 rating buttons.
+ * Flashcard with 3D flip animation and color-coded SM-2 rating buttons.
  */
 export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 	const [isFlipped, setIsFlipped] = React.useState(false);
 
 	return (
-		<div className="w-full">
+		<div className="w-full space-y-4">
+			{/* Card */}
 			<div className="relative h-72 w-full [perspective:1200px]">
 				<div
 					className={cn(
@@ -27,58 +59,60 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 						isFlipped ? "[transform:rotateY(180deg)]" : ""
 					)}
 				>
-					<Card
+					{/* Front */}
+					<div
 						className={cn(
-							"absolute inset-0 flex h-full w-full items-center justify-center",
-							"[backface-visibility:hidden]"
+							"absolute inset-0 flex h-full w-full cursor-pointer flex-col items-center justify-center gap-4",
+							"rounded-2xl border border-border bg-card shadow-sm [backface-visibility:hidden]"
+						)}
+						onClick={() => setIsFlipped(true)}
+					>
+						<Badge variant={word.level as "A1" | "A2" | "B1" | "B2"}>
+							{word.level}
+						</Badge>
+						<p className="text-3xl font-bold text-foreground">{word.german}</p>
+						<p className="text-xs text-muted-foreground">Ketuk untuk melihat arti</p>
+					</div>
+
+					{/* Back */}
+					<div
+						className={cn(
+							"absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3",
+							"rounded-2xl border border-border bg-card shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]"
 						)}
 					>
-						<div className="space-y-3 text-center">
-							<p className="text-2xl font-semibold text-foreground">{word.german}</p>
-							<Button variant="ghost" onClick={() => setIsFlipped(true)}>
-								Lihat arti
-							</Button>
-						</div>
-					</Card>
-					<Card
-						className={cn(
-							"absolute inset-0 flex h-full w-full items-center justify-center",
-							"[backface-visibility:hidden] [transform:rotateY(180deg)]"
-						)}
-					>
-						<div className="space-y-4 text-center">
-							<div>
-								<p className="text-xl font-semibold text-foreground">
-									{word.indonesian}
-								</p>
-								<p className="text-sm text-muted-foreground">{word.example}</p>
-								<p className="text-sm text-muted-foreground">
-									{word.exampleTranslation}
-								</p>
+						<p className="text-2xl font-bold text-foreground">{word.indonesian}</p>
+						{word.example ? (
+							<div className="space-y-1 text-center">
+								<p className="text-sm italic text-muted-foreground">{word.example}</p>
+								{word.exampleTranslation ? (
+									<p className="text-xs text-muted-foreground/70">
+										{word.exampleTranslation}
+									</p>
+								) : null}
 							</div>
-							<div className="flex flex-wrap justify-center gap-2">
-								<Button variant="ghost" onClick={() => onRate(0)}>
-									Lagi
-								</Button>
-								<Button variant="secondary" onClick={() => onRate(1)}>
-									Sulit
-								</Button>
-								<Button variant="primary" onClick={() => onRate(3)}>
-									Oke
-								</Button>
-								<Button variant="secondary" onClick={() => onRate(5)}>
-									Mudah
-								</Button>
-							</div>
-						</div>
-					</Card>
+						) : null}
+					</div>
 				</div>
 			</div>
-			{isFlipped ? null : (
-				<p className="mt-3 text-center text-xs text-muted-foreground">
-					Klik untuk membalik kartu
-				</p>
-			)}
+
+			{/* Rating buttons — only shown when flipped */}
+			{isFlipped ? (
+				<div className="grid grid-cols-4 gap-2">
+					{RATING_BUTTONS.map(({ quality, label, className }) => (
+						<button
+							key={quality}
+							onClick={() => onRate(quality)}
+							className={cn(
+								"rounded-xl border py-3 text-sm font-semibold transition-colors",
+								className
+							)}
+						>
+							{label}
+						</button>
+					))}
+				</div>
+			) : null}
 		</div>
 	);
 }

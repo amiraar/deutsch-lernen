@@ -1,10 +1,14 @@
 "use client";
 
-import { Card, LoadingSpinner } from "@/components/ui";
+import { User, Mail, Award, Zap } from "lucide-react";
+
+import { Badge, Card, LoadingSpinner } from "@/components/ui";
 import { trpc } from "@/lib/trpcClient";
+import { LEVEL_LABELS } from "@/constants";
 
 export default function ProfilePage() {
 	const meQuery = trpc.auth.me.useQuery();
+	const statsQuery = trpc.progress.getUserStats.useQuery();
 
 	if (meQuery.isLoading) {
 		return (
@@ -22,13 +26,76 @@ export default function ProfilePage() {
 		);
 	}
 
+	const { name, email, level, xp } = meQuery.data;
+	const initials = name
+		.split(" ")
+		.map((w: string) => w[0])
+		.join("")
+		.toUpperCase()
+		.slice(0, 2);
+
 	return (
-		<Card className="space-y-2">
-			<h2 className="text-lg font-semibold text-foreground">Profil</h2>
-			<p className="text-sm text-muted-foreground">Nama: {meQuery.data.name}</p>
-			<p className="text-sm text-muted-foreground">Email: {meQuery.data.email}</p>
-			<p className="text-sm text-muted-foreground">Level: {meQuery.data.level}</p>
-			<p className="text-sm text-muted-foreground">XP: {meQuery.data.xp}</p>
-		</Card>
+		<div className="space-y-6">
+			<h1 className="text-xl font-bold text-foreground">Profil</h1>
+
+			{/* Avatar + name card */}
+			<Card variant="elevated" className="flex items-center gap-5">
+				<div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+					{initials}
+				</div>
+				<div className="space-y-1">
+					<h2 className="text-lg font-semibold text-foreground">{name}</h2>
+					<div className="flex items-center gap-2">
+						<Badge variant={level as "A1" | "A2" | "B1" | "B2"}>{level}</Badge>
+						<span className="text-xs text-muted-foreground">
+							{LEVEL_LABELS[level as keyof typeof LEVEL_LABELS]}
+						</span>
+					</div>
+				</div>
+			</Card>
+
+			{/* Info grid */}
+			<div className="grid gap-4 sm:grid-cols-2">
+				<Card className="flex items-center gap-4">
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+						<User size={18} className="text-muted-foreground" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Nama</p>
+						<p className="text-sm font-medium text-foreground">{name}</p>
+					</div>
+				</Card>
+				<Card className="flex items-center gap-4">
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+						<Mail size={18} className="text-muted-foreground" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Email</p>
+						<p className="text-sm font-medium text-foreground">{email}</p>
+					</div>
+				</Card>
+				<Card className="flex items-center gap-4">
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100">
+						<Award size={18} className="text-violet-500" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Pelajaran Selesai</p>
+						<p className="text-sm font-medium text-foreground">
+							{statsQuery.data?.lessonsCompleted ?? 0}
+						</p>
+					</div>
+				</Card>
+				<Card className="flex items-center gap-4">
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+						<Zap size={18} className="text-amber-500" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Total XP</p>
+						<p className="text-sm font-medium text-foreground">{xp}</p>
+					</div>
+				</Card>
+			</div>
+		</div>
 	);
 }
+

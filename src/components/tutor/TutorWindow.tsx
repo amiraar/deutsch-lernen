@@ -4,22 +4,23 @@ import * as React from "react";
 
 import type { Message } from "@/types";
 import { trpc } from "@/lib/trpcClient";
-import { Button, Card, Input, LoadingSpinner, Badge } from "@/components/ui";
+import { Button, Badge, Input } from "@/components/ui";
 
 type TutorWindowProps = {
 	className?: string;
+	initialMessage?: string;
 };
 
 const LIMIT = 20;
 
 function TypingIndicator() {
 	return (
-		<div className="flex items-center gap-1">
+		<div className="flex items-end gap-1 px-1">
 			{Array.from({ length: 3 }).map((_, index) => (
 				<span
 					key={index}
-					className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground"
-					style={{ animationDelay: `${index * 0.1}s` }}
+					className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground"
+					style={{ animationDelay: `${index * 0.15}s` }}
 				/>
 			))}
 		</div>
@@ -29,10 +30,11 @@ function TypingIndicator() {
 /**
  * Chat window for the AI tutor.
  */
-export function TutorWindow({ className }: TutorWindowProps) {
+export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
 	const [messages, setMessages] = React.useState<Message[]>([]);
 	const [input, setInput] = React.useState("");
 	const [aiUsage, setAiUsage] = React.useState(0);
+	const bottomRef = React.useRef<HTMLDivElement>(null);
 
 	const chatMutation = trpc.tutor.chat.useMutation();
 	const providerQuery = trpc.tutor.getProviderStatus.useQuery(undefined, {
@@ -41,65 +43,79 @@ export function TutorWindow({ className }: TutorWindowProps) {
 
 	const providerName = providerQuery.data?.provider ?? "-";
 
-	const handleSend = async () => {
-		if (!input.trim() || chatMutation.isLoading) {
-			return;
+	const sendMessage = React.useCallback(
+		async (text: string) => {
+			if (!text.trim() || chatMutation.isPending) return;
+
+			const nextMessage: Message = { role: "user", content: text.trim() };
+			const nextMessages = [...messages, nextMessage];
+			setMessages(nextMessages);
+			setInput("");
+
+			try {
+				const response = await chatMutation.mutateAsync({ messages: nextMessages });
+				setMessages((prev) => [
+					...prev,
+					{ role: "assistant", content: response.response },
+				]);
+				setAiUsage((prev) => Math.min(LIMIT, prev + 1));
+				await providerQuery.refetch();
+			} catch (error) {
+				const message = error instanceof Error ? error.message : "Unknown error";
+				setMessages((prev) => [
+					...prev,
+					{ role: "assistant", content: `Gagal: ${message}` },
+				]);
+			}
+		},
+		[messages, chatMutation, providerQuery]
+	);
+
+	// Auto-send initial message when provided
+	React.useEffect(() => {
+		if (initialMessage) {
+			void sendMessage(initialMessage);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-		const nextMessage: Message = { role: "user", content: input.trim() };
-		const nextMessages = [...messages, nextMessage];
-		setMessages(nextMessages);
-		setInput("");
-
-		try {
-			const response = await chatMutation.mutateAsync({
-				messages: nextMessages,
-			});
-
-			setMessages((prev) => [
-				...prev,
-				{ role: "assistant", content: response.response },
-			]);
-			setAiUsage((prev) => Math.min(LIMIT, prev + 1));
-			await providerQuery.refetch();
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			setMessages((prev) => [
-				...prev,
-				{ role: "assistant", content: `Gagal: ${message}` },
-			]);
-		}
-	};
+	// Scroll to bottom on new messages
+	React.useEffect(() => {
+		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages, chatMutation.isPending]);
 
 	return (
-		<Card className={className}>
-			<div className="flex items-center justify-between">
-				<h2 className="text-lg font-semibold text-foreground">AI Tutor</h2>
-				<span className="text-xs text-muted-foreground">
-					AI limit: {aiUsage}/{LIMIT} used today
-				</span>
+		<div className={`flex flex-col rounded-xl border border-border bg-card ${className ?? ""}`}>
+			{/* Header */}
+			<div className="flex items-center justify-between border-b border-border px-4 py-3">
+				<h2 className="text-sm font-semibold text-foreground">AI Tutor</h2>
+				<div className="flex items-center gap-2">
+					{providerName !== "-" ? (
+						<Badge variant="neutral" className="text-[10px]">via {providerName}</Badge>
+					) : null}
+					<span className="text-xs text-muted-foreground">
+						{aiUsage}/{LIMIT} AI
+					</span>
+				</div>
 			</div>
 
-			<div className="mt-4 h-80 space-y-3 overflow-y-auto rounded-md border border-border bg-muted/30 p-3">
+			{/* Messages */}
+			<div className="flex-1 space-y-4 overflow-y-auto p-4" style={{ minHeight: "320px", maxHeight: "420px" }}>
 				{messages.length === 0 ? (
-					<p className="text-sm text-muted-foreground">
-						Mulai percakapan dengan tutor bahasa Jerman.
+					<p className="text-center text-sm text-muted-foreground">
+						Mulai percakapan dengan tutor bahasa Jerman. 👋
 					</p>
 				) : (
 					messages.map((message, index) => (
 						<div
 							key={index}
-							className={
-								message.role === "user"
-									? "flex justify-end"
-									: "flex justify-start"
-							}
+							className={message.role === "user" ? "flex justify-end" : "flex justify-start"}
 						>
 							<div
 								className={
 									message.role === "user"
-										? "rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground"
-										: "rounded-lg bg-card px-3 py-2 text-sm text-foreground"
+										? "max-w-[75%] rounded-2xl rounded-br-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground"
+										: "max-w-[75%] rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-2.5 text-sm text-foreground"
 								}
 							>
 								{message.content}
@@ -107,41 +123,39 @@ export function TutorWindow({ className }: TutorWindowProps) {
 						</div>
 					))
 				)}
-				{chatMutation.isLoading ? (
-					<div className="flex items-center gap-2 text-sm text-muted-foreground">
-						<TypingIndicator />
-						Mengetik...
+				{chatMutation.isPending ? (
+					<div className="flex justify-start">
+						<div className="rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3">
+							<TypingIndicator />
+						</div>
 					</div>
 				) : null}
+				<div ref={bottomRef} />
 			</div>
 
-			<div className="mt-4 flex items-center gap-2">
-				<Input
-					value={input}
-					onChange={(event) => setInput(event.target.value)}
-					placeholder="Tulis pertanyaanmu"
-					onKeyDown={(event) => {
-						if (event.key === "Enter") {
-							event.preventDefault();
-							void handleSend();
-						}
-					}}
-				/>
-				<Button onClick={handleSend} isLoading={chatMutation.isLoading}>
-					Kirim
-				</Button>
-			</div>
-
-			<div className="mt-4 flex items-center justify-end">
-				<Badge variant="neutral">via {providerName}</Badge>
-			</div>
-
-			{chatMutation.isError ? (
-				<div className="mt-2 flex items-center gap-2 text-xs text-destructive">
-					<LoadingSpinner size="sm" />
-					{chatMutation.error.message}
+			{/* Input */}
+			<div className="border-t border-border p-3">
+				<div className="flex items-center gap-2">
+					<Input
+						value={input}
+						onChange={(event) => setInput(event.target.value)}
+						placeholder="Tulis pertanyaanmu..."
+						onKeyDown={(event) => {
+							if (event.key === "Enter") {
+								event.preventDefault();
+								void sendMessage(input);
+							}
+						}}
+					/>
+					<Button
+						onClick={() => sendMessage(input)}
+						isLoading={chatMutation.isPending}
+						disabled={!input.trim()}
+					>
+						Kirim
+					</Button>
 				</div>
-			) : null}
-		</Card>
+			</div>
+		</div>
 	);
 }

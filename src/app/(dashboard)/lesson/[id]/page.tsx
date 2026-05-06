@@ -71,7 +71,7 @@ export default function LessonPage() {
 				elapsedSeconds={elapsedSeconds}
 			/>
 
-			<Card>
+			<Card variant="elevated" className="min-h-[280px]">
 				{current ? (
 					<ExerciseBlock exercise={current} onComplete={handleComplete} />
 				) : (
@@ -82,14 +82,26 @@ export default function LessonPage() {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title="Pelajaran selesai"
+				title="Pelajaran selesai! 🎉"
 			>
-				<div className="space-y-4">
-					<p className="text-sm text-muted-foreground">
-						Skor kamu: {Math.round((correctCount / exercises.length) * 100)}
-					</p>
-					<Button onClick={() => (window.location.href = "/dashboard")}>
-						Lanjutkan ke pelajaran berikutnya
+				<div className="space-y-6 text-center">
+					<div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+						<span className="text-4xl">🏆</span>
+					</div>
+					<div>
+						<p className="text-4xl font-bold text-foreground">
+							{Math.round((correctCount / Math.max(exercises.length, 1)) * 100)}
+							<span className="text-xl text-muted-foreground">/100</span>
+						</p>
+						<p className="mt-1 text-sm text-muted-foreground">Skor kamu</p>
+					</div>
+					<div className="rounded-lg bg-primary/5 px-4 py-3">
+						<p className="text-sm font-semibold text-primary">
+							+{correctCount * 10} XP diperoleh
+						</p>
+					</div>
+					<Button className="w-full" onClick={() => (window.location.href = "/dashboard")}>
+						Kembali ke Dashboard
 					</Button>
 				</div>
 			</Modal>

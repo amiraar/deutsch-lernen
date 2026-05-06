@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
 import { LevelEnum } from "@/generated/prisma";
 import { getCachedLesson, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
-import { get, set } from "@/lib/redis";
+import { get, set, del } from "@/lib/redis";
+import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";
 import { protectedProcedure, router } from "@/server/trpc";
 
 function lessonListKey(userId: string, level?: LevelEnum): string {
@@ -34,13 +34,7 @@ function calculateStreak(
 
 export const lessonRouter = router({
 	getLessons: protectedProcedure
-		.input(
-			z
-				.object({
-					level: z.nativeEnum(LevelEnum).optional(),
-				})
-				.optional()
-		)
+		.input(getLessonsInput)
 		.query(async ({ ctx, input }) => {
 			const cacheKey = lessonListKey(ctx.userId, input?.level);
 			const cached = await get<
@@ -95,7 +89,7 @@ export const lessonRouter = router({
 		}),
 
 	getLessonById: protectedProcedure
-		.input(z.object({ id: z.string().min(1) }))
+		.input(getLessonByIdInput)
 		.query(async ({ input }) => {
 			const lesson = await getCachedLesson(input.id);
 
@@ -110,12 +104,7 @@ export const lessonRouter = router({
 		}),
 
 	completeLesson: protectedProcedure
-		.input(
-			z.object({
-				lessonId: z.string().min(1),
-				score: z.number().min(0).max(100),
-			})
-		)
+		.input(completeLessonInput)
 		.mutation(async ({ ctx, input }) => {
 			const now = new Date();
 			const xpEarned = Math.round(input.score / 10) * 10;
@@ -170,6 +159,11 @@ export const lessonRouter = router({
 				});
 
 				await invalidateUserStats(ctx.userId);
+				// Invalidate lesson list caches so isCompleted updates immediately
+				await Promise.all([
+					del(lessonListKey(ctx.userId)),
+					...Object.values(LevelEnum).map((lvl) => del(lessonListKey(ctx.userId, lvl))),
+				]);
 
 				return {
 					completion: result.completion,

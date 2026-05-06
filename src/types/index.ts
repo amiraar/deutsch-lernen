@@ -47,16 +47,3 @@ export type UserStats = {
 	lessonsCompleted: number;
 	wordsLearned: number;
 };
-
-export type SRSCard = {
-	easeFactor: number;
-	interval: number;
-	repetitions: number;
-};
-
-export type SRSResult = {
-	easeFactor: number;
-	interval: number;
-	repetitions: number;
-	nextReviewAt: Date;
-};

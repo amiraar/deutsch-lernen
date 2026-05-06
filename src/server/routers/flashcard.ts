@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
 import { calculateNextReview } from "@/lib/srs";
+import { addWordInput, reviewCardInput } from "@/lib/validations/flashcard";
 import { protectedProcedure, router } from "@/server/trpc";
 
 export const flashcardRouter = router({
@@ -26,12 +26,7 @@ export const flashcardRouter = router({
 	}),
 
 	reviewCard: protectedProcedure
-		.input(
-			z.object({
-				cardId: z.string().min(1),
-				quality: z.number().min(0).max(5),
-			})
-		)
+		.input(reviewCardInput)
 		.mutation(async ({ ctx, input }) => {
 			try {
 				const card = await ctx.prisma.flashcardReview.findFirst({
@@ -78,7 +73,7 @@ export const flashcardRouter = router({
 		}),
 
 	addWordToReview: protectedProcedure
-		.input(z.object({ vocabWordId: z.string().min(1) }))
+		.input(addWordInput)
 		.mutation(async ({ ctx, input }) => {
 			try {
 				return await ctx.prisma.flashcardReview.create({

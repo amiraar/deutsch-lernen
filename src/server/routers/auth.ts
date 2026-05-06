@@ -1,15 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
 
 import { LevelEnum } from "@/generated/prisma";
+import { registerSchema } from "@/lib/validations/user";
 import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
-
-const registerSchema = z.object({
-	email: z.string().email(),
-	password: z.string().min(8),
-	name: z.string().min(1),
-});
 
 export const authRouter = router({
 	register: publicProcedure
