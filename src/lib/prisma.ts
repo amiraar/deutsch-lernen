@@ -1,3 +1,5 @@
+import { PrismaPg } from "@prisma/adapter-pg";
+
 import { PrismaClient } from "@/generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -6,7 +8,8 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
 	try {
-		return new PrismaClient();
+		const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+		return new PrismaClient({ adapter });
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
 		throw new Error(`Failed to create PrismaClient: ${message}`);
