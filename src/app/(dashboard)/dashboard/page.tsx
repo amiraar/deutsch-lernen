@@ -189,7 +189,7 @@ export default function DashboardPage() {
 				<Card variant="elevated" className="h-fit space-y-4">
 					<h3 className="text-sm font-semibold text-foreground">Aktivitas Terbaru</h3>
 					<ul className="space-y-3">
-						{activityQuery.data?.lessons?.slice(0, 6).map((item: { id: string; title: string; completedAt: string; xpEarned: number }) => (
+						{activityQuery.data?.lessons?.slice(0, 6).map((item) => (
 							<li key={item.id} className="flex items-center justify-between gap-2">
 								<div className="flex items-center gap-2">
 									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary/40" />
