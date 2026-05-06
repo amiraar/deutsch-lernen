@@ -1,0 +1,1 @@
+// Lesson card component placeholder.

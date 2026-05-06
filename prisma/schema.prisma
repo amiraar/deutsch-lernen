@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LevelEnum {
+  A1
+  A2
+  B1
+  B2
+}
+
+enum ExerciseType {
+  MULTIPLE_CHOICE
+  FILL_IN_BLANK
+  TRANSLATION
+  PRONUNCIATION
+}
+
+model User {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  passwordHash    String
+  name            String
+  avatarUrl       String?
+  level           LevelEnum          @default(A1)
+  xp              Int                @default(0)
+  streakDays      Int                @default(0)
+  lastStudiedAt   DateTime?
+  sessions        Session[]
+  accounts        Account[]
+  flashcardReviews FlashcardReview[]
+  lessonCompletions LessonCompletion[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([level])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
+model Lesson {
+  id              String             @id @default(cuid())
+  title           String
+  slug            String             @unique
+  description     String
+  level           LevelEnum
+  order           Int
+  content         Json
+  estimatedMinutes Int
+  exercises       Exercise[]
+  completions     LessonCompletion[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([slug])
+  @@index([level])
+}
+
+model Exercise {
+  id            String       @id @default(cuid())
+  lessonId      String
+  type          ExerciseType
+  prompt        String
+  correctAnswer String
+  options       String[]
+  explanation   String
+  lesson        Lesson       @relation(fields: [lessonId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([lessonId])
+}
+
+model VocabWord {
+  id                 String            @id @default(cuid())
+  german             String
+  indonesian         String
+  example            String
+  exampleTranslation String
+  audioUrl           String?
+  level              LevelEnum
+  tags               String[]
+  flashcardReviews   FlashcardReview[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([level])
+}
+
+model FlashcardReview {
+  id             String    @id @default(cuid())
+  userId         String
+  vocabWordId    String
+  easeFactor     Float     @default(2.5)
+  interval       Int       @default(1)
+  repetitions    Int       @default(0)
+  nextReviewAt   DateTime
+  lastReviewedAt DateTime?
+  user           User      @relation(fields: [userId], references: [id])
+  vocabWord      VocabWord @relation(fields: [vocabWordId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, vocabWordId])
+  @@index([userId])
+  @@index([vocabWordId])
+  @@index([nextReviewAt])
+}
+
+model LessonCompletion {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  score       Int
+  xpEarned    Int
+  completedAt DateTime
+  user        User     @relation(fields: [userId], references: [id])
+  lesson      Lesson   @relation(fields: [lessonId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([lessonId])
+}

@@ -1,0 +1,1 @@
+// Lesson schema placeholders.
