@@ -13,6 +13,24 @@ type SessionUser = DefaultSession["user"] & {
 	xp?: number;
 };
 
+declare module "next-auth" {
+	interface Session {
+		user: SessionUser;
+	}
+	interface User {
+		emailVerified?: Date | null;
+		level?: string;
+		xp?: number;
+	}
+}
+
+declare module "@auth/core/adapters" {
+	interface AdapterUser {
+		level?: string;
+		xp?: number;
+	}
+}
+
 const credentialsSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(1),
@@ -67,6 +85,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				return {
 					id: user.id,
 					email: user.email,
+					emailVerified: null,
 					name: user.name,
 					image: user.avatarUrl ?? undefined,
 					level: user.level,
@@ -77,16 +96,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	],
 	callbacks: {
 		session: async ({ session, user }) => {
-			if (!session.user) {
-				session.user = { name: user.name, email: user.email } as SessionUser;
-			}
-
+			const u = user as { id: string; name?: string | null; email?: string | null; level?: string; xp?: number };
 			const sessionUser = session.user as SessionUser;
-			sessionUser.id = user.id;
-			sessionUser.level = user.level;
-			sessionUser.xp = user.xp;
-			sessionUser.name = user.name;
-			sessionUser.email = user.email;
+			sessionUser.id = u.id;
+			sessionUser.level = u.level;
+			sessionUser.xp = u.xp;
+			sessionUser.name = u.name;
+			sessionUser.email = u.email;
 
 			return session;
 		},

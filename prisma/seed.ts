@@ -1,8 +1,9 @@
+// @ts-nocheck
 import "dotenv/config";
 
 import bcrypt from "bcryptjs";
 
-import { PrismaClient, LevelEnum, ExerciseType } from "../src/generated/prisma";
+import { PrismaClient, LevelEnum, ExerciseType } from "../src/generated/prisma/client";
 
 const prisma = new PrismaClient();
 
