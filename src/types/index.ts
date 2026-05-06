@@ -1,7 +1,7 @@
 import type {
 	ExerciseType as PrismaExerciseType,
 	LevelEnum,
-} from "@/generated/prisma";
+} from "@/generated/prisma/client";
 
 export type Level = LevelEnum;
 export type ExerciseType = PrismaExerciseType;

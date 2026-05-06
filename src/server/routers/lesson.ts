@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 
-import { LevelEnum } from "@/generated/prisma";
+import { LevelEnum } from "@/generated/prisma/client";
 import { getCachedLesson, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
 import { get, set, del } from "@/lib/redis";
 import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";

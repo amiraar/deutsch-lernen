@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { FlashcardReview, VocabWord } from "@/generated/prisma";
+import type { FlashcardReview, VocabWord } from "@/generated/prisma/client";
 import { trpc } from "@/lib/trpcClient";
 import { ProgressBar, Card, Button, LoadingSpinner } from "@/components/ui";
 import { FlashcardItem } from "@/components/flashcard/FlashcardItem";

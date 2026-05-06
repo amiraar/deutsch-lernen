@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 
-import { LevelEnum } from "@/generated/prisma";
+import { LevelEnum } from "@/generated/prisma/client";
 import { registerSchema } from "@/lib/validations/user";
 import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 

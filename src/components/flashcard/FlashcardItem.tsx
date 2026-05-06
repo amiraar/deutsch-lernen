@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { VocabWord } from "@/generated/prisma";
+import type { VocabWord } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 

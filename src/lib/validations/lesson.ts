@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { LevelEnum } from "@/generated/prisma";
+import { LevelEnum } from "@/generated/prisma/client";
 
 export const getLessonsInput = z
 	.object({

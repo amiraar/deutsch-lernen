@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { Exercise } from "@/generated/prisma";
+import type { Exercise } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpcClient";
 import { speak } from "@/lib/ai/tts";
