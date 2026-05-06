@@ -2,12 +2,14 @@
 
 import * as React from "react";
 
-import type { FlashcardReview, VocabWord } from "@/generated/prisma/client";
+import type { AppRouter } from "@/server/root";
+import type { inferRouterOutputs } from "@trpc/server";
 import { trpc } from "@/lib/trpcClient";
 import { ProgressBar, Card, Button, LoadingSpinner } from "@/components/ui";
 import { FlashcardItem } from "@/components/flashcard/FlashcardItem";
 
-type DueCard = FlashcardReview & { vocabWord: VocabWord };
+type RouterOutputs = inferRouterOutputs<AppRouter>;
+type DueCard = RouterOutputs["flashcard"]["getDueCards"][number];
 
 /**
  * Manages a queue of flashcards due for review.
@@ -21,7 +23,7 @@ export function FlashcardDeck() {
 
 	React.useEffect(() => {
 		if (data) {
-			setQueue(data as DueCard[]);
+			setQueue(data);
 			setCompletedCount(0);
 		}
 	}, [data]);

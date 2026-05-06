@@ -2,12 +2,17 @@
 
 import * as React from "react";
 
-import type { VocabWord } from "@/generated/prisma/client";
+import type { AppRouter } from "@/server/root";
+import type { inferRouterOutputs } from "@trpc/server";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 
+type RouterOutputs = inferRouterOutputs<AppRouter>;
+type VocabWordSerialized =
+	RouterOutputs["flashcard"]["getDueCards"][number]["vocabWord"];
+
 export type FlashcardItemProps = {
-	word: VocabWord;
+	word: VocabWordSerialized;
 	onRate: (quality: 0 | 1 | 3 | 5) => void;
 };
 
