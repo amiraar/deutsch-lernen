@@ -25,8 +25,18 @@ export default function RegisterPage() {
 			await registerMutation.mutateAsync({ email, password, name });
 			router.push("/login");
 		} catch (err) {
-			const message = err instanceof Error ? err.message : "Unknown error";
-			setError(message);
+			const raw = err instanceof Error ? err.message : "Unknown error";
+			// tRPC wraps Zod validation errors as a JSON array string
+			try {
+				const parsed = JSON.parse(raw) as Array<{ message: string }>;
+				if (Array.isArray(parsed) && parsed[0]?.message) {
+					setError(parsed[0].message);
+					return;
+				}
+			} catch {
+				// not JSON, fall through
+			}
+			setError(raw);
 		}
 	};
 
