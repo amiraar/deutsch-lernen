@@ -2,10 +2,13 @@
 import "dotenv/config";
 
 import bcrypt from "bcryptjs";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 import { PrismaClient, LevelEnum, ExerciseType } from "../src/generated/prisma/client";
+import { LESSON_CONTENT } from "../lesson-content";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 const lessons = [
   {
@@ -15,7 +18,7 @@ const lessons = [
     level: LevelEnum.A1,
     order: 1,
     estimatedMinutes: 15,
-    content: { topic: "greetings" },
+    content: LESSON_CONTENT["salam-dasar"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -61,7 +64,7 @@ const lessons = [
     level: LevelEnum.A1,
     order: 2,
     estimatedMinutes: 20,
-    content: { topic: "numbers" },
+    content: LESSON_CONTENT["angka-1-20"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -107,7 +110,7 @@ const lessons = [
     level: LevelEnum.A1,
     order: 3,
     estimatedMinutes: 15,
-    content: { topic: "pronouns" },
+    content: LESSON_CONTENT["kata-ganti-orang"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -153,7 +156,7 @@ const lessons = [
     level: LevelEnum.A1,
     order: 4,
     estimatedMinutes: 20,
-    content: { topic: "gender" },
+    content: LESSON_CONTENT["gender-kata-benda"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -199,7 +202,7 @@ const lessons = [
     level: LevelEnum.A1,
     order: 5,
     estimatedMinutes: 20,
-    content: { topic: "verbs" },
+    content: LESSON_CONTENT["kata-kerja-dasar"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -245,7 +248,7 @@ const lessons = [
     level: LevelEnum.A2,
     order: 6,
     estimatedMinutes: 20,
-    content: { topic: "time" },
+    content: LESSON_CONTENT["waktu-dan-hari"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -291,7 +294,7 @@ const lessons = [
     level: LevelEnum.A2,
     order: 7,
     estimatedMinutes: 20,
-    content: { topic: "direction" },
+    content: LESSON_CONTENT["arah-dan-tempat"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -337,7 +340,7 @@ const lessons = [
     level: LevelEnum.A2,
     order: 8,
     estimatedMinutes: 20,
-    content: { topic: "food" },
+    content: LESSON_CONTENT["makanan-favorit"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -383,7 +386,7 @@ const lessons = [
     level: LevelEnum.A2,
     order: 9,
     estimatedMinutes: 20,
-    content: { topic: "daily" },
+    content: LESSON_CONTENT["kegiatan-harian"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,
@@ -429,7 +432,7 @@ const lessons = [
     level: LevelEnum.A2,
     order: 10,
     estimatedMinutes: 20,
-    content: { topic: "hobbies" },
+    content: LESSON_CONTENT["waktu-senggang"],
     exercises: [
       {
         type: ExerciseType.MULTIPLE_CHOICE,

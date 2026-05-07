@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,6 +10,7 @@ import {
 	Bot,
 	User,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
 import type { BadgeVariant } from "@/components/ui/Badge";
@@ -34,8 +36,14 @@ const NAV_ITEMS = [
  */
 export function Sidebar() {
 	const pathname = usePathname();
-	const { data, isLoading } = trpc.progress.getUserStats.useQuery();
+	const { data, isLoading, error } = trpc.progress.getUserStats.useQuery();
 	const { isSigningOut, toast, handleSignOut } = useLogoutWithToast();
+
+	React.useEffect(() => {
+		if (error?.data?.code === "UNAUTHORIZED") {
+			void signOut({ callbackUrl: "/login" });
+		}
+	}, [error]);
 
 	return (
 		<aside className="hidden w-64 flex-col justify-between border-r border-border bg-white md:flex">

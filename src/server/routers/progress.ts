@@ -9,6 +9,12 @@ export const progressRouter = router({
 			return await getCachedUserStats(ctx.userId);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Unknown error";
+			if (message === "User not found") {
+				throw new TRPCError({
+					code: "UNAUTHORIZED",
+					message: "Sesi tidak valid. Silakan login kembali.",
+				});
+			}
 			throw new TRPCError({
 				code: "INTERNAL_SERVER_ERROR",
 				message: `Gagal mengambil statistik pengguna. ${message}`,

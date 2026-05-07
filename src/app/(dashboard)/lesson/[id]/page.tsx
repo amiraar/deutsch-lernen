@@ -6,10 +6,20 @@ import { useParams } from "next/navigation";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ExerciseBlock } from "@/components/lesson/ExerciseBlock";
 import type { SerializedExercise } from "@/components/lesson/ExerciseBlock";
+import { LessonContentView } from "@/components/lesson/LessonContent";
 import { LessonProgress } from "@/components/lesson/LessonProgress";
 import { Button, Card, LoadingSpinner, Modal, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
+import type { LessonContent } from "@/../lesson-content";
+
+type LessonData = {
+	id: string;
+	title: string;
+	description: string;
+	content: LessonContent | null;
+	exercises?: SerializedExercise[];
+};
 
 export default function LessonPage() {
 	const params = useParams();
@@ -18,6 +28,7 @@ export default function LessonPage() {
 	const lessonQuery = trpc.lesson.getLessonById.useQuery({ id: lessonId });
 	const completeMutation = trpc.lesson.completeLesson.useMutation();
 
+	const [phase, setPhase] = React.useState<"content" | "exercises">("content");
 	const [currentIndex, setCurrentIndex] = React.useState(0);
 	const [correctCount, setCorrectCount] = React.useState(0);
 	const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
@@ -25,12 +36,12 @@ export default function LessonPage() {
 	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
+		if (phase !== "exercises") return;
 		const timer = setInterval(() => {
 			setElapsedSeconds((prev) => prev + 1);
 		}, 1000);
-
 		return () => clearInterval(timer);
-	}, []);
+	}, [phase]);
 
 	React.useEffect(() => {
 		if (lessonQuery.error) {
@@ -40,9 +51,13 @@ export default function LessonPage() {
 		}
 	}, [clearToast, lessonQuery.error, showToast]);
 
-	const lesson = lessonQuery.data as { exercises?: SerializedExercise[] } | undefined;
+	const lesson = lessonQuery.data as LessonData | undefined;
 	const exercises = lesson?.exercises ?? [];
 	const current = exercises[currentIndex];
+
+	const handleStartExercises = () => {
+		setPhase("exercises");
+	};
 
 	const handleComplete = async (correct: boolean) => {
 		setCorrectCount((prev) => prev + (correct ? 1 : 0));
@@ -73,6 +88,28 @@ export default function LessonPage() {
 				<Card className="text-sm text-destructive">
 					{lessonQuery.error?.message ?? "Pelajaran tidak ditemukan."}
 				</Card>
+				{toast ? (
+					<Toast message={toast.message} variant={toast.variant} />
+				) : null}
+			</div>
+		);
+	}
+
+	const hasContent = lesson?.content && typeof lesson.content === "object" && "introduction" in lesson.content;
+
+	if (phase === "content" && hasContent) {
+		return (
+			<div className="space-y-6">
+				<LessonContentView
+					content={lesson!.content as LessonContent}
+					title={lesson!.title}
+					description={lesson!.description}
+				/>
+				<div className="sticky bottom-4">
+					<Button className="w-full" size="lg" onClick={handleStartExercises}>
+						Mulai Latihan →
+					</Button>
+				</div>
 				{toast ? (
 					<Toast message={toast.message} variant={toast.variant} />
 				) : null}
@@ -131,3 +168,4 @@ export default function LessonPage() {
 		</div>
 	);
 }
+

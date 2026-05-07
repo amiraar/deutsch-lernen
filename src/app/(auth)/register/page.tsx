@@ -97,15 +97,31 @@ export default function RegisterPage() {
 							autoComplete="email"
 							required
 						/>
-						<Input
-							label="Password"
-							type="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							hint="Minimal 8 karakter"
-							autoComplete="new-password"
-							required
-						/>
+						<div className="flex flex-col gap-1">
+							<Input
+								label="Password"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								showPasswordToggle
+								autoComplete="new-password"
+								required
+							/>
+							{password.length > 0 && (
+								<ul className="mt-1 space-y-1">
+									{[
+										{ label: "Minimal 8 karakter", ok: password.length >= 8 },
+										{ label: "Mengandung huruf kapital (A–Z)", ok: /[A-Z]/.test(password) },
+										{ label: "Mengandung angka atau simbol", ok: /[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password) },
+									].map(({ label, ok }) => (
+										<li key={label} className={`flex items-center gap-2 text-xs ${ok ? "text-green-600" : "text-destructive"}`}>
+											<span className={`inline-block h-1.5 w-1.5 rounded-full ${ok ? "bg-green-500" : "bg-destructive"}`} />
+											{label}
+										</li>
+									))}
+								</ul>
+							)}
+						</div>
 						<Button
 							type="submit"
 							className="w-full"

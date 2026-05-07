@@ -103,6 +103,7 @@ export default function LoginPage() {
 							type="password"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
+							showPasswordToggle
 							autoComplete="current-password"
 							required
 						/>

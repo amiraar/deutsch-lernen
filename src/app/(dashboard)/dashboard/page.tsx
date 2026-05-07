@@ -4,6 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import { Flame, Trophy, BookOpen, Layers, ArrowRight, Clock } from "lucide-react";
 
+import { signOut } from "next-auth/react";
+
 import { Badge, Button, Card, ProgressBar, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
@@ -69,6 +71,10 @@ export default function DashboardPage() {
 	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
+		if (statsQuery.error?.data?.code === "UNAUTHORIZED") {
+			void signOut({ callbackUrl: "/login" });
+			return;
+		}
 		if (statsQuery.error) {
 			showToast("Gagal memuat statistik. Coba lagi sebentar.", "error");
 			return;
