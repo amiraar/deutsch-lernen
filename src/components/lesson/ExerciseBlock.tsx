@@ -2,14 +2,25 @@
 
 import * as React from "react";
 
-import type { Exercise } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpcClient";
 import { speak } from "@/lib/ai/tts";
 import { Button, Card, Input } from "@/components/ui";
 
+export type SerializedExercise = {
+	id: string;
+	lessonId: string;
+	type: "MULTIPLE_CHOICE" | "FILL_IN_BLANK" | "TRANSLATION" | "PRONUNCIATION";
+	prompt: string;
+	correctAnswer: string;
+	options: string[];
+	explanation: string;
+	createdAt: string;
+	updatedAt: string;
+};
+
 type ExerciseBlockProps = {
-	exercise: Exercise;
+	exercise: SerializedExercise;
 	onComplete: (correct: boolean) => void;
 };
 

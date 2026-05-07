@@ -64,6 +64,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					image: user.avatarUrl ?? undefined,
 					level: user.level,
 					xp: user.xp,
+				} as {
+					id: string;
+					email: string;
+					emailVerified: null;
+					name: string;
+					image?: string;
+					level: string;
+					xp: number;
 				};
 			},
 		}),

@@ -8,6 +8,11 @@ import { Badge, Button, Card, ProgressBar, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { DAILY_LESSON_GOAL, XP_THRESHOLDS, LEVEL_LABELS } from "@/constants";
+import type { AppRouter } from "@/server/root";
+import type { inferRouterOutputs } from "@trpc/server";
+
+type RouterOutputs = inferRouterOutputs<AppRouter>;
+type RecentLesson = RouterOutputs["progress"]["getRecentActivity"]["lessons"][number];;
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -58,7 +63,7 @@ export default function DashboardPage() {
 			? Math.round(((xp - prevLevelXp) / (nextLevelXp - prevLevelXp)) * 100)
 			: 100;
 
-	const completedToday = activityQuery.data?.lessons?.filter((l: { completedAt: string }) => {
+	const completedToday = activityQuery.data?.lessons?.filter((l: RecentLesson) => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		return new Date(l.completedAt) >= today;
@@ -236,8 +241,8 @@ export default function DashboardPage() {
 				<Card variant="elevated" className="h-fit space-y-4">
 					<h3 className="text-sm font-semibold text-foreground">Aktivitas Terbaru</h3>
 					<ul className="space-y-3">
-						{activityQuery.data?.lessons?.slice(0, 6).map((item) => (
-							<li key={item.id} className="flex items-center justify-between gap-2">
+					{activityQuery.data?.lessons?.slice(0, 6).map((item, index) => (
+						<li key={item.id ?? index} className="flex items-center justify-between gap-2">
 								<div className="flex items-center gap-2">
 									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary/40" />
 									<span className="text-xs text-muted-foreground">

@@ -11,9 +11,15 @@ import {
 } from "lucide-react";
 
 import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
+import type { BadgeVariant } from "@/components/ui/Badge";
 import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
 import { trpc } from "@/lib/trpcClient";
 import { cn } from "@/lib/utils";
+
+function toValidBadgeVariant(level: string | undefined): BadgeVariant {
+	const valid: BadgeVariant[] = ["A1", "A2", "B1", "B2", "success", "warning", "error", "neutral"];
+	return valid.includes(level as BadgeVariant) ? (level as BadgeVariant) : "neutral";
+}
 
 const NAV_ITEMS = [
 	{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -89,7 +95,7 @@ export function Sidebar() {
 								</p>
 							</div>
 						</div>
-						<Badge variant={data?.level ?? "neutral"}>
+						<Badge variant={toValidBadgeVariant(data?.level)}>
 							{data?.level ?? "A1"}
 						</Badge>
 							<Button

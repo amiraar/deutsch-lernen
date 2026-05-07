@@ -3,9 +3,9 @@
 import * as React from "react";
 import { useParams } from "next/navigation";
 
-import type { Exercise } from "@/generated/prisma/client";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ExerciseBlock } from "@/components/lesson/ExerciseBlock";
+import type { SerializedExercise } from "@/components/lesson/ExerciseBlock";
 import { LessonProgress } from "@/components/lesson/LessonProgress";
 import { Button, Card, LoadingSpinner, Modal, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
@@ -40,7 +40,7 @@ export default function LessonPage() {
 		}
 	}, [clearToast, lessonQuery.error, showToast]);
 
-	const lesson = lessonQuery.data as { exercises?: Exercise[] } | undefined;
+	const lesson = lessonQuery.data as { exercises?: SerializedExercise[] } | undefined;
 	const exercises = lesson?.exercises ?? [];
 	const current = exercises[currentIndex];
 
