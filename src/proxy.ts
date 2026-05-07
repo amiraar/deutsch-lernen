@@ -1,5 +1,17 @@
+import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
+const PUBLIC_PATHS = ["/", "/login", "/register"];
+
+function isPublic(pathname: string): boolean {
+  return (
+    PUBLIC_PATHS.includes(pathname) ||
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon")
+  );
+}
 
 function buildCspHeader(nonce: string, isDev: boolean): string {
   const csp = `
@@ -21,7 +33,8 @@ function buildCspHeader(nonce: string, isDev: boolean): string {
   return csp.replace(/\s{2,}/g, " ").trim();
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const isDev = process.env.NODE_ENV === "development";
   const nonce = crypto.randomUUID();
   const contentSecurityPolicy = buildCspHeader(nonce, isDev);
@@ -29,6 +42,13 @@ export function proxy(request: NextRequest) {
 
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);
+
+  if (!isPublic(pathname)) {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
 
   const response = NextResponse.next({
     request: {
@@ -42,13 +62,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    {
-      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
-      missing: [
-        { type: "header", key: "next-router-prefetch" },
-        { type: "header", key: "purpose", value: "prefetch" },
-      ],
-    },
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
