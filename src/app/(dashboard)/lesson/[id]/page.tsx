@@ -11,7 +11,7 @@ import { LessonProgress } from "@/components/lesson/LessonProgress";
 import { Button, Card, LoadingSpinner, Modal, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
-import type { LessonContent } from "@/../lesson-content";
+import type { LessonContent } from "@/types/lesson-content";
 
 type LessonData = {
 	id: string;

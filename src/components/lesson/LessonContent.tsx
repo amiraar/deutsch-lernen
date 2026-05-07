@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { LessonContent } from "@/../lesson-content";
+import type { LessonContent } from "@/types/lesson-content";
 import { Card } from "@/components/ui";
 
 type LessonContentProps = {
