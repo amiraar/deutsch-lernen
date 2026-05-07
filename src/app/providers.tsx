@@ -29,7 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           url:
             typeof window !== "undefined"
               ? "/api/trpc"
-              : `${process.env.NEXTAUTH_URL,
+              : `${process.env.NEXTAUTH_URL}/api/trpc`,
         }),
       ],
     })
