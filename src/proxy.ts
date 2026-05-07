@@ -8,6 +8,7 @@ function isPublic(pathname: string): boolean {
   return (
     PUBLIC_PATHS.includes(pathname) ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/trpc") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon")
   );
