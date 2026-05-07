@@ -26,7 +26,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "/api/trpc",
+          url:
+            typeof window !== "undefined"
+              ? "/api/trpc"
+              : `${process.env.NEXTAUTH_URL,
         }),
       ],
     })

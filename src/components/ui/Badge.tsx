@@ -17,14 +17,14 @@ export type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
 };
 
 const variantClasses: Record<BadgeVariant, string> = {
-	A1: "bg-primary/10 text-primary",
-	A2: "bg-secondary/10 text-secondary-foreground",
-	B1: "bg-muted text-foreground",
-	B2: "bg-accent/10 text-accent-foreground",
-	success: "bg-success/10 text-success",
-	warning: "bg-warning/10 text-warning",
-	error: "bg-destructive/10 text-destructive",
-	neutral: "bg-muted text-muted-foreground",
+	A1: "bg-indigo-100 text-indigo-700",
+	A2: "bg-sky-100 text-sky-700",
+	B1: "bg-violet-100 text-violet-700",
+	B2: "bg-emerald-100 text-emerald-700",
+	success: "bg-emerald-100 text-emerald-700",
+	warning: "bg-amber-100 text-amber-700",
+	error: "bg-rose-100 text-rose-700",
+	neutral: "bg-slate-100 text-slate-600",
 };
 
 /**

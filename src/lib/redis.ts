@@ -121,14 +121,3 @@ export async function exists(key: string): Promise<boolean> {
 		return false;
 	}
 }
-
-export default {
-	get: (key: string) => getRedisClient().get(key),
-	set: (...args: Parameters<Redis["set"]>) => getRedisClient().set(...args),
-	del: (...args: Parameters<Redis["del"]>) => getRedisClient().del(...args),
-	exists: (...args: Parameters<Redis["exists"]>) =>
-		getRedisClient().exists(...args),
-	consume: (...args: unknown[]) =>
-		(getRedisClient() as unknown as { consume?: (...args: unknown[]) => unknown })
-			.consume?.(...args),
-} as unknown as Redis;

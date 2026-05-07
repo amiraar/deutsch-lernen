@@ -8,11 +8,39 @@ import { Badge, Button, Card, ProgressBar, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { DAILY_LESSON_GOAL, XP_THRESHOLDS, LEVEL_LABELS } from "@/constants";
+import type { Level } from "@/types";
 import type { AppRouter } from "@/server/root";
 import type { inferRouterOutputs } from "@trpc/server";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
-type RecentLesson = RouterOutputs["progress"]["getRecentActivity"]["lessons"][number];;
+type RecentLesson = RouterOutputs["progress"]["getRecentActivity"]["lessons"][number];
+
+const LEVEL_ORDER: Level[] = ["A1", "A2", "B1", "B2"];
+
+function getXpProgressToNextLevel(xp: number, level: Level): number {
+	const levelIndex = LEVEL_ORDER.indexOf(level);
+
+	// B2 is max level
+	if (levelIndex === LEVEL_ORDER.length - 1) {
+		return 100;
+	}
+
+	const currentFloor = XP_THRESHOLDS[level];
+	const nextLevel = LEVEL_ORDER[levelIndex + 1] as Level;
+	const nextFloor = XP_THRESHOLDS[nextLevel];
+	const range = nextFloor - currentFloor;
+
+	if (range <= 0) return 100;
+
+	return Math.min(100, Math.round(((xp - currentFloor) / range) * 100));
+}
+
+function getNextLevelXp(level: Level): number {
+	const levelIndex = LEVEL_ORDER.indexOf(level);
+	if (levelIndex === LEVEL_ORDER.length - 1) return XP_THRESHOLDS[level];
+	const nextLevel = LEVEL_ORDER[levelIndex + 1] as Level;
+	return XP_THRESHOLDS[nextLevel];
+}
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -24,10 +52,10 @@ function getGreeting(): string {
 function StatCardSkeleton() {
 	return (
 		<Card variant="elevated" className="flex items-center gap-4">
-			<div className="h-11 w-11 animate-pulse rounded-xl bg-muted/50" />
+			<div className="h-11 w-11 animate-pulse rounded-xl bg-slate-200" />
 			<div className="space-y-2">
-				<div className="h-6 w-16 animate-pulse rounded bg-muted/50" />
-				<div className="h-3 w-24 animate-pulse rounded bg-muted/50" />
+				<div className="h-6 w-16 animate-pulse rounded bg-slate-200" />
+				<div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
 			</div>
 		</Card>
 	);
@@ -55,13 +83,9 @@ export default function DashboardPage() {
 	const stats = statsQuery.data;
 	const streakDays = stats?.streakDays ?? 0;
 	const xp = stats?.xp ?? 0;
-	const level = stats?.level ?? "A1";
-	const nextLevelXp = XP_THRESHOLDS[level === "B2" ? "B2" : level] ?? 0;
-	const prevLevelXp = level === "A1" ? 0 : (XP_THRESHOLDS[level] ?? 0);
-	const xpProgress =
-		nextLevelXp > prevLevelXp
-			? Math.round(((xp - prevLevelXp) / (nextLevelXp - prevLevelXp)) * 100)
-			: 100;
+	const level = (stats?.level ?? "A1") as Level;
+	const xpProgress = getXpProgressToNextLevel(xp, level);
+	const nextLevelXp = getNextLevelXp(level);
 
 	const completedToday = activityQuery.data?.lessons?.filter((l: RecentLesson) => {
 		const today = new Date();
@@ -88,7 +112,7 @@ export default function DashboardPage() {
 
 			{/* Stats cards */}
 			{statsQuery.error ? (
-				<Card variant="elevated" className="border-destructive text-destructive">
+				<Card variant="elevated" className="border-rose-200 text-rose-600">
 					Gagal memuat statistik. Coba refresh halaman.
 				</Card>
 			) : statsQuery.isLoading ? (
@@ -100,7 +124,6 @@ export default function DashboardPage() {
 				</div>
 			) : (
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-					{/* Streak */}
 					<Card variant="elevated" className="flex items-center gap-4">
 						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-amber-100">
 							<Flame size={22} className="text-amber-500" />
@@ -111,7 +134,6 @@ export default function DashboardPage() {
 						</div>
 					</Card>
 
-					{/* XP */}
 					<Card variant="elevated" className="flex items-center gap-4">
 						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-violet-100">
 							<Trophy size={22} className="text-violet-500" />
@@ -122,7 +144,6 @@ export default function DashboardPage() {
 						</div>
 					</Card>
 
-					{/* Lessons */}
 					<Card variant="elevated" className="flex items-center gap-4">
 						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100">
 							<BookOpen size={22} className="text-emerald-500" />
@@ -133,7 +154,6 @@ export default function DashboardPage() {
 						</div>
 					</Card>
 
-					{/* Cards due */}
 					<Card variant="elevated" className="flex items-center gap-4">
 						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100">
 							<Layers size={22} className="text-sky-500" />
@@ -148,7 +168,6 @@ export default function DashboardPage() {
 
 			{/* Main content grid */}
 			<div className="grid gap-6 lg:grid-cols-3">
-				{/* Left col: progress + next lesson + flashcards CTA */}
 				<div className="space-y-6 lg:col-span-2">
 					{/* Daily goal */}
 					<Card variant="elevated">
@@ -187,16 +206,14 @@ export default function DashboardPage() {
 						<h3 className="text-sm font-semibold text-foreground">Lanjutkan Belajar</h3>
 						{lessonsQuery.isLoading ? (
 							<div className="space-y-3">
-								<div className="h-4 w-28 animate-pulse rounded bg-muted/50" />
-								<div className="h-5 w-48 animate-pulse rounded bg-muted/50" />
-								<div className="h-3 w-24 animate-pulse rounded bg-muted/50" />
-								<div className="h-8 w-20 animate-pulse rounded bg-muted/50" />
+								<div className="h-5 w-48 animate-pulse rounded bg-slate-200" />
+								<div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
 							</div>
 						) : nextLesson ? (
 							<div className="flex items-center justify-between gap-4">
 								<div className="space-y-1">
 									<div className="flex items-center gap-2">
-										<Badge variant={nextLesson.level}>{nextLesson.level}</Badge>
+										<Badge variant={nextLesson.level as Level}>{nextLesson.level}</Badge>
 										<span className="text-sm font-medium text-foreground">
 											{nextLesson.title}
 										</span>
@@ -217,7 +234,6 @@ export default function DashboardPage() {
 						)}
 					</Card>
 
-					{/* Flashcards CTA */}
 					{dueCount > 0 ? (
 						<Card className="border-sky-200 bg-sky-50">
 							<div className="flex items-center justify-between">
@@ -237,23 +253,19 @@ export default function DashboardPage() {
 					) : null}
 				</div>
 
-				{/* Right col: recent activity */}
+				{/* Recent activity */}
 				<Card variant="elevated" className="h-fit space-y-4">
 					<h3 className="text-sm font-semibold text-foreground">Aktivitas Terbaru</h3>
 					<ul className="space-y-3">
-					{activityQuery.data?.lessons?.slice(0, 6).map((item, index) => (
-						<li key={item.id ?? index} className="flex items-center justify-between gap-2">
+						{activityQuery.data?.lessons?.slice(0, 6).map((item, index) => (
+							<li key={item.id ?? index} className="flex items-center justify-between gap-2">
 								<div className="flex items-center gap-2">
-									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary/40" />
-									<span className="text-xs text-muted-foreground">
-										Pelajaran selesai
-									</span>
+									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-indigo-400" />
+									<span className="text-xs text-muted-foreground">Pelajaran selesai</span>
 								</div>
 								<div className="flex items-center gap-2">
-									<span className="text-xs font-medium text-foreground">
-										Skor {item.score}
-									</span>
-									<span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+									<span className="text-xs font-medium text-foreground">Skor {item.score}</span>
+									<span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
 										+{item.xpEarned} XP
 									</span>
 								</div>

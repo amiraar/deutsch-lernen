@@ -3,7 +3,6 @@ import type { Session } from "next-auth";
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import redis from "@/lib/redis";
 import { checkAiLimit, checkApiLimit } from "@/lib/rateLimit";
 
 type CreateContextOptions = {
@@ -16,7 +15,6 @@ export async function createContext({ req }: CreateContextOptions) {
 	return {
 		session,
 		prisma,
-		redis,
 		req,
 	};
 }
@@ -24,12 +22,12 @@ export async function createContext({ req }: CreateContextOptions) {
 export type Context = {
 	session: Session | null;
 	prisma: typeof prisma;
-	redis: typeof redis;
 	req: Request;
 };
 
 const t = initTRPC.context<Context>().create();
 
+export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
@@ -72,5 +70,3 @@ export const aiProcedure = t.procedure.use(async ({ ctx, next }) => {
 		},
 	});
 });
-
-export const router = t.router;
