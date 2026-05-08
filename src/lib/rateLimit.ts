@@ -44,23 +44,21 @@ function createLimiter(opts: LimiterOptions) {
 	}
 }
 
-const authLimiter = createLimiter({
-	points: 5,
-	duration: 15 * 60,
-	keyPrefix: "dl:auth",
-});
+// Lazily initialized — defers createLimiter (and any production throw) to
+// first request rather than module load / build time.
+let _authLimiter: ReturnType<typeof createLimiter> | undefined;
+let _apiLimiter: ReturnType<typeof createLimiter> | undefined;
+let _aiLimiter: ReturnType<typeof createLimiter> | undefined;
 
-const apiLimiter = createLimiter({
-	points: 60,        // 60 req/min per user is sufficient for normal use
-	duration: 60,
-	keyPrefix: "dl:api",
-});
-
-const aiLimiter = createLimiter({
-	points: 10,        // max 10 AI calls per hour per user
-	duration: 60 * 60,
-	keyPrefix: "dl:ai",
-});
+function getAuthLimiter() {
+	return (_authLimiter ??= createLimiter({ points: 5, duration: 15 * 60, keyPrefix: "dl:auth" }));
+}
+function getApiLimiter() {
+	return (_apiLimiter ??= createLimiter({ points: 60, duration: 60, keyPrefix: "dl:api" }));
+}
+function getAiLimiter() {
+	return (_aiLimiter ??= createLimiter({ points: 10, duration: 60 * 60, keyPrefix: "dl:ai" }));
+}
 
 type RateLimitResult = { msBeforeNext: number };
 
@@ -85,7 +83,7 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 	}
 
 	try {
-		await authLimiter.consume(ip);
+		await getAuthLimiter().consume(ip);
 	} catch (error) {
 		if (isRateLimitResult(error)) {
 			const minutes = toMinutes(error.msBeforeNext);
@@ -106,7 +104,7 @@ export async function checkApiLimit(userId: string): Promise<void> {
 	}
 
 	try {
-		await apiLimiter.consume(userId);
+		await getApiLimiter().consume(userId);
 	} catch (error) {
 		if (isRateLimitResult(error)) {
 			throw new TRPCError({
@@ -129,7 +127,7 @@ export async function checkAiLimit(userId: string): Promise<void> {
 	}
 
 	try {
-		await aiLimiter.consume(userId);
+		await getAiLimiter().consume(userId);
 	} catch (error) {
 		if (isRateLimitResult(error)) {
 			const minutes = toMinutes(error.msBeforeNext);
