@@ -4,7 +4,7 @@ import { del, get, set } from "@/lib/redis";
 
 export const LESSON_TTL = 60 * 60;
 export const VOCAB_TTL = 60 * 60 * 24;
-export const USER_STATS_TTL = 60 * 5;
+export const USER_STATS_TTL = 60 * 2; // 2 minutes — shorter window reduces stale data risk
 export const SRS_QUEUE_TTL = 60;
 
 let cacheWarningShown = false;

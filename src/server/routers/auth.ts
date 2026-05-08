@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 
+import { checkAuthLimit } from "@/lib/rateLimit";
 import { LevelEnum } from "@/generated/prisma/client";
 import { registerSchema } from "@/lib/validations/user";
 import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
@@ -9,6 +10,9 @@ export const authRouter = router({
 	register: publicProcedure
 		.input(registerSchema)
 		.mutation(async ({ ctx, input }) => {
+			const ip = ctx.req.headers.get("x-forwarded-for") || ctx.req.headers.get("x-real-ip") || "unknown";
+			await checkAuthLimit(ip);
+
 			try {
 				const existing = await ctx.prisma.user.findUnique({
 					where: { email: input.email },

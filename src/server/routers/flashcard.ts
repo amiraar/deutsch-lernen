@@ -76,6 +76,16 @@ export const flashcardRouter = router({
 		.input(addWordInput)
 		.mutation(async ({ ctx, input }) => {
 			try {
+				const wordExists = await ctx.prisma.vocabWord.findUnique({
+					where: { id: input.vocabWordId },
+					select: { id: true },
+				});
+				if (!wordExists) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Kata tidak ditemukan.",
+					});
+				}
 				return await ctx.prisma.flashcardReview.create({
 					data: {
 						userId: ctx.userId,

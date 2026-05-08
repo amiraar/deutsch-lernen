@@ -83,6 +83,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.level = user.level;
 				token.xp = user.xp;
 			}
+			// Re-sync level/xp from DB on every token refresh (not just sign-in)
+			if (token.id) {
+				try {
+					const fresh = await prisma.user.findUnique({
+					where: { id: token.id as string },
+					select: { level: true, xp: true },
+					});
+					if (fresh) {
+					token.level = fresh.level;
+					token.xp = fresh.xp;
+					}
+				} catch {
+					// Non-fatal: keep stale values rather than breaking auth
+				}
+			}
 			return token;
 		},
 		session: async ({ session, token }) => {

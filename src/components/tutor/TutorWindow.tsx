@@ -11,8 +11,6 @@ type TutorWindowProps = {
 	initialMessage?: string;
 };
 
-const LIMIT = 20;
-
 function TypingIndicator() {
 	return (
 		<div className="flex items-end gap-1 px-1">
@@ -33,7 +31,6 @@ function TypingIndicator() {
 export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
 	const [messages, setMessages] = React.useState<Message[]>([]);
 	const [input, setInput] = React.useState("");
-	const [aiUsage, setAiUsage] = React.useState(0);
 	const bottomRef = React.useRef<HTMLDivElement>(null);
 
 	const chatMutation = trpc.tutor.chat.useMutation();
@@ -58,7 +55,6 @@ export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
 					...prev,
 					{ role: "assistant", content: response.response },
 				]);
-				setAiUsage((prev) => Math.min(LIMIT, prev + 1));
 				await providerQuery.refetch();
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "Unknown error";
@@ -93,9 +89,6 @@ export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
 					{providerName !== "-" ? (
 						<Badge variant="neutral" className="text-[10px]">via {providerName}</Badge>
 					) : null}
-					<span className="text-xs text-muted-foreground">
-						{aiUsage}/{LIMIT} AI
-					</span>
 				</div>
 			</div>
 

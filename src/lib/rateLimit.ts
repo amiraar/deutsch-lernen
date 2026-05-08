@@ -49,13 +49,13 @@ const authLimiter = createLimiter({
 });
 
 const apiLimiter = createLimiter({
-	points: 100,
+	points: 60,        // 60 req/min per user is sufficient for normal use
 	duration: 60,
 	keyPrefix: "dl:api",
 });
 
 const aiLimiter = createLimiter({
-	points: 20,
+	points: 10,        // max 10 AI calls per hour per user
 	duration: 60 * 60,
 	keyPrefix: "dl:ai",
 });
