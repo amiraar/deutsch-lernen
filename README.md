@@ -10,7 +10,7 @@ Platform belajar bahasa Jerman berbasis AI dengan tRPC, Prisma, NextAuth, dan Re
 copy .env.example .env
 ```
 
-2. Isi variabel penting: `DATABASE_URL`, `REDIS_URL`, `NEXTAUTH_SECRET`, dan API key AI.
+2. Isi variabel wajib: `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, dan minimal satu API key AI.
 
 3. Jalankan migrasi dan seed:
 
@@ -24,6 +24,18 @@ npm run seed
 ```bash
 npm run dev
 ```
+
+## Konfigurasi Redis
+
+Redis digunakan untuk caching dan rate limiting. App tetap berjalan tanpa Redis, tetapi rate limiting dinonaktifkan.
+
+| Lingkungan | Rekomendasi |
+|---|---|
+| Lokal | `REDIS_URL=redis://localhost:6379` |
+| Vercel (production) | `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (gratis di [upstash.com](https://upstash.com)) |
+| Redis Cloud / Railway | `REDIS_URL=rediss://...` |
+
+Aplikasi mencoba `REDIS_URL` terlebih dahulu, lalu fallback ke Upstash REST jika `UPSTASH_REDIS_REST_URL` dan `UPSTASH_REDIS_REST_TOKEN` tersedia.
 
 ## Ringkasan Struktur Folder
 

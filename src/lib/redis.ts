@@ -4,11 +4,30 @@ const globalForRedis = globalThis as unknown as {
 	redis?: Redis;
 };
 
+/**
+ * Resolves a Redis connection URL from available env vars.
+ * Prefers REDIS_URL; falls back to deriving an ioredis-compatible URL
+ * from Upstash REST credentials (UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN).
+ */
+export function resolveRedisUrl(): string | null {
+	if (process.env.REDIS_URL) {
+		return process.env.REDIS_URL;
+	}
+	const restUrl = process.env.UPSTASH_REDIS_REST_URL;
+	const restToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+	if (restUrl && restToken) {
+		// REST URL is https://<host> — convert to rediss://<host>:6379
+		const host = restUrl.replace(/^https?:\/\//, "");
+		return `rediss://default:${restToken}@${host}:6379`;
+	}
+	return null;
+}
+
 export function getRedisClient(): Redis {
-	const redisUrl = process.env.REDIS_URL;
+	const redisUrl = resolveRedisUrl();
 	if (!redisUrl) {
 		throw new Error(
-			"REDIS_URL is not set. Add it to your environment variables."
+			"No Redis configuration found. Set REDIS_URL or UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN."
 		);
 	}
 

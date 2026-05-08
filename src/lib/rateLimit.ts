@@ -3,6 +3,8 @@ import { TRPCError } from "@trpc/server";
 import type Redis from "ioredis";
 import type { RedisOptions } from "ioredis";
 
+import { resolveRedisUrl } from "@/lib/redis";
+
 type RedisConstructor = new (
 	url: string,
 	options?: RedisOptions
@@ -14,13 +16,23 @@ type LimiterOptions = {
 	keyPrefix: string;
 };
 
+function isRedisConfigured(): boolean {
+	return !!(
+		process.env.REDIS_URL ||
+		(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+	);
+}
+
+function warnNoRedis(context: string): void {
+	console.warn(
+		`[RateLimit] REDIS_URL not set — skipping rate limit check for "${context}". ` +
+		"This is unsafe in production. Configure REDIS_URL to enable effective rate limiting."
+	);
+}
+
 function createLimiter(opts: LimiterOptions) {
-	const redisUrl = process.env.REDIS_URL;
+	const redisUrl = resolveRedisUrl();
 	if (!redisUrl) {
-		if (process.env.NODE_ENV === "production") {
-			throw new Error(`[RateLimit] REDIS_URL is required in production for "${opts.keyPrefix}". ` + "In-memory rate limiting is ineffective on serverless platforms.");
-		}
-		console.warn(`[RateLimit] Redis unavailable, using in-memory limiter for "${opts.keyPrefix}". ` + "This is only acceptable in development.");
 		return new RateLimiterMemory(opts);
 	}
 
@@ -44,8 +56,7 @@ function createLimiter(opts: LimiterOptions) {
 	}
 }
 
-// Lazily initialized — defers createLimiter (and any production throw) to
-// first request rather than module load / build time.
+// Lazily initialized — defers createLimiter to first request rather than module load.
 let _authLimiter: ReturnType<typeof createLimiter> | undefined;
 let _apiLimiter: ReturnType<typeof createLimiter> | undefined;
 let _aiLimiter: ReturnType<typeof createLimiter> | undefined;
@@ -82,6 +93,11 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 		throw new Error("IP address is required for auth rate limiting");
 	}
 
+	if (!isRedisConfigured()) {
+		warnNoRedis("auth");
+		return;
+	}
+
 	try {
 		await getAuthLimiter().consume(ip);
 	} catch (error) {
@@ -101,6 +117,11 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 export async function checkApiLimit(userId: string): Promise<void> {
 	if (!userId) {
 		throw new Error("userId is required for API rate limiting");
+	}
+
+	if (!isRedisConfigured()) {
+		warnNoRedis("api");
+		return;
 	}
 
 	try {
@@ -124,6 +145,11 @@ export async function checkApiLimit(userId: string): Promise<void> {
 export async function checkAiLimit(userId: string): Promise<void> {
 	if (!userId) {
 		throw new Error("userId is required for AI rate limiting");
+	}
+
+	if (!isRedisConfigured()) {
+		warnNoRedis("ai");
+		return;
 	}
 
 	try {
