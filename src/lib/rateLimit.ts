@@ -15,30 +15,32 @@ type LimiterOptions = {
 };
 
 function createLimiter(opts: LimiterOptions) {
-	try {
-		const redisUrl = process.env.REDIS_URL;
-		if (!redisUrl) {
-			throw new Error("no redis");
+	const redisUrl = process.env.REDIS_URL;
+	if (!redisUrl) {
+		if (process.env.NODE_ENV === "production") {
+			throw new Error(`[RateLimit] REDIS_URL is required in production for "${opts.keyPrefix}". ` + "In-memory rate limiting is ineffective on serverless platforms.");
 		}
+		console.warn(`[RateLimit] Redis unavailable, using in-memory limiter for "${opts.keyPrefix}". ` + "This is only acceptable in development.");
+		return new RateLimiterMemory(opts);
+	}
 
+	try {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const RedisModule = require("ioredis") as
-			| { default?: RedisConstructor }
-			| RedisConstructor;
+		| { default?: RedisConstructor }
+		| RedisConstructor;
 		const RedisClient =
-			"default" in RedisModule && RedisModule.default
-				? RedisModule.default
-				: (RedisModule as RedisConstructor);
+		"default" in RedisModule && RedisModule.default
+			? RedisModule.default
+			: (RedisModule as RedisConstructor);
 		const client = new RedisClient(redisUrl, {
 			maxRetriesPerRequest: 3,
 			lazyConnect: true,
 		});
 		return new RateLimiterRedis({ storeClient: client, ...opts });
-	} catch {
-		console.warn(
-			`[RateLimit] Redis unavailable, using in-memory limiter for ${opts.keyPrefix}`
-		);
-		return new RateLimiterMemory(opts);
+	} catch (err) {
+		const message = err instanceof Error ? err.message : "Unknown error";
+		throw new Error(`[RateLimit] Failed to create Redis rate limiter: ${message}`);
 	}
 }
 

@@ -10,7 +10,15 @@ export const authRouter = router({
 	register: publicProcedure
 		.input(registerSchema)
 		.mutation(async ({ ctx, input }) => {
-			const ip = ctx.req.headers.get("x-forwarded-for") || ctx.req.headers.get("x-real-ip") || "unknown";
+			function getClientIp(req: Request): string {
+				const forwardedFor = req.headers.get("x-forwarded-for");
+				if (forwardedFor) {
+					const ips = forwardedFor.split(",").map((ip) => ip.trim()).filter(Boolean);
+					return ips[ips.length - 1] ?? "unknown";
+				}
+				return req.headers.get("x-real-ip") ?? "unknown";
+			}
+			const ip = getClientIp(ctx.req);
 			await checkAuthLimit(ip);
 
 			try {

@@ -10,6 +10,15 @@ function lessonListKey(userId: string, level?: LevelEnum): string {
 	return `lessons:${userId}:${level ?? "all"}`;
 }
 
+async function invalidateLessonCache(userId: string): Promise<void> {
+	const keys = [
+		lessonListKey(userId),
+		...Object.values(LevelEnum).map((lvl) => lessonListKey(userId, lvl)),
+	];
+	// ioredis DEL accepts multiple keys in a single command
+	await Promise.all(keys.map((key) => del(key)));
+}
+
 function calculateStreak(
 	lastStudiedAt: Date | null,
 	currentStreak: number,
@@ -160,10 +169,7 @@ export const lessonRouter = router({
 
 				await invalidateUserStats(ctx.userId);
 				// Invalidate lesson list caches so isCompleted updates immediately
-				await Promise.all([
-					del(lessonListKey(ctx.userId)),
-					...Object.values(LevelEnum).map((lvl) => del(lessonListKey(ctx.userId, lvl))),
-				]);
+				await invalidateLessonCache(ctx.userId);
 
 				return {
 					completion: result.completion,

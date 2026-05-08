@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 
+import { invalidateUserStats } from "@/lib/cache";
 import { calculateNextReview } from "@/lib/srs";
 import { addWordInput, reviewCardInput } from "@/lib/validations/flashcard";
 import { protectedProcedure, router } from "@/server/trpc";
@@ -49,7 +50,7 @@ export const flashcardRouter = router({
 					input.quality
 				);
 
-				return await ctx.prisma.flashcardReview.update({
+				const updated = await ctx.prisma.flashcardReview.update({
 					where: { id: card.id },
 					data: {
 						easeFactor: next.easeFactor,
@@ -59,6 +60,8 @@ export const flashcardRouter = router({
 						lastReviewedAt: new Date(),
 					},
 				});
+				await invalidateUserStats(ctx.userId);
+				return updated;
 			} catch (error) {
 				if (error instanceof TRPCError) {
 					throw error;

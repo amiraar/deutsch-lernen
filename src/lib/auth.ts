@@ -12,12 +12,13 @@ const credentialsSchema = z.object({
 });
 
 function getClientIp(request: Request): string {
-	const forwardedFor = request.headers.get("x-forwarded-for");
-	if (forwardedFor) {
-		return forwardedFor.split(",")[0]?.trim() ?? "unknown";
-	}
-
-	return request.headers.get("x-real-ip") ?? "unknown";
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const ips = forwardedFor.split(",").map((ip) => ip.trim()).filter(Boolean);
+    // Last IP is appended by the trusted proxy — harder to spoof
+    return ips[ips.length - 1] ?? "unknown";
+  }
+  return request.headers.get("x-real-ip") ?? "unknown";
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -83,19 +84,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.level = user.level;
 				token.xp = user.xp;
 			}
-			// Re-sync level/xp from DB on every token refresh (not just sign-in)
+			const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
 			if (token.id) {
-				try {
+				const now = Date.now();
+				const lastSync = typeof token.syncedAt === "number" ? token.syncedAt : 0;
+				const needsSync = now - lastSync > SYNC_INTERVAL_MS;
+
+				if (needsSync) {
+					try {
 					const fresh = await prisma.user.findUnique({
-					where: { id: token.id as string },
-					select: { level: true, xp: true },
+						where: { id: token.id as string },
+						select: { level: true, xp: true },
 					});
 					if (fresh) {
-					token.level = fresh.level;
-					token.xp = fresh.xp;
+						token.level = fresh.level;
+						token.xp = fresh.xp;
+						token.syncedAt = now;
 					}
-				} catch {
+					} catch {
 					// Non-fatal: keep stale values rather than breaking auth
+					}
 				}
 			}
 			return token;

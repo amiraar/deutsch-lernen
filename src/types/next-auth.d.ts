@@ -26,5 +26,6 @@ declare module "next-auth/jwt" {
 		id?: string;
 		level?: string;
 		xp?: number;
+		syncedAt?: number;
 	}
 }
