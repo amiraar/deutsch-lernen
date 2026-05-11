@@ -27,5 +27,6 @@ declare module "next-auth/jwt" {
 		level?: string;
 		xp?: number;
 		syncedAt?: number;
+		onboardingDone?: boolean;
 	}
 }

@@ -56,6 +56,7 @@ function AnswerFooter({
 function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 	const [selected, setSelected] = React.useState<string | null>(null);
 	const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
+	const [shakeKey, setShakeKey] = React.useState(0);
 
 	const handleSelect = (option: string) => {
 		if (isCorrect !== null) {
@@ -65,6 +66,9 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 		const correct = option === exercise.correctAnswer;
 		setSelected(option);
 		setIsCorrect(correct);
+		if (!correct) {
+			setShakeKey((value) => value + 1);
+		}
 		onComplete(correct);
 	};
 
@@ -75,6 +79,7 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 				{(exercise.options as string[]).map((option) => {
 					const isSelected = selected === option;
 					const isAnswer = option === exercise.correctAnswer;
+					const shouldShake = isSelected && isCorrect === false;
 					const stateClass =
 						isCorrect === null
 							? "border-border"
@@ -86,9 +91,13 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 
 					return (
 						<Button
-							key={option}
+							key={shouldShake ? `${option}-${shakeKey}` : option}
 							variant="secondary"
-							className={cn("justify-start border", stateClass)}
+							className={cn(
+								"justify-start border",
+								stateClass,
+								shouldShake ? "animate-shake" : ""
+							)}
 							onClick={() => handleSelect(option)}
 						>
 							{option}
@@ -110,6 +119,7 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 function FillInBlank({ exercise, onComplete }: ExerciseBlockProps) {
 	const [value, setValue] = React.useState("");
 	const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
+	const shouldShake = isCorrect === false;
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
@@ -131,6 +141,7 @@ function FillInBlank({ exercise, onComplete }: ExerciseBlockProps) {
 				onChange={(event) => setValue(event.target.value)}
 				placeholder="Tulis jawabanmu"
 				disabled={isCorrect !== null}
+				className={cn(shouldShake ? "animate-shake border-destructive" : "")}
 			/>
 			<Button type="submit" disabled={isCorrect !== null}>
 				Periksa
@@ -207,7 +218,29 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 	const [audioUrl, setAudioUrl] = React.useState<string | null>(null);
 	const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
 	const [isSpeaking, setIsSpeaking] = React.useState(false);
+	const [tips, setTips] = React.useState<string[]>([]);
+	const [isEvaluating, setIsEvaluating] = React.useState(false);
 	const recorderRef = React.useRef<MediaRecorder | null>(null);
+
+	const evaluateMutation = trpc.tutor.evaluatePronunciation.useMutation();
+
+	const blobToBase64 = React.useCallback(async (blob: Blob) => {
+		return new Promise<string>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				if (typeof reader.result === "string") {
+					const base64 = reader.result.split(",")[1] ?? "";
+					resolve(base64);
+					return;
+				}
+				resolve("");
+			};
+			reader.onerror = () => {
+				reject(reader.error ?? new Error("Failed to read audio"));
+			};
+			reader.readAsDataURL(blob);
+		});
+	}, []);
 
 	const handleListen = async () => {
 		setIsSpeaking(true);
@@ -229,15 +262,32 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			const recorder = new MediaRecorder(stream);
 			recorderRef.current = recorder;
+			setTips([]);
+			setIsCorrect(null);
 
 			const chunks: BlobPart[] = [];
 			recorder.ondataavailable = (event) => chunks.push(event.data);
-			recorder.onstop = () => {
+			recorder.onstop = async () => {
 				const blob = new Blob(chunks, { type: "audio/webm" });
 				const url = URL.createObjectURL(blob);
 				setAudioUrl(url);
-				setIsCorrect(true);
-				onComplete(true);
+				setIsEvaluating(true);
+
+				try {
+					const audioBase64 = await blobToBase64(blob);
+					const result = await evaluateMutation.mutateAsync({
+						audioBase64,
+						expectedText: exercise.prompt,
+					});
+					setTips(result.tips);
+				} catch (error) {
+					const message = error instanceof Error ? error.message : "Unknown error";
+					setTips([`Gagal mendapatkan tips pelafalan. ${message}`]);
+				} finally {
+					setIsEvaluating(false);
+					setIsCorrect(true);
+					onComplete(true);
+				}
 			};
 
 			recorder.start();
@@ -265,7 +315,7 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 				<Button
 					variant="secondary"
 					onClick={handleRecordToggle}
-					disabled={isSpeaking}
+					disabled={isSpeaking || isEvaluating}
 				>
 					{isRecording ? "⏹ Stop" : "🎙 Rekam"}
 				</Button>
@@ -274,6 +324,16 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 				<audio controls className="w-full">
 					<source src={audioUrl} type="audio/webm" />
 				</audio>
+			) : null}
+			{tips.length > 0 ? (
+				<div className="space-y-2 text-sm">
+					<p className="font-medium text-foreground">Tips Pelafalan:</p>
+					<ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+						{tips.map((tip, index) => (
+							<li key={`${tip}-${index}`}>{tip}</li>
+						))}
+					</ul>
+				</div>
 			) : null}
 			{isCorrect !== null ? (
 				<AnswerFooter

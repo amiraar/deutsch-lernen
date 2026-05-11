@@ -6,7 +6,7 @@ import { Flame, Trophy, BookOpen, Layers, ArrowRight, Clock } from "lucide-react
 
 import { signOut } from "next-auth/react";
 
-import { Badge, Button, Card, ProgressBar, Toast } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, ProgressBar, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { DAILY_LESSON_GOAL, XP_THRESHOLDS, LEVEL_LABELS } from "@/constants";
@@ -236,7 +236,11 @@ export default function DashboardPage() {
 								</Link>
 							</div>
 						) : (
-							<p className="text-sm text-muted-foreground">Semua pelajaran selesai! 🎉</p>
+							<EmptyState
+								icon={<Trophy size={24} className="text-amber-500" />}
+								title="Semua pelajaran selesai!"
+								description="Kamu sudah menuntaskan semua pelajaran. Saatnya review atau lanjut besok."
+							/>
 						)}
 					</Card>
 

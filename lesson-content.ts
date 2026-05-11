@@ -22,6 +22,10 @@ export type LessonSection = {
   title: string;
   explanation: string;
   examples: LessonExample[];
+  culturalNote?: {
+    title: string;
+    content: string;
+  };
   tip?: string;
 };
 
@@ -70,6 +74,11 @@ export const LESSON_CONTENT: Record<string, LessonContent> = {
           { german: "Mir geht es gut.", indonesian: "Saya baik-baik saja." },
           { german: "Danke, gut. Und Ihnen?", indonesian: "Terima kasih, baik. Dan Anda?" },
         ],
+        culturalNote: {
+          title: "Formal vs Informal di Jerman",
+          content:
+            "Di Jerman, menggunakan 'du' kepada orang asing dianggap tidak sopan. Tunggu sampai orang lain mengajak 'duzen' (beralih ke du) sebelum kamu menggunakannya. Di tempat kerja, bahkan rekan kerja yang sudah lama pun mungkin tetap pakai 'Sie'.",
+        },
         tip: "'Mir geht es gut' = 'Kepadaku perjalanannya baik' — langsung hafalkan frasa ini secara utuh.",
       },
       {
@@ -799,6 +808,637 @@ export const LESSON_CONTENT: Record<string, LessonContent> = {
       "Musik: Musik hören, ein Instrument spielen, singen",
       "Ekspresi hobi: Ich ... gern / Mein Hobby ist ... / Ich interessiere mich für ...",
       "Mengajak: Hast du Lust, ...? → Ja, gerne! / Leider nicht.",
+    ],
+  },
+
+  "perfekt-tense": {
+    topic: "past_tense",
+    introduction:
+      "Perfekt adalah bentuk lampau yang paling sering dipakai dalam percakapan sehari-hari. Kamu akan belajar pola dasar Perfekt, pemilihan haben/sein, serta Partizip II regular dan irregular.",
+    sections: [
+      {
+        title: "Konsep Dasar Perfekt",
+        explanation:
+          "Perfekt dibentuk dengan kata kerja bantu (haben/sein) + Partizip II di akhir kalimat. Biasanya dipakai untuk kejadian masa lalu dalam percakapan.",
+        examples: [
+          { german: "Ich habe gegessen.", indonesian: "Saya sudah makan." },
+          { german: "Wir haben Deutsch gelernt.", indonesian: "Kami sudah belajar bahasa Jerman." },
+          { german: "Er hat gearbeitet.", indonesian: "Dia sudah bekerja." },
+          { german: "Sie hat eine E-Mail geschrieben.", indonesian: "Dia sudah menulis email." },
+          { german: "Habt ihr heute gekocht?", indonesian: "Apakah kalian memasak hari ini?" },
+        ],
+        tip: "Ingat: kata kerja bantu di posisi ke-2, Partizip II di akhir kalimat.",
+      },
+      {
+        title: "Partizip II Regular (ge- + -t)",
+        explanation:
+          "Kata kerja regular membentuk Partizip II dengan ge- + akar + -t. Contoh: machen → gemacht.",
+        examples: [
+          { german: "machen → gemacht", indonesian: "melakukan → dilakukan" },
+          { german: "spielen → gespielt", indonesian: "bermain → dimainkan" },
+          { german: "lernen → gelernt", indonesian: "belajar → belajar (lampau)" },
+          { german: "arbeiten → gearbeitet", indonesian: "bekerja → bekerja (lampau)" },
+          { german: "fragen → gefragt", indonesian: "bertanya → bertanya (lampau)" },
+        ],
+        tip: "Kata kerja berakhiran -ieren tidak pakai ge-: studieren → studiert.",
+      },
+      {
+        title: "Partizip II Irregular (ge- + -en)",
+        explanation:
+          "Kata kerja tidak beraturan punya bentuk Partizip II khusus, sering berakhiran -en dan berubah vokal.",
+        examples: [
+          { german: "gehen → gegangen", indonesian: "pergi → pergi (lampau)" },
+          { german: "sehen → gesehen", indonesian: "melihat → melihat (lampau)" },
+          { german: "finden → gefunden", indonesian: "menemukan → ditemukan" },
+          { german: "lesen → gelesen", indonesian: "membaca → membaca (lampau)" },
+          { german: "trinken → getrunken", indonesian: "minum → minum (lampau)" },
+        ],
+        tip: "Bentuk irregular harus dihafal satu per satu.",
+      },
+      {
+        title: "Haben vs Sein",
+        explanation:
+          "Sebagian besar kata kerja memakai haben. Sein dipakai untuk gerak/perubahan keadaan (gehen, kommen, werden, bleiben).",
+        examples: [
+          { german: "Ich bin nach Hause gegangen.", indonesian: "Saya pulang ke rumah." },
+          { german: "Wir sind um 8 Uhr gekommen.", indonesian: "Kami datang jam 8." },
+          { german: "Er ist krank geworden.", indonesian: "Dia menjadi sakit." },
+          { german: "Sie ist in Berlin geblieben.", indonesian: "Dia tetap tinggal di Berlin." },
+          { german: "Ich habe gestern angerufen.", indonesian: "Saya menelepon kemarin." },
+        ],
+        tip: "Kalau ada perpindahan tempat atau perubahan kondisi, biasanya pakai sein.",
+      },
+    ],
+    summary: [
+      "Perfekt = haben/sein + Partizip II di akhir kalimat",
+      "Regular: ge- + akar + -t (machen → gemacht)",
+      "Irregular: bentuk khusus, sering -en (gehen → gegangen)",
+      "sein dipakai untuk gerak/perubahan keadaan",
+      "haben dipakai untuk mayoritas kata kerja lain",
+    ],
+  },
+
+  "modalverben": {
+    topic: "modal_verbs",
+    introduction:
+      "Modalverben menambah nuansa kemampuan, keharusan, izin, keinginan, dan saran. Dalam kalimat, modal berada di posisi ke-2 dan kata kerja utama kembali ke bentuk infinitif di akhir.",
+    sections: [
+      {
+        title: "können (bisa/mampu)",
+        explanation:
+          "Konjugasi: ich kann, du kannst, er/sie/es kann, wir können, ihr könnt, sie/Sie können.",
+        examples: [
+          { german: "Ich kann Deutsch sprechen.", indonesian: "Saya bisa berbicara bahasa Jerman." },
+          { german: "Kannst du heute kommen?", indonesian: "Apakah kamu bisa datang hari ini?" },
+          { german: "Er kann gut schwimmen.", indonesian: "Dia bisa berenang dengan baik." },
+          { german: "Wir können dir helfen.", indonesian: "Kami bisa membantumu." },
+          { german: "Sie können hier warten.", indonesian: "Anda bisa menunggu di sini." },
+        ],
+      },
+      {
+        title: "müssen (harus)",
+        explanation:
+          "Konjugasi: ich muss, du musst, er/sie/es muss, wir müssen, ihr müsst, sie/Sie müssen.",
+        examples: [
+          { german: "Ich muss arbeiten.", indonesian: "Saya harus bekerja." },
+          { german: "Du musst früh aufstehen.", indonesian: "Kamu harus bangun pagi." },
+          { german: "Er muss lernen.", indonesian: "Dia harus belajar." },
+          { german: "Wir müssen los.", indonesian: "Kami harus berangkat." },
+          { german: "Müssen Sie das heute erledigen?", indonesian: "Apakah Anda harus menyelesaikan ini hari ini?" },
+        ],
+      },
+      {
+        title: "dürfen (boleh)",
+        explanation:
+          "Konjugasi: ich darf, du darfst, er/sie/es darf, wir dürfen, ihr dürft, sie/Sie dürfen.",
+        examples: [
+          { german: "Darf ich hier sitzen?", indonesian: "Boleh saya duduk di sini?" },
+          { german: "Du darfst heute früh gehen.", indonesian: "Kamu boleh pulang lebih awal hari ini." },
+          { german: "Er darf nicht rauchen.", indonesian: "Dia tidak boleh merokok." },
+          { german: "Wir dürfen Fotos machen.", indonesian: "Kami boleh mengambil foto." },
+          { german: "Dürfen Sie das Fenster öffnen?", indonesian: "Apakah Anda boleh membuka jendela?" },
+        ],
+      },
+      {
+        title: "wollen (ingin/berniat)",
+        explanation:
+          "Konjugasi: ich will, du willst, er/sie/es will, wir wollen, ihr wollt, sie/Sie wollen.",
+        examples: [
+          { german: "Ich will mehr lernen.", indonesian: "Saya ingin belajar lebih banyak." },
+          { german: "Willst du Kaffee trinken?", indonesian: "Apakah kamu ingin minum kopi?" },
+          { german: "Er will Arzt werden.", indonesian: "Dia ingin menjadi dokter." },
+          { german: "Wir wollen nach Berlin fahren.", indonesian: "Kami ingin pergi ke Berlin." },
+          { german: "Sie wollen ein Ticket kaufen.", indonesian: "Mereka ingin membeli tiket." },
+        ],
+      },
+      {
+        title: "sollen (sebaiknya/harus menurut orang lain)",
+        explanation:
+          "Konjugasi: ich soll, du sollst, er/sie/es soll, wir sollen, ihr sollt, sie/Sie sollen.",
+        examples: [
+          { german: "Ich soll mehr schlafen.", indonesian: "Saya seharusnya tidur lebih banyak." },
+          { german: "Du sollst zum Arzt gehen.", indonesian: "Kamu sebaiknya pergi ke dokter." },
+          { german: "Er soll pünktlich sein.", indonesian: "Dia harus tepat waktu (menurut aturan)." },
+          { german: "Wir sollen warten.", indonesian: "Kami diminta menunggu." },
+          { german: "Sollen wir anfangen?", indonesian: "Haruskah kita mulai?" },
+        ],
+      },
+      {
+        title: "möchten (ingin dengan sopan)",
+        explanation:
+          "Konjugasi: ich möchte, du möchtest, er/sie/es möchte, wir möchten, ihr möchtet, sie/Sie möchten.",
+        examples: [
+          { german: "Ich möchte ein Wasser.", indonesian: "Saya ingin air (sopan)." },
+          { german: "Möchtest du etwas essen?", indonesian: "Apakah kamu mau makan sesuatu?" },
+          { german: "Er möchte später kommen.", indonesian: "Dia ingin datang nanti." },
+          { german: "Wir möchten reservieren.", indonesian: "Kami ingin reservasi." },
+          { german: "Möchten Sie bezahlen?", indonesian: "Apakah Anda ingin membayar?" },
+        ],
+      },
+    ],
+    summary: [
+      "Modal berada di posisi ke-2, kata kerja utama infinitif di akhir",
+      "können = bisa, müssen = harus, dürfen = boleh",
+      "wollen = ingin, sollen = sebaiknya/harus (menurut aturan)",
+      "möchten = ingin (lebih sopan)",
+      "Konjugasi modal berubah bentuk pada ich/du/er",
+    ],
+  },
+
+  "konjunktionen": {
+    topic: "conjunctions",
+    introduction:
+      "Konjungsi menyambungkan ide dalam kalimat. Ada dua jenis utama: koordinating (tidak mengubah urutan kata) dan subordinating (mendorong kata kerja ke akhir).",
+    sections: [
+      {
+        title: "Koordinating Conjunctions",
+        explanation:
+          "Konjungsi koordinasi menghubungkan dua kalimat setara. Urutan kata tetap seperti kalimat biasa.",
+        examples: [
+          { german: "Ich lerne Deutsch und ich arbeite.", indonesian: "Saya belajar Jerman dan saya bekerja." },
+          { german: "Er ist müde, aber er kommt.", indonesian: "Dia lelah, tetapi dia datang." },
+          { german: "Möchtest du Tee oder Kaffee?", indonesian: "Kamu mau teh atau kopi?" },
+          { german: "Wir bleiben zu Hause, denn es regnet.", indonesian: "Kami di rumah, karena hujan." },
+          { german: "Sie mag Musik und er mag Sport.", indonesian: "Dia suka musik dan dia suka olahraga." },
+        ],
+      },
+      {
+        title: "Subordinating Conjunctions",
+        explanation:
+          "Konjungsi subordinasi membuat anak kalimat dan menaruh kata kerja di akhir.",
+        examples: [
+          { german: "Ich bleibe zu Hause, weil ich krank bin.", indonesian: "Saya tetap di rumah karena saya sakit." },
+          { german: "Er sagt, dass er keine Zeit hat.", indonesian: "Dia berkata bahwa dia tidak punya waktu." },
+          { german: "Obwohl es kalt ist, gehen wir spazieren.", indonesian: "Walaupun dingin, kami tetap jalan-jalan." },
+          { german: "Wenn ich Zeit habe, rufe ich dich an.", indonesian: "Kalau saya punya waktu, saya akan meneleponmu." },
+          { german: "Sie bleibt, weil sie lernen muss.", indonesian: "Dia tinggal karena harus belajar." },
+        ],
+        tip: "Di anak kalimat, kata kerja selalu di akhir.",
+      },
+      {
+        title: "Perubahan Word Order",
+        explanation:
+          "Jika anak kalimat (subordinating) berada di awal, kalimat utama mengalami inversi (kata kerja di posisi ke-2).",
+        examples: [
+          { german: "Weil ich krank bin, bleibe ich zu Hause.", indonesian: "Karena saya sakit, saya tetap di rumah." },
+          { german: "Wenn er Zeit hat, kommt er vorbei.", indonesian: "Jika dia punya waktu, dia mampir." },
+          { german: "Obwohl es spät ist, arbeiten wir weiter.", indonesian: "Walaupun sudah larut, kami terus bekerja." },
+          { german: "Dass er hilft, ist klar.", indonesian: "Bahwa dia membantu itu jelas." },
+          { german: "Weil sie müde ist, geht sie früh schlafen.", indonesian: "Karena dia lelah, dia tidur lebih awal." },
+        ],
+      },
+      {
+        title: "Menggabungkan Ide",
+        explanation:
+          "Gunakan konjungsi yang tepat untuk menunjukkan alasan, pilihan, atau kontras.",
+        examples: [
+          { german: "Ich trinke Tee, weil Kaffee zu stark ist.", indonesian: "Saya minum teh karena kopi terlalu kuat." },
+          { german: "Willst du kommen oder zu Hause bleiben?", indonesian: "Kamu mau datang atau tetap di rumah?" },
+          { german: "Er ist müde, aber er lernt weiter.", indonesian: "Dia lelah, tetapi tetap belajar." },
+          { german: "Sie arbeitet viel, denn sie braucht Geld.", indonesian: "Dia bekerja banyak karena butuh uang." },
+          { german: "Wenn wir fertig sind, gehen wir essen.", indonesian: "Kalau sudah selesai, kita pergi makan." },
+        ],
+      },
+    ],
+    summary: [
+      "Koordinating: und, aber, oder, denn (word order tetap)",
+      "Subordinating: weil, dass, obwohl, wenn (kata kerja di akhir)",
+      "Anak kalimat di depan → inversi di kalimat utama",
+      "denn mirip karena, tapi tidak mengubah word order",
+      "weil selalu mendorong kata kerja ke akhir",
+    ],
+  },
+
+  "komparativ-superlativ": {
+    topic: "comparison",
+    introduction:
+      "Untuk membandingkan sesuatu, bahasa Jerman memakai Komparativ (-er) dan Superlativ (am ...-sten / -sten). Ada beberapa bentuk tidak beraturan yang wajib dihafal.",
+    sections: [
+      {
+        title: "Komparativ Regular",
+        explanation: "Komparativ dibentuk dengan menambah -er pada kata sifat.",
+        examples: [
+          { german: "groß → größer", indonesian: "besar → lebih besar" },
+          { german: "schnell → schneller", indonesian: "cepat → lebih cepat" },
+          { german: "langsam → langsamer", indonesian: "lambat → lebih lambat" },
+          { german: "teuer → teurer", indonesian: "mahal → lebih mahal" },
+          { german: "billig → billiger", indonesian: "murah → lebih murah" },
+        ],
+      },
+      {
+        title: "Superlativ Regular",
+        explanation: "Superlativ biasanya memakai pola am + adjektiv + -sten.",
+        examples: [
+          { german: "am größten", indonesian: "paling besar" },
+          { german: "am schnellsten", indonesian: "paling cepat" },
+          { german: "am langsamsten", indonesian: "paling lambat" },
+          { german: "am teuersten", indonesian: "paling mahal" },
+          { german: "am billigsten", indonesian: "paling murah" },
+        ],
+        tip: "Jika adjektif berakhir -d/-t/-s/-ß, sering butuh -esten.",
+      },
+      {
+        title: "Irregular Comparisons",
+        explanation: "Beberapa kata sifat berubah bentuk secara tidak beraturan.",
+        examples: [
+          { german: "gut → besser → am besten", indonesian: "baik → lebih baik → paling baik" },
+          { german: "viel → mehr → am meisten", indonesian: "banyak → lebih banyak → paling banyak" },
+          { german: "gern → lieber → am liebsten", indonesian: "suka → lebih suka → paling suka" },
+          { german: "hoch → höher → am höchsten", indonesian: "tinggi → lebih tinggi → paling tinggi" },
+          { german: "nah → näher → am nächsten", indonesian: "dekat → lebih dekat → paling dekat" },
+        ],
+      },
+      {
+        title: "Perbandingan dalam Kalimat",
+        explanation: "Gunakan als (daripada) untuk komparatif.",
+        examples: [
+          { german: "Berlin ist größer als Hamburg.", indonesian: "Berlin lebih besar daripada Hamburg." },
+          { german: "Dieses Auto ist schneller als das alte.", indonesian: "Mobil ini lebih cepat daripada yang lama." },
+          { german: "Das ist am besten.", indonesian: "Itu yang paling baik." },
+          { german: "Heute ist es wärmer als gestern.", indonesian: "Hari ini lebih hangat daripada kemarin." },
+          { german: "Sie singt am schönsten.", indonesian: "Dia bernyanyi paling indah." },
+        ],
+      },
+    ],
+    summary: [
+      "Komparativ: adjektiv + -er",
+      "Superlativ: am + adjektiv + -sten",
+      "Als dipakai untuk membandingkan dua hal",
+      "Bentuk irregular harus dihafal (gut → besser → am besten)",
+      "Perhatikan tambahan -esten untuk kata berakhiran tertentu",
+    ],
+  },
+
+  "dativ-akkusativ": {
+    topic: "cases",
+    introduction:
+      "Bahasa Jerman memiliki kasus (Nominativ, Akkusativ, Dativ) yang memengaruhi artikel dan fungsi kata dalam kalimat. Di pelajaran ini kamu fokus pada perbedaan Akkusativ dan Dativ.",
+    sections: [
+      {
+        title: "Fungsi Nominativ, Akkusativ, Dativ",
+        explanation:
+          "Nominativ untuk subjek, Akkusativ untuk objek langsung, Dativ untuk objek tidak langsung.",
+        examples: [
+          { german: "Der Mann sieht den Hund.", indonesian: "Pria itu melihat anjing itu.", note: "den Hund = Akkusativ" },
+          { german: "Die Frau gibt dem Kind ein Buch.", indonesian: "Wanita itu memberi anak sebuah buku.", note: "dem Kind = Dativ" },
+          { german: "Ich helfe dem Freund.", indonesian: "Saya membantu teman (Dativ)." },
+          { german: "Wir haben einen Tisch.", indonesian: "Kami punya sebuah meja (Akkusativ)." },
+          { german: "Das Kind ist müde.", indonesian: "Anak itu lelah (Nominativ)." },
+        ],
+      },
+      {
+        title: "Perubahan Artikel",
+        explanation:
+          "Artikel berubah sesuai kasus: der → den (Akk), der → dem (Dat).",
+        examples: [
+          { german: "der Mann → den Mann → dem Mann", indonesian: "maskulin: Nominativ → Akkusativ → Dativ" },
+          { german: "die Frau → die Frau → der Frau", indonesian: "feminin: der Frau (Dativ)" },
+          { german: "das Kind → das Kind → dem Kind", indonesian: "netral: dem Kind (Dativ)" },
+          { german: "ein Mann → einen Mann → einem Mann", indonesian: "artikel tidak tentu: einen/einem" },
+          { german: "Ich sehe den Lehrer.", indonesian: "Saya melihat guru itu (Akkusativ)." },
+        ],
+        tip: "Maskulin berubah paling jelas: der → den → dem.",
+      },
+      {
+        title: "Preposisi Selalu Akkusativ",
+        explanation:
+          "Beberapa preposisi selalu diikuti Akkusativ.",
+        examples: [
+          { german: "durch die Stadt", indonesian: "melalui kota" },
+          { german: "für meinen Bruder", indonesian: "untuk kakak laki-laki saya" },
+          { german: "ohne dich", indonesian: "tanpamu" },
+          { german: "gegen den Wind", indonesian: "melawan angin" },
+          { german: "um den Tisch", indonesian: "mengelilingi meja" },
+        ],
+      },
+      {
+        title: "Preposisi Selalu Dativ",
+        explanation:
+          "Preposisi berikut selalu memakai Dativ.",
+        examples: [
+          { german: "mit dem Zug", indonesian: "dengan kereta" },
+          { german: "nach der Arbeit", indonesian: "setelah kerja" },
+          { german: "aus dem Haus", indonesian: "dari rumah" },
+          { german: "bei der Freundin", indonesian: "di tempat teman perempuan" },
+          { german: "zu dem Arzt", indonesian: "ke dokter" },
+        ],
+      },
+    ],
+    summary: [
+      "Nominativ = subjek, Akkusativ = objek langsung, Dativ = objek tidak langsung",
+      "Maskulin berubah: der → den → dem",
+      "Artikel tidak tentu: ein → einen → einem",
+      "Preposisi Akkusativ: durch, für, ohne, gegen, um",
+      "Preposisi Dativ: mit, nach, aus, bei, von, zu, seit",
+    ],
+  },
+
+  "konjunktiv-ii": {
+    topic: "subjunctive",
+    introduction:
+      "Konjunktiv II dipakai untuk menyatakan kondisi tidak nyata, keinginan, dan permintaan sopan. Bentuk yang paling umum adalah würde + Infinitiv.",
+    sections: [
+      {
+        title: "würde + Infinitiv",
+        explanation:
+          "Pola paling praktis: würde (konjugasi) + kata kerja infinitif di akhir.",
+        examples: [
+          { german: "Ich würde gern reisen.", indonesian: "Saya ingin sekali bepergian." },
+          { german: "Er würde mehr lernen.", indonesian: "Dia akan belajar lebih banyak (andaikan)." },
+          { german: "Wir würden helfen.", indonesian: "Kami akan membantu (jika bisa)." },
+          { german: "Würdest du kommen?", indonesian: "Apakah kamu mau datang?" },
+          { german: "Sie würden es kaufen.", indonesian: "Mereka akan membelinya." },
+        ],
+      },
+      {
+        title: "Irreale Bedingungen",
+        explanation:
+          "Kalimat pengandaian yang tidak nyata sering memakai wenn + Konjunktiv II.",
+        examples: [
+          { german: "Wenn ich Zeit hätte, würde ich kommen.", indonesian: "Jika saya punya waktu, saya akan datang." },
+          { german: "Wenn er mehr Geld hätte, würde er reisen.", indonesian: "Jika dia punya lebih banyak uang, dia akan bepergian." },
+          { german: "Wenn wir in Berlin wären, würden wir dich besuchen.", indonesian: "Jika kami di Berlin, kami akan mengunjungimu." },
+          { german: "Wenn ich du wäre, würde ich das nicht tun.", indonesian: "Kalau saya jadi kamu, saya tidak akan melakukan itu." },
+          { german: "Wenn sie Zeit hätte, würde sie helfen.", indonesian: "Jika dia punya waktu, dia akan membantu." },
+        ],
+      },
+      {
+        title: "Höfliche Anfragen",
+        explanation: "Konjunktiv II membuat permintaan terdengar lebih sopan.",
+        examples: [
+          { german: "Könnten Sie mir helfen?", indonesian: "Bisakah Anda membantu saya?" },
+          { german: "Würden Sie bitte hier warten?", indonesian: "Bisakah Anda menunggu di sini?" },
+          { german: "Hätten Sie einen Moment?", indonesian: "Apakah Anda punya waktu sebentar?" },
+          { german: "Ich würde gern bezahlen.", indonesian: "Saya ingin membayar (sopan)." },
+          { german: "Dürfte ich fragen?", indonesian: "Bolehkah saya bertanya?" },
+        ],
+      },
+      {
+        title: "Bentuk Khusus (wäre, hätte, könnte)",
+        explanation:
+          "Beberapa kata kerja punya bentuk khusus yang sering dipakai tanpa würde.",
+        examples: [
+          { german: "Ich wäre jetzt lieber zu Hause.", indonesian: "Saya lebih ingin di rumah sekarang." },
+          { german: "Er hätte Zeit.", indonesian: "Dia akan punya waktu (andaikan)." },
+          { german: "Wir könnten später gehen.", indonesian: "Kami bisa pergi nanti (andaikan)." },
+          { german: "Sie müsste mehr schlafen.", indonesian: "Dia seharusnya tidur lebih banyak." },
+          { german: "Ich möchte das versuchen.", indonesian: "Saya ingin mencoba itu (sopan)." },
+        ],
+      },
+    ],
+    summary: [
+      "Konjunktiv II = kondisi tidak nyata dan permintaan sopan",
+      "Pola praktis: würde + infinitif",
+      "Kalimat pengandaian: wenn + Konjunktiv II",
+      "Bentuk khusus yang sering dipakai: wäre, hätte, könnte",
+      "Gunakan bentuk ini untuk membuat permintaan lebih halus",
+    ],
+  },
+
+  "passiv": {
+    topic: "passive_voice",
+    introduction:
+      "Pasif digunakan ketika fokus pada proses atau hasil, bukan pelaku. Ada dua jenis: Vorgangspassiv (proses) dan Zustandspassiv (keadaan).",
+    sections: [
+      {
+        title: "Vorgangspassiv (werden + Partizip II)",
+        explanation:
+          "Menekankan proses atau tindakan yang sedang terjadi.",
+        examples: [
+          { german: "Das Haus wird gebaut.", indonesian: "Rumah itu sedang dibangun." },
+          { german: "Der Brief wird geschrieben.", indonesian: "Surat itu sedang ditulis." },
+          { german: "Die Tür wird geschlossen.", indonesian: "Pintunya sedang ditutup." },
+          { german: "Die Aufgaben werden erklärt.", indonesian: "Tugas-tugas dijelaskan." },
+          { german: "Das Problem wird gelöst.", indonesian: "Masalah diselesaikan." },
+        ],
+      },
+      {
+        title: "Zustandspassiv (sein + Partizip II)",
+        explanation:
+          "Menekankan keadaan hasil setelah proses selesai.",
+        examples: [
+          { german: "Das Haus ist gebaut.", indonesian: "Rumah itu sudah dibangun (hasilnya)." },
+          { german: "Die Tür ist geschlossen.", indonesian: "Pintunya sudah tertutup." },
+          { german: "Die Aufgabe ist erledigt.", indonesian: "Tugasnya sudah selesai." },
+          { german: "Der Brief ist geschrieben.", indonesian: "Suratnya sudah ditulis." },
+          { german: "Das Fenster ist geöffnet.", indonesian: "Jendelanya terbuka (hasil)." },
+        ],
+      },
+      {
+        title: "Kapan Aktif vs Pasif",
+        explanation:
+          "Aktif menonjolkan pelaku, pasif menonjolkan tindakan atau hasil.",
+        examples: [
+          { german: "Der Koch kocht das Essen.", indonesian: "Koki memasak makanan (aktif)." },
+          { german: "Das Essen wird gekocht.", indonesian: "Makanan sedang dimasak (pasif proses)." },
+          { german: "Das Essen ist gekocht.", indonesian: "Makanan sudah dimasak (pasif keadaan)." },
+          { german: "Die Firma baut die Brücke.", indonesian: "Perusahaan membangun jembatan (aktif)." },
+          { german: "Die Brücke wird gebaut.", indonesian: "Jembatan sedang dibangun (pasif)." },
+        ],
+      },
+    ],
+    summary: [
+      "Vorgangspassiv: werden + Partizip II (fokus proses)",
+      "Zustandspassiv: sein + Partizip II (fokus hasil)",
+      "Aktif menonjolkan pelaku, pasif menonjolkan tindakan",
+      "Pasif sering dipakai di laporan, berita, dan instruksi",
+      "Pelaku bisa ditambahkan dengan von + Dativ",
+    ],
+  },
+
+  "nebensatze": {
+    topic: "subordinate_clauses",
+    introduction:
+      "Nebensatz (anak kalimat) memperkaya informasi. Di level ini kamu belajar Relativsatz, pertanyaan tidak langsung, dan konstruksi infinitif.",
+    sections: [
+      {
+        title: "Relativsatz",
+        explanation:
+          "Relativsatz menggunakan der/die/das sebagai relativpronomen dan menaruh kata kerja di akhir.",
+        examples: [
+          { german: "Das ist der Mann, der hier wohnt.", indonesian: "Itu pria yang tinggal di sini." },
+          { german: "Ich kenne die Frau, die Deutsch spricht.", indonesian: "Saya kenal wanita yang berbicara Jerman." },
+          { german: "Das Buch, das du liest, ist interessant.", indonesian: "Buku yang kamu baca itu menarik." },
+          { german: "Die Stadt, in der ich wohne, ist groß.", indonesian: "Kota tempat saya tinggal besar." },
+          { german: "Der Freund, mit dem ich lerne, ist nett.", indonesian: "Teman yang belajar dengan saya itu baik." },
+        ],
+      },
+      {
+        title: "Indirekte Fragen",
+        explanation:
+          "Pertanyaan tidak langsung memakai ob atau kata tanya, dan kata kerja di akhir.",
+        examples: [
+          { german: "Ich weiß nicht, wo er wohnt.", indonesian: "Saya tidak tahu di mana dia tinggal." },
+          { german: "Können Sie mir sagen, wie spät es ist?", indonesian: "Bisakah Anda bilang jam berapa?" },
+          { german: "Er fragt, ob du kommst.", indonesian: "Dia bertanya apakah kamu datang." },
+          { german: "Ich weiß nicht, wann der Zug fährt.", indonesian: "Saya tidak tahu kapan kereta berangkat." },
+          { german: "Sie fragt, warum du traurig bist.", indonesian: "Dia bertanya kenapa kamu sedih." },
+        ],
+      },
+      {
+        title: "Infinitivkonstruktionen",
+        explanation:
+          "Konstruksi infinitif memakai um...zu, ohne...zu, statt...zu.",
+        examples: [
+          { german: "Ich lerne, um die Prüfung zu bestehen.", indonesian: "Saya belajar untuk lulus ujian." },
+          { german: "Er geht, ohne etwas zu sagen.", indonesian: "Dia pergi tanpa mengatakan apa-apa." },
+          { german: "Sie kam, statt anzurufen.", indonesian: "Dia datang alih-alih menelepon." },
+          { german: "Wir sparen, um ein Auto zu kaufen.", indonesian: "Kami menabung untuk membeli mobil." },
+          { german: "Er arbeitet, ohne sich zu beschweren.", indonesian: "Dia bekerja tanpa mengeluh." },
+        ],
+      },
+    ],
+    summary: [
+      "Relativsatz memakai der/die/das dan kata kerja di akhir",
+      "Pertanyaan tidak langsung: ob / kata tanya + kata kerja di akhir",
+      "Infinitifkonstruktion: um...zu, ohne...zu, statt...zu",
+      "Anak kalimat memperjelas informasi tambahan",
+      "Gunakan preposisi untuk relativsatz kompleks (mit dem, in der)",
+    ],
+  },
+
+  "wortbildung": {
+    topic: "word_formation",
+    introduction:
+      "Wortbildung membantumu menebak arti kata baru. Kamu akan belajar prefiks, sufiks, komposita, dan derivasi.",
+    sections: [
+      {
+        title: "Präfixe (un-, miss-, ver-, zer-)",
+        explanation:
+          "Prefiks mengubah arti kata dasar.",
+        examples: [
+          { german: "glücklich → unglücklich", indonesian: "bahagia → tidak bahagia" },
+          { german: "verstehen → missverstehen", indonesian: "mengerti → salah paham" },
+          { german: "kaufen → verkaufen", indonesian: "membeli → menjual" },
+          { german: "teilen → zerteilen", indonesian: "membagi → memecah" },
+          { german: "arbeiten → verarbeiten", indonesian: "bekerja → mengolah" },
+        ],
+      },
+      {
+        title: "Suffixe (-heit, -keit, -ung)",
+        explanation:
+          "Sufiks mengubah kelas kata, biasanya menjadi kata benda abstrak.",
+        examples: [
+          { german: "frei → Freiheit", indonesian: "bebas → kebebasan" },
+          { german: "möglich → Möglichkeit", indonesian: "mungkin → kemungkinan" },
+          { german: "schön → Schönheit", indonesian: "indah → keindahan" },
+          { german: "entwickeln → Entwicklung", indonesian: "mengembangkan → perkembangan" },
+          { german: "erklären → Erklärung", indonesian: "menjelaskan → penjelasan" },
+        ],
+      },
+      {
+        title: "Komposita (Zusammensetzung)",
+        explanation:
+          "Kata majemuk digabung dari beberapa kata dasar.",
+        examples: [
+          { german: "die Hausaufgabe", indonesian: "pekerjaan rumah" },
+          { german: "der Sprachkurs", indonesian: "kursus bahasa" },
+          { german: "das Stadtzentrum", indonesian: "pusat kota" },
+          { german: "die Zugfahrt", indonesian: "perjalanan kereta" },
+          { german: "die Krankenversicherung", indonesian: "asuransi kesehatan" },
+        ],
+        tip: "Kata terakhir menentukan gender dan arti utama.",
+      },
+      {
+        title: "Derivation (Kelas Kata)",
+        explanation:
+          "Derivasi mengubah kelas kata: adjektif → noun, verb → noun, dll.",
+        examples: [
+          { german: "lernen → der Lerner", indonesian: "belajar → pembelajar" },
+          { german: "fahren → der Fahrer", indonesian: "mengemudi → pengemudi" },
+          { german: "kreativ → Kreativität", indonesian: "kreatif → kreativitas" },
+          { german: "schnell → Schnelligkeit", indonesian: "cepat → kecepatan" },
+          { german: "freundlich → Freundlichkeit", indonesian: "ramah → keramahan" },
+        ],
+      },
+    ],
+    summary: [
+      "Prefiks un-/miss-/ver-/zer- mengubah arti kata",
+      "Sufiks -heit/-keit/-ung membuat kata benda abstrak",
+      "Komposita menggabungkan kata dasar, gender ikut kata terakhir",
+      "Derivasi mengubah kelas kata",
+      "Wortbildung membantu menebak arti kata baru",
+    ],
+  },
+
+  "formelle-sprache": {
+    topic: "formal_language",
+    introduction:
+      "Bahasa formal dipakai untuk surat resmi, email kerja, dan situasi profesional. Di sini kamu belajar gaya bahasa yang sopan dan terstruktur.",
+    sections: [
+      {
+        title: "Formell vs Informell",
+        explanation:
+          "Pakai Sie, ungkapan sopan, dan struktur kalimat yang lengkap.",
+        examples: [
+          { german: "Können Sie mir bitte helfen?", indonesian: "Bisakah Anda membantu saya? (formal)" },
+          { german: "Ich möchte einen Termin vereinbaren.", indonesian: "Saya ingin membuat janji." },
+          { german: "Vielen Dank im Voraus.", indonesian: "Terima kasih sebelumnya." },
+          { german: "Ich schreibe Ihnen wegen...", indonesian: "Saya menulis kepada Anda terkait..." },
+          { german: "Mit freundlichen Grüßen", indonesian: "Salam hormat" },
+        ],
+      },
+      {
+        title: "Bewerbungsschreiben Basics",
+        explanation:
+          "Surat lamaran kerja memiliki struktur formal: pembuka, isi singkat, penutup.",
+        examples: [
+          { german: "Sehr geehrte Damen und Herren,", indonesian: "Yang terhormat Bapak/Ibu," },
+          { german: "hiermit bewerbe ich mich um die Stelle als...", indonesian: "dengan ini saya melamar posisi sebagai..." },
+          { german: "Ich habe Erfahrung in...", indonesian: "Saya memiliki pengalaman dalam..." },
+          { german: "Gern stehe ich für ein Gespräch zur Verfügung.", indonesian: "Saya siap untuk wawancara." },
+          { german: "Ich freue mich auf Ihre Rückmeldung.", indonesian: "Saya menantikan kabar Anda." },
+        ],
+      },
+      {
+        title: "Höfliche Zustimmung",
+        explanation: "Cara menyetujui dengan bahasa sopan.",
+        examples: [
+          { german: "Ich stimme Ihnen zu.", indonesian: "Saya setuju dengan Anda." },
+          { german: "Das klingt sehr vernünftig.", indonesian: "Itu terdengar sangat masuk akal." },
+          { german: "Gern nehme ich das Angebot an.", indonesian: "Dengan senang hati saya menerima tawaran itu." },
+          { german: "Ich bin damit einverstanden.", indonesian: "Saya setuju dengan itu." },
+          { german: "Vielen Dank für das Angebot.", indonesian: "Terima kasih atas tawarannya." },
+        ],
+      },
+      {
+        title: "Höfliche Ablehnung",
+        explanation: "Cara menolak dengan sopan dan profesional.",
+        examples: [
+          { german: "Leider kann ich das nicht annehmen.", indonesian: "Sayangnya saya tidak bisa menerimanya." },
+          { german: "Ich muss Ihr Angebot ablehnen.", indonesian: "Saya harus menolak tawaran Anda." },
+          { german: "Vielen Dank, aber ich habe mich anders entschieden.", indonesian: "Terima kasih, tetapi saya memutuskan yang lain." },
+          { german: "Ich bitte um Verständnis.", indonesian: "Mohon pengertiannya." },
+          { german: "Vielleicht ein anderes Mal.", indonesian: "Mungkin lain kali." },
+        ],
+      },
+    ],
+    summary: [
+      "Bahasa formal memakai Sie dan ungkapan sopan",
+      "Surat lamaran: pembuka formal → isi singkat → penutup",
+      "Gunakan kalimat lengkap dan nada profesional",
+      "Setuju: Ich stimme Ihnen zu / Ich bin einverstanden",
+      "Menolak: Leider kann ich... / Ich bitte um Verständnis",
     ],
   },
 };

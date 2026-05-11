@@ -1,0 +1,20 @@
+"use client";
+
+import * as React from "react";
+
+/**
+ * Debounce a value by the provided delay.
+ */
+export function useDebounce<T>(value: T, delayMs = 300): T {
+	const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+	React.useEffect(() => {
+		const timer = window.setTimeout(() => {
+			setDebouncedValue(value);
+		}, delayMs);
+
+		return () => window.clearTimeout(timer);
+	}, [value, delayMs]);
+
+	return debouncedValue;
+}

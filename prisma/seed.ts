@@ -471,6 +471,486 @@ const lessons = [
       },
     ],
   },
+  {
+    title: "Perfekt Tense",
+    slug: "perfekt-tense",
+    description: "Mengenal Perfekt untuk menceritakan kejadian masa lalu.",
+    level: LevelEnum.B1,
+    order: 11,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["perfekt-tense"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Pilih bentuk Perfekt yang benar: Ich ___ gegessen.",
+        correctAnswer: "habe",
+        options: ["bin", "habe", "hat", "haben"],
+        explanation: "Ich + haben = ich habe gegessen.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Er ___ nach Hause gegangen.",
+        correctAnswer: "ist",
+        options: [],
+        explanation: "gehen memakai sein: Er ist gegangen.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Saya sudah belajar bahasa Jerman.",
+        correctAnswer: "Ich habe Deutsch gelernt.",
+        options: [],
+        explanation: "Perfekt: habe + gelernt.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Partizip II dari 'finden' adalah...",
+        correctAnswer: "gefunden",
+        options: ["gefindet", "gefunden", "findet", "finden"],
+        explanation: "finden → gefunden.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Wir ___ gestern gearbeitet.",
+        correctAnswer: "haben",
+        options: [],
+        explanation: "arbeiten memakai haben: wir haben gearbeitet.",
+      },
+    ],
+  },
+  {
+    title: "Modalverben",
+    slug: "modalverben",
+    description: "Kata kerja modal untuk kemampuan, keharusan, dan izin.",
+    level: LevelEnum.B1,
+    order: 12,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["modalverben"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'Ich ___ helfen.' Pilih modal yang tepat untuk 'bisa'.",
+        correctAnswer: "kann",
+        options: ["kann", "muss", "darf", "will"],
+        explanation: "können = bisa.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Du ___ nicht rauchen.",
+        correctAnswer: "darfst",
+        options: [],
+        explanation: "dürfen = boleh/tidak boleh.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Kami harus berangkat sekarang.",
+        correctAnswer: "Wir müssen jetzt los.",
+        options: [],
+        explanation: "müssen = harus.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk 'möchten' untuk wir adalah...",
+        correctAnswer: "möchten",
+        options: ["möchtest", "möchten", "möchte", "möchtet"],
+        explanation: "wir möchten.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Er ___ Arzt werden.",
+        correctAnswer: "will",
+        options: [],
+        explanation: "wollen = ingin.",
+      },
+    ],
+  },
+  {
+    title: "Konjunktionen",
+    slug: "konjunktionen",
+    description: "Menghubungkan kalimat dengan konjungsi koordinasi dan subordinasi.",
+    level: LevelEnum.B1,
+    order: 13,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["konjunktionen"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Konjungsi subordinating yang benar untuk sebab adalah...",
+        correctAnswer: "weil",
+        options: ["und", "aber", "weil", "oder"],
+        explanation: "weil = karena dan membuat kata kerja di akhir.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich bleibe zu Hause, ___ ich krank bin.",
+        correctAnswer: "weil",
+        options: [],
+        explanation: "weil menaruh kata kerja di akhir.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Walaupun hujan, kami tetap pergi.",
+        correctAnswer: "Obwohl es regnet, gehen wir trotzdem.",
+        options: [],
+        explanation: "obwohl = walaupun.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Kalimat yang benar dengan 'denn' adalah...",
+        correctAnswer: "Ich komme, denn ich habe Zeit.",
+        options: [
+          "Ich komme, denn ich Zeit habe.",
+          "Ich komme, denn ich habe Zeit.",
+          "Ich komme, denn habe ich Zeit.",
+          "Ich komme, denn ich Zeit habe nicht.",
+        ],
+        explanation: "denn tidak mengubah urutan kata.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "___ ich Zeit habe, komme ich.",
+        correctAnswer: "Wenn",
+        options: [],
+        explanation: "Jika anak kalimat di depan, kalimat utama inversi.",
+      },
+    ],
+  },
+  {
+    title: "Komparativ & Superlativ",
+    slug: "komparativ-superlativ",
+    description: "Membandingkan dengan Komparativ dan Superlativ.",
+    level: LevelEnum.B1,
+    order: 14,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["komparativ-superlativ"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk komparativ dari 'groß' adalah...",
+        correctAnswer: "größer",
+        options: ["großer", "größer", "am größten", "groß"],
+        explanation: "groß → größer.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Das Auto ist ___ als das Fahrrad.",
+        correctAnswer: "schneller",
+        options: [],
+        explanation: "schnell → schneller.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Ini yang paling baik.",
+        correctAnswer: "Das ist am besten.",
+        options: [],
+        explanation: "Superlativ: am besten.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk superlativ dari 'gut' adalah...",
+        correctAnswer: "am besten",
+        options: ["am besten", "am gutesten", "besser", "besten"],
+        explanation: "gut → besser → am besten.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Berlin ist ___ als Hamburg.",
+        correctAnswer: "größer",
+        options: [],
+        explanation: "Komparativ memakai -er.",
+      },
+    ],
+  },
+  {
+    title: "Dativ vs Akkusativ",
+    slug: "dativ-akkusativ",
+    description: "Memahami perbedaan kasus Akkusativ dan Dativ.",
+    level: LevelEnum.B1,
+    order: 15,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["dativ-akkusativ"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Pilih bentuk yang benar: Ich sehe ___ Mann.",
+        correctAnswer: "den",
+        options: ["der", "den", "dem", "des"],
+        explanation: "Akkusativ maskulin: den Mann.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich helfe ___ Kind.",
+        correctAnswer: "dem",
+        options: [],
+        explanation: "Dativ: dem Kind.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Kami memberi teman sebuah buku.",
+        correctAnswer: "Wir geben dem Freund ein Buch.",
+        options: [],
+        explanation: "Dativ untuk objek tidak langsung.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Preposisi yang selalu Akkusativ adalah...",
+        correctAnswer: "für",
+        options: ["mit", "bei", "für", "nach"],
+        explanation: "für selalu Akkusativ.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Wir gehen ___ Bahnhof.",
+        correctAnswer: "zum",
+        options: [],
+        explanation: "zu + Dativ: zum Bahnhof.",
+      },
+    ],
+  },
+  {
+    title: "Konjunktiv II",
+    slug: "konjunktiv-ii",
+    description: "Mengungkapkan kondisi tidak nyata dan permintaan sopan.",
+    level: LevelEnum.B2,
+    order: 16,
+    estimatedMinutes: 30,
+    content: LESSON_CONTENT["konjunktiv-ii"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk yang benar: Ich ___ gern reisen.",
+        correctAnswer: "würde",
+        options: ["würde", "werde", "wurde", "würden"],
+        explanation: "Konjunktiv II: würde + infinitif.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Wenn ich Zeit hätte, ___ ich kommen.",
+        correctAnswer: "würde",
+        options: [],
+        explanation: "Kalimat pengandaian memakai würde.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Bisakah Anda menunggu di sini?",
+        correctAnswer: "Würden Sie bitte hier warten?",
+        options: [],
+        explanation: "Permintaan sopan dengan würde.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk khusus Konjunktiv II untuk 'haben' adalah...",
+        correctAnswer: "hätte",
+        options: ["hat", "hatte", "hätte", "haben"],
+        explanation: "haben → hätte.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Wir ___ helfen, aber wir sind nicht da.",
+        correctAnswer: "würden",
+        options: [],
+        explanation: "wir würden.",
+      },
+    ],
+  },
+  {
+    title: "Passiv",
+    slug: "passiv",
+    description: "Membedakan Vorgangspassiv dan Zustandspassiv.",
+    level: LevelEnum.B2,
+    order: 17,
+    estimatedMinutes: 30,
+    content: LESSON_CONTENT["passiv"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Kalimat pasif proses yang benar adalah...",
+        correctAnswer: "Das Haus wird gebaut.",
+        options: [
+          "Das Haus ist gebaut.",
+          "Das Haus wird gebaut.",
+          "Das Haus war gebaut.",
+          "Das Haus hat gebaut.",
+        ],
+        explanation: "Vorgangspassiv memakai werden + Partizip II.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Der Brief ___ geschrieben.",
+        correctAnswer: "wird",
+        options: [],
+        explanation: "werden + Partizip II.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Tugasnya sudah selesai.",
+        correctAnswer: "Die Aufgabe ist erledigt.",
+        options: [],
+        explanation: "Zustandspassiv: sein + Partizip II.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk Zustandspassiv yang benar adalah...",
+        correctAnswer: "Die Tür ist geschlossen.",
+        options: ["Die Tür wird geschlossen.", "Die Tür ist geschlossen.", "Die Tür schließt.", "Die Tür hat geschlossen."],
+        explanation: "sein + Partizip II.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Die Aufgaben ___ erklärt.",
+        correctAnswer: "werden",
+        options: [],
+        explanation: "Plural: werden.",
+      },
+    ],
+  },
+  {
+    title: "Nebensätze",
+    slug: "nebensatze",
+    description: "Relativsatz, pertanyaan tidak langsung, dan konstruksi infinitif.",
+    level: LevelEnum.B2,
+    order: 18,
+    estimatedMinutes: 30,
+    content: LESSON_CONTENT["nebensatze"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Relativsatz yang benar adalah...",
+        correctAnswer: "Das ist der Mann, der hier wohnt.",
+        options: [
+          "Das ist der Mann, der wohnt hier.",
+          "Das ist der Mann, der hier wohnt.",
+          "Das ist der Mann, hier wohnt der.",
+          "Das ist der Mann, wohnt der hier.",
+        ],
+        explanation: "Kata kerja di akhir anak kalimat.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich weiß nicht, ___ er kommt.",
+        correctAnswer: "ob",
+        options: [],
+        explanation: "Pertanyaan tidak langsung memakai ob.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Saya belajar untuk lulus ujian.",
+        correctAnswer: "Ich lerne, um die Prüfung zu bestehen.",
+        options: [],
+        explanation: "um...zu + infinitif.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Kalimat dengan 'ohne...zu' yang benar adalah...",
+        correctAnswer: "Er geht, ohne etwas zu sagen.",
+        options: [
+          "Er geht, ohne er etwas sagt.",
+          "Er geht, ohne etwas zu sagen.",
+          "Er geht, ohne zu sagt etwas.",
+          "Er geht, ohne etwas sagt.",
+        ],
+        explanation: "ohne...zu + infinitif.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Er fragt, ___ du kommst.",
+        correctAnswer: "ob",
+        options: [],
+        explanation: "ob untuk pertanyaan ya/tidak.",
+      },
+    ],
+  },
+  {
+    title: "Wortbildung",
+    slug: "wortbildung",
+    description: "Mengenal prefiks, sufiks, dan komposita dalam pembentukan kata.",
+    level: LevelEnum.B2,
+    order: 19,
+    estimatedMinutes: 30,
+    content: LESSON_CONTENT["wortbildung"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Bentuk kata dengan prefiks 'un-' dari 'glücklich' adalah...",
+        correctAnswer: "unglücklich",
+        options: ["glücklich", "unglücklich", "glücklichun", "unglücke"],
+        explanation: "un- membentuk makna negasi.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Frei → ___ (kata benda)",
+        correctAnswer: "Freiheit",
+        options: [],
+        explanation: "Suffix -heit membentuk noun abstrak.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Saya butuh penjelasan.",
+        correctAnswer: "Ich brauche eine Erklärung.",
+        options: [],
+        explanation: "erklären → Erklärung.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Kata majemuk yang benar adalah...",
+        correctAnswer: "Sprachkurs",
+        options: ["Sprache Kurs", "Sprachkurs", "Kurs Sprache", "Sprach Kurs"],
+        explanation: "Komposita digabung jadi satu kata.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "schnell → ___ (noun)",
+        correctAnswer: "Schnelligkeit",
+        options: [],
+        explanation: "-keit membentuk noun.",
+      },
+    ],
+  },
+  {
+    title: "Bahasa Formal",
+    slug: "formelle-sprache",
+    description: "Gaya bahasa formal untuk surat dan situasi profesional.",
+    level: LevelEnum.B2,
+    order: 20,
+    estimatedMinutes: 30,
+    content: LESSON_CONTENT["formelle-sprache"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Pembuka surat formal yang tepat adalah...",
+        correctAnswer: "Sehr geehrte Damen und Herren,",
+        options: ["Hallo!", "Liebe Freunde,", "Sehr geehrte Damen und Herren,", "Hi zusammen,"],
+        explanation: "Surat formal memakai pembuka sopan.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich freue mich auf Ihre ___.",
+        correctAnswer: "Rückmeldung",
+        options: [],
+        explanation: "Ungkapan formal untuk menunggu balasan.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Terima kasih sebelumnya.",
+        correctAnswer: "Vielen Dank im Voraus.",
+        options: [],
+        explanation: "Ungkapan formal umum.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Ungkapan penutup formal yang benar adalah...",
+        correctAnswer: "Mit freundlichen Grüßen",
+        options: ["Tschüss", "Bis bald", "Mit freundlichen Grüßen", "Viele Grüße"],
+        explanation: "Penutup formal standar.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich ___ Ihnen zu.",
+        correctAnswer: "stimme",
+        options: [],
+        explanation: "Ich stimme Ihnen zu.",
+      },
+    ],
+  },
 ];
 
 const vocab = [
@@ -527,9 +1007,53 @@ const moreVocab = [
   { german: "machen", indonesian: "Membuat/Melakukan", example: "Was machst du?", exampleTranslation: "Apa yang sedang kamu lakukan?", level: LevelEnum.A1, tags: ["verbs"] },
   { german: "sprechen", indonesian: "Berbicara", example: "Ich spreche Deutsch.", exampleTranslation: "Saya berbicara bahasa Jerman.", level: LevelEnum.A1, tags: ["verbs"] },
   { german: "verstehen", indonesian: "Mengerti", example: "Ich verstehe nicht.", exampleTranslation: "Saya tidak mengerti.", level: LevelEnum.A1, tags: ["verbs"] },
+  { german: "gestern", indonesian: "kemarin", example: "Gestern habe ich gelernt.", exampleTranslation: "Kemarin saya belajar.", level: LevelEnum.B1, tags: ["past_tense"] },
+  { german: "schon", indonesian: "sudah", example: "Ich habe schon gegessen.", exampleTranslation: "Saya sudah makan.", level: LevelEnum.B1, tags: ["past_tense"] },
+  { german: "erklären", indonesian: "menjelaskan", example: "Er hat es erklärt.", exampleTranslation: "Dia sudah menjelaskannya.", level: LevelEnum.B1, tags: ["past_tense"] },
+  { german: "müssen", indonesian: "harus", example: "Ich muss arbeiten.", exampleTranslation: "Saya harus bekerja.", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "können", indonesian: "bisa", example: "Sie kann schwimmen.", exampleTranslation: "Dia bisa berenang.", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "dürfen", indonesian: "boleh", example: "Darf ich fragen?", exampleTranslation: "Boleh saya bertanya?", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "wollen", indonesian: "ingin", example: "Ich will reisen.", exampleTranslation: "Saya ingin bepergian.", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "sollen", indonesian: "sebaiknya", example: "Du sollst lernen.", exampleTranslation: "Kamu sebaiknya belajar.", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "möchten", indonesian: "ingin (sopan)", example: "Ich möchte Tee.", exampleTranslation: "Saya ingin teh.", level: LevelEnum.B1, tags: ["modal_verbs"] },
+  { german: "weil", indonesian: "karena", example: "Ich bleibe, weil ich müde bin.", exampleTranslation: "Saya tinggal karena saya lelah.", level: LevelEnum.B1, tags: ["conjunctions"] },
+  { german: "obwohl", indonesian: "walaupun", example: "Obwohl es regnet, gehe ich.", exampleTranslation: "Walaupun hujan, saya pergi.", level: LevelEnum.B1, tags: ["conjunctions"] },
+  { german: "dass", indonesian: "bahwa", example: "Ich weiß, dass er kommt.", exampleTranslation: "Saya tahu bahwa dia datang.", level: LevelEnum.B1, tags: ["conjunctions"] },
+  { german: "wenn", indonesian: "jika", example: "Wenn ich Zeit habe, komme ich.", exampleTranslation: "Jika saya punya waktu, saya datang.", level: LevelEnum.B1, tags: ["conjunctions"] },
+  { german: "größer", indonesian: "lebih besar", example: "Berlin ist größer als Hamburg.", exampleTranslation: "Berlin lebih besar daripada Hamburg.", level: LevelEnum.B1, tags: ["comparison"] },
+  { german: "schneller", indonesian: "lebih cepat", example: "Der Zug ist schneller.", exampleTranslation: "Kereta lebih cepat.", level: LevelEnum.B1, tags: ["comparison"] },
+  { german: "besser", indonesian: "lebih baik", example: "Das ist besser.", exampleTranslation: "Itu lebih baik.", level: LevelEnum.B1, tags: ["comparison"] },
+  { german: "am besten", indonesian: "paling baik", example: "Das ist am besten.", exampleTranslation: "Itu yang terbaik.", level: LevelEnum.B1, tags: ["comparison"] },
+  { german: "den", indonesian: "artikel Akkusativ (mask.)", example: "Ich sehe den Mann.", exampleTranslation: "Saya melihat pria itu.", level: LevelEnum.B1, tags: ["cases"] },
+  { german: "dem", indonesian: "artikel Dativ (mask.)", example: "Ich helfe dem Mann.", exampleTranslation: "Saya membantu pria itu.", level: LevelEnum.B1, tags: ["cases"] },
+  { german: "für", indonesian: "untuk", example: "Das Geschenk ist für dich.", exampleTranslation: "Hadiah itu untukmu.", level: LevelEnum.B1, tags: ["cases"] },
+  { german: "mit", indonesian: "dengan", example: "Ich komme mit dem Bus.", exampleTranslation: "Saya datang dengan bus.", level: LevelEnum.B1, tags: ["cases"] },
+  { german: "würde", indonesian: "akan (Konjunktiv II)", example: "Ich würde helfen.", exampleTranslation: "Saya akan membantu.", level: LevelEnum.B2, tags: ["subjunctive"] },
+  { german: "hätte", indonesian: "akan punya", example: "Ich hätte Zeit.", exampleTranslation: "Saya akan punya waktu.", level: LevelEnum.B2, tags: ["subjunctive"] },
+  { german: "könnte", indonesian: "bisa (andaikan)", example: "Wir könnten gehen.", exampleTranslation: "Kami bisa pergi.", level: LevelEnum.B2, tags: ["subjunctive"] },
+  { german: "würden", indonesian: "akan (plural)", example: "Wir würden kommen.", exampleTranslation: "Kami akan datang.", level: LevelEnum.B2, tags: ["subjunctive"] },
+  { german: "passiv", indonesian: "pasif", example: "Das wird passiv gesagt.", exampleTranslation: "Itu dikatakan secara pasif.", level: LevelEnum.B2, tags: ["passive_voice"] },
+  { german: "werden", indonesian: "menjadi", example: "Das Haus wird gebaut.", exampleTranslation: "Rumah sedang dibangun.", level: LevelEnum.B2, tags: ["passive_voice"] },
+  { german: "relativ", indonesian: "relatif", example: "Das ist ein relativ wichtiger Punkt.", exampleTranslation: "Itu poin yang relatif penting.", level: LevelEnum.B2, tags: ["subordinate_clauses"] },
+  { german: "ob", indonesian: "apakah", example: "Ich frage, ob er kommt.", exampleTranslation: "Saya bertanya apakah dia datang.", level: LevelEnum.B2, tags: ["subordinate_clauses"] },
+  { german: "um...zu", indonesian: "untuk...", example: "Ich lerne, um die Prüfung zu bestehen.", exampleTranslation: "Saya belajar untuk lulus ujian.", level: LevelEnum.B2, tags: ["subordinate_clauses"] },
+  { german: "Präfix", indonesian: "prefiks", example: "Un- ist ein Präfix.", exampleTranslation: "Un- adalah prefiks.", level: LevelEnum.B2, tags: ["word_formation"] },
+  { german: "Suffix", indonesian: "sufiks", example: "-ung ist ein Suffix.", exampleTranslation: "-ung adalah sufiks.", level: LevelEnum.B2, tags: ["word_formation"] },
+  { german: "Kompositum", indonesian: "kata majemuk", example: "Hausaufgabe ist ein Kompositum.", exampleTranslation: "Hausaufgabe adalah kata majemuk.", level: LevelEnum.B2, tags: ["word_formation"] },
+  { german: "formell", indonesian: "formal", example: "Das ist eine formelle E-Mail.", exampleTranslation: "Itu email formal.", level: LevelEnum.B2, tags: ["formal_language"] },
+  { german: "Rückmeldung", indonesian: "balasan", example: "Ich warte auf Ihre Rückmeldung.", exampleTranslation: "Saya menunggu balasan Anda.", level: LevelEnum.B2, tags: ["formal_language"] },
+  { german: "Bewerbung", indonesian: "lamaran", example: "Ich schicke meine Bewerbung.", exampleTranslation: "Saya mengirim lamaran saya.", level: LevelEnum.B2, tags: ["formal_language"] },
+  { german: "Zustimmung", indonesian: "persetujuan", example: "Danke für die Zustimmung.", exampleTranslation: "Terima kasih atas persetujuannya.", level: LevelEnum.B2, tags: ["formal_language"] },
+  { german: "Ablehnung", indonesian: "penolakan", example: "Die Ablehnung war höflich.", exampleTranslation: "Penolakannya sopan.", level: LevelEnum.B2, tags: ["formal_language"] },
 ];
 
 async function main() {
+  const existingLessons = await prisma.lesson.count();
+  if (existingLessons >= 20) {
+    console.log("Seed sudah lengkap, skip.");
+    return;
+  }
+
   const passwordHash1 = await bcrypt.hash("password123", 12);
   const passwordHash2 = await bcrypt.hash("password456", 12);
 
@@ -572,6 +1096,71 @@ async function main() {
   const vocabWords = await prisma.vocabWord.createMany({
     data: [...vocab, ...moreVocab],
   });
+
+  const vocabForLinks = await prisma.vocabWord.findMany({
+    select: { id: true, tags: true },
+  });
+
+  const lessonLinks: Array<{ lessonSlug: string; tags: string[] }> = [
+    { lessonSlug: "salam-dasar", tags: ["greetings"] },
+    { lessonSlug: "angka-1-20", tags: ["basics"] },
+    { lessonSlug: "kata-ganti-orang", tags: ["basics"] },
+    { lessonSlug: "gender-kata-benda", tags: ["objects"] },
+    { lessonSlug: "kata-kerja-dasar", tags: ["verbs"] },
+    { lessonSlug: "waktu-dan-hari", tags: ["time"] },
+    { lessonSlug: "arah-dan-tempat", tags: ["places"] },
+    { lessonSlug: "makanan-favorit", tags: ["food"] },
+    { lessonSlug: "kegiatan-harian", tags: ["daily"] },
+    { lessonSlug: "waktu-senggang", tags: ["hobbies"] },
+    { lessonSlug: "perfekt-tense", tags: ["past_tense"] },
+    { lessonSlug: "modalverben", tags: ["modal_verbs"] },
+    { lessonSlug: "konjunktionen", tags: ["conjunctions"] },
+    { lessonSlug: "komparativ-superlativ", tags: ["comparison"] },
+    { lessonSlug: "dativ-akkusativ", tags: ["cases"] },
+    { lessonSlug: "konjunktiv-ii", tags: ["subjunctive"] },
+    { lessonSlug: "passiv", tags: ["passive_voice"] },
+    { lessonSlug: "nebensatze", tags: ["subordinate_clauses"] },
+    { lessonSlug: "wortbildung", tags: ["word_formation"] },
+    { lessonSlug: "formelle-sprache", tags: ["formal_language"] },
+  ];
+
+  const lessonBySlug = await prisma.lesson.findMany({
+    select: { id: true, slug: true },
+  });
+
+  const lessonIdBySlug = new Map(
+    lessonBySlug.map((lesson) => [lesson.slug, lesson.id])
+  );
+
+  const vocabIdsByTag = new Map<string, string[]>();
+  for (const word of vocabForLinks) {
+    for (const tag of word.tags) {
+      const existing = vocabIdsByTag.get(tag) ?? [];
+      existing.push(word.id);
+      vocabIdsByTag.set(tag, existing);
+    }
+  }
+
+  const lessonVocabLinks: Array<{ lessonId: string; vocabWordId: string }> = [];
+  for (const link of lessonLinks) {
+    const lessonId = lessonIdBySlug.get(link.lessonSlug);
+    if (!lessonId) {
+      continue;
+    }
+    for (const tag of link.tags) {
+      const vocabIds = vocabIdsByTag.get(tag) ?? [];
+      for (const vocabId of vocabIds) {
+        lessonVocabLinks.push({ lessonId, vocabWordId: vocabId });
+      }
+    }
+  }
+
+  if (lessonVocabLinks.length > 0) {
+    await prisma.lessonVocab.createMany({
+      data: lessonVocabLinks,
+      skipDuplicates: true,
+    });
+  }
 
   const vocabEntries = await prisma.vocabWord.findMany({
     where: { level: LevelEnum.A1 },

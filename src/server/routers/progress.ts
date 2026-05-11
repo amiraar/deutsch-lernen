@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
 import { getCachedUserStats } from "@/lib/cache";
+import { toUserMessage } from "@/lib/toUserMessage";
 import { protectedProcedure, router } from "@/server/trpc";
 
 export const progressRouter = router({
@@ -8,8 +9,13 @@ export const progressRouter = router({
 		try {
 			return await getCachedUserStats(ctx.userId);
 		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			if (message === "User not found") {
+			if (error instanceof TRPCError) {
+				throw error;
+			}
+
+			console.error("[progress.getUserStats]", error);
+			const errorMessage = error instanceof Error ? error.message : "";
+			if (errorMessage === "User not found") {
 				throw new TRPCError({
 					code: "UNAUTHORIZED",
 					message: "Sesi tidak valid. Silakan login kembali.",
@@ -17,7 +23,7 @@ export const progressRouter = router({
 			}
 			throw new TRPCError({
 				code: "INTERNAL_SERVER_ERROR",
-				message: `Gagal mengambil statistik pengguna. ${message}`,
+				message: toUserMessage(error, "Gagal mengambil statistik pengguna."),
 			});
 		}
 	}),
@@ -55,10 +61,14 @@ export const progressRouter = router({
 
 			return { lessons, reviews };
 		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
+			if (error instanceof TRPCError) {
+				throw error;
+			}
+
+			console.error("[progress.getRecentActivity]", error);
 			throw new TRPCError({
 				code: "INTERNAL_SERVER_ERROR",
-				message: `Gagal mengambil aktivitas terbaru. ${message}`,
+				message: toUserMessage(error, "Gagal mengambil aktivitas terbaru."),
 			});
 		}
 	}),

@@ -1,7 +1,10 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
+import { LevelEnum } from "@/generated/prisma/client";
 import { invalidateUserStats } from "@/lib/cache";
 import { calculateNextReview } from "@/lib/srs";
+import { toUserMessage } from "@/lib/toUserMessage";
 import { addWordInput, reviewCardInput } from "@/lib/validations/flashcard";
 import { protectedProcedure, router } from "@/server/trpc";
 
@@ -18,13 +21,54 @@ export const flashcardRouter = router({
 				take: 20,
 			});
 		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
+			if (error instanceof TRPCError) {
+				throw error;
+			}
+
+			console.error("[flashcard.getDueCards]", error);
 			throw new TRPCError({
 				code: "INTERNAL_SERVER_ERROR",
-				message: `Gagal mengambil kartu review. ${message}`,
+				message: toUserMessage(error, "Gagal mengambil kartu review."),
 			});
 		}
 	}),
+
+	searchVocab: protectedProcedure
+		.input(
+			z.object({
+				query: z.string().min(0).max(100),
+				level: z.nativeEnum(LevelEnum).optional(),
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			try {
+				const query = input.query.trim();
+				if (!query) {
+					return [];
+				}
+
+				return await ctx.prisma.vocabWord.findMany({
+					where: {
+						OR: [
+							{ german: { contains: query, mode: "insensitive" } },
+							{ indonesian: { contains: query, mode: "insensitive" } },
+						],
+						...(input.level ? { level: input.level } : {}),
+					},
+					take: 20,
+				});
+			} catch (error) {
+				if (error instanceof TRPCError) {
+					throw error;
+				}
+
+				console.error("[flashcard.searchVocab]", error);
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: toUserMessage(error, "Gagal mencari kosakata."),
+				});
+			}
+		}),
 
 	reviewCard: protectedProcedure
 		.input(reviewCardInput)
@@ -67,10 +111,10 @@ export const flashcardRouter = router({
 					throw error;
 				}
 
-				const message = error instanceof Error ? error.message : "Unknown error";
+				console.error("[flashcard.reviewCard]", error);
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: `Gagal menyimpan review. ${message}`,
+					message: toUserMessage(error, "Gagal menyimpan review."),
 				});
 			}
 		}),
@@ -104,8 +148,9 @@ export const flashcardRouter = router({
 					throw error;
 				}
 
-				const message = error instanceof Error ? error.message : "Unknown error";
-				if (message.includes("Unique constraint")) {
+				console.error("[flashcard.addWordToReview]", error);
+				const errorMessage = error instanceof Error ? error.message : "";
+				if (errorMessage.includes("Unique constraint")) {
 					throw new TRPCError({
 						code: "CONFLICT",
 						message: "Kata ini sudah ada di review.",
@@ -114,7 +159,7 @@ export const flashcardRouter = router({
 
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: `Gagal menambahkan kata. ${message}`,
+					message: toUserMessage(error, "Gagal menambahkan kata."),
 				});
 			}
 		}),

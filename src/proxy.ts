@@ -22,6 +22,16 @@ export async function proxy(request: NextRequest) {
     if (!session) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
+
+    const token = (session as { token?: { onboardingDone?: boolean } }).token;
+    const shouldRedirectToOnboarding =
+      token?.onboardingDone === false &&
+      pathname !== "/onboarding" &&
+      !pathname.startsWith("/api");
+
+    if (shouldRedirectToOnboarding) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
   }
 
   const response = NextResponse.next();

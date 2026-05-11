@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Brain, Layers, Mic } from "lucide-react";
 
 import { Button, Input } from "@/components/ui";
@@ -16,6 +17,7 @@ export default function RegisterPage() {
 	const [password, setPassword] = React.useState("");
 	const [name, setName] = React.useState("");
 	const [error, setError] = React.useState<string | null>(null);
+	const [isLoggingIn, setIsLoggingIn] = React.useState(false);
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -23,7 +25,17 @@ export default function RegisterPage() {
 
 		try {
 			await registerMutation.mutateAsync({ email, password, name });
-			router.push("/login");
+			setIsLoggingIn(true);
+			const result = await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+			});
+			if (result?.error) {
+				router.push("/login");
+			} else {
+				router.push("/dashboard");
+			}
 		} catch (err) {
 			const raw = err instanceof Error ? err.message : "Unknown error";
 			// tRPC wraps Zod validation errors as a JSON array string
@@ -37,6 +49,8 @@ export default function RegisterPage() {
 				// not JSON, fall through
 			}
 			setError(raw);
+		} finally {
+			setIsLoggingIn(false);
 		}
 	};
 
@@ -135,7 +149,7 @@ export default function RegisterPage() {
 						<Button
 							type="submit"
 							className="w-full"
-							isLoading={registerMutation.isPending}
+							isLoading={registerMutation.isPending || isLoggingIn}
 						>
 							Buat Akun
 						</Button>

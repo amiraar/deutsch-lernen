@@ -24,19 +24,24 @@ const DEFAULTS: Required<LogoutOptions> = {
 export function useLogoutWithToast(options: LogoutOptions = {}) {
 	const settings = { ...DEFAULTS, ...options };
 	const [isSigningOut, setIsSigningOut] = React.useState(false);
+	const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
 	const { toast, showToast, clearToast } = useToastMessage({ durationMs: 2500 });
+
+	const requestSignOut = React.useCallback(() => {
+		setIsConfirmOpen(true);
+	}, []);
+
+	const cancelSignOut = React.useCallback(() => {
+		setIsConfirmOpen(false);
+	}, []);
 
 	const handleSignOut = React.useCallback(async () => {
 		if (isSigningOut) {
 			return;
 		}
 
-		const confirmed = window.confirm(settings.confirmMessage);
-		if (!confirmed) {
-			return;
-		}
-
 		try {
+			setIsConfirmOpen(false);
 			setIsSigningOut(true);
 			clearToast();
 			const result = await signOut({
@@ -55,5 +60,5 @@ export function useLogoutWithToast(options: LogoutOptions = {}) {
 		}
 	}, [clearToast, isSigningOut, settings, showToast]);
 
-	return { isSigningOut, toast, handleSignOut };
+	return { isSigningOut, isConfirmOpen, toast, requestSignOut, handleSignOut, cancelSignOut };
 }

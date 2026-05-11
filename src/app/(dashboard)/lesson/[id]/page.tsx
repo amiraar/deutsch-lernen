@@ -1,14 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ExerciseBlock } from "@/components/lesson/ExerciseBlock";
 import type { SerializedExercise } from "@/components/lesson/ExerciseBlock";
 import { LessonContentView } from "@/components/lesson/LessonContent";
 import { LessonProgress } from "@/components/lesson/LessonProgress";
-import { Button, Card, LoadingSpinner, Modal, Toast } from "@/components/ui";
+import { Button, Card, LoadingSpinner, Modal, Toast, XpGainToast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import type { LessonContent } from "@/types/lesson-content";
@@ -24,6 +25,7 @@ type LessonData = {
 export default function LessonPage() {
 	const params = useParams();
 	const lessonId = params?.id as string;
+	const router = useRouter();
 
 	const lessonQuery = trpc.lesson.getLessonById.useQuery({ id: lessonId });
 	const completeMutation = trpc.lesson.completeLesson.useMutation();
@@ -33,6 +35,8 @@ export default function LessonPage() {
 	const [correctCount, setCorrectCount] = React.useState(0);
 	const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 	const [isModalOpen, setIsModalOpen] = React.useState(false);
+	const [xpEarned, setXpEarned] = React.useState(0);
+	const [showXpToast, setShowXpToast] = React.useState(false);
 	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
@@ -60,17 +64,22 @@ export default function LessonPage() {
 	};
 
 	const handleComplete = async (correct: boolean) => {
+		const nextCorrectCount = correctCount + (correct ? 1 : 0);
 		setCorrectCount((prev) => prev + (correct ? 1 : 0));
 
 		if (currentIndex < exercises.length - 1) {
 			setCurrentIndex((prev) => prev + 1);
 		} else {
-			const score = Math.round((correctCount + (correct ? 1 : 0)) / exercises.length * 100);
+			const score = Math.round((nextCorrectCount / exercises.length) * 100);
 			await completeMutation.mutateAsync({
 				lessonId,
 				score,
 			});
-			setIsModalOpen(true);
+			setXpEarned(nextCorrectCount * 10);
+			setShowXpToast(true);
+			window.setTimeout(() => {
+				setIsModalOpen(true);
+			}, 300);
 		}
 	};
 
@@ -105,7 +114,16 @@ export default function LessonPage() {
 					title={lesson!.title}
 					description={lesson!.description}
 				/>
-				<div className="sticky bottom-4">
+				<Link
+					href={`/tutor?lessonId=${encodeURIComponent(lessonId)}`}
+					className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+				>
+					Tanya AI Tutor
+				</Link>
+				<div className="sticky bottom-4 space-y-2">
+					<p className="text-center text-xs text-muted-foreground">
+						{exercises.length} soal latihan
+					</p>
 					<Button className="w-full" size="lg" onClick={handleStartExercises}>
 						Mulai Latihan →
 					</Button>
@@ -157,11 +175,14 @@ export default function LessonPage() {
 							+{correctCount * 10} XP diperoleh
 						</p>
 					</div>
-					<Button className="w-full" onClick={() => (window.location.href = "/dashboard")}>
+					<Button className="w-full" onClick={() => router.push("/dashboard")}>
 						Kembali ke Dashboard
 					</Button>
 				</div>
 			</Modal>
+			{showXpToast ? (
+				<XpGainToast amount={xpEarned} onDone={() => setShowXpToast(false)} />
+			) : null}
 			{toast ? (
 				<Toast message={toast.message} variant={toast.variant} />
 			) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { BookOpen } from "lucide-react";
 
 import type { Message } from "@/types";
 import { trpc } from "@/lib/trpcClient";
@@ -9,6 +10,7 @@ import { Button, Badge, Input } from "@/components/ui";
 type TutorWindowProps = {
 	className?: string;
 	initialMessage?: string;
+	contextNote?: string;
 };
 
 function TypingIndicator() {
@@ -28,7 +30,7 @@ function TypingIndicator() {
 /**
  * Chat window for the AI tutor.
  */
-export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
+export function TutorWindow({ className, initialMessage, contextNote }: TutorWindowProps) {
 	const [messages, setMessages] = React.useState<Message[]>([]);
 	const [input, setInput] = React.useState("");
 	const bottomRef = React.useRef<HTMLDivElement>(null);
@@ -91,6 +93,14 @@ export function TutorWindow({ className, initialMessage }: TutorWindowProps) {
 					) : null}
 				</div>
 			</div>
+			{contextNote ? (
+				<div className="px-4 pt-3">
+					<span className="inline-flex items-center gap-1.5 rounded-full bg-primary/5 px-3 py-1 text-xs text-primary">
+						<BookOpen className="h-3.5 w-3.5" aria-hidden />
+						Konteks: {contextNote}
+					</span>
+				</div>
+			) : null}
 
 			{/* Messages */}
 			<div className="flex-1 space-y-4 overflow-y-auto p-4" style={{ minHeight: "320px", maxHeight: "420px" }}>

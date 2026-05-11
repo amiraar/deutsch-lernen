@@ -15,6 +15,11 @@ const MOBILE_NAV = [
 	{ label: "Profil", href: "/profile", icon: User },
 ];
 
+function isNavActive(href: string, pathname: string): boolean {
+	if (href === "/dashboard") return pathname === "/dashboard";
+	return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function DashboardLayout({
 	children,
 }: {
@@ -33,7 +38,7 @@ export default function DashboardLayout({
 			{/* Mobile bottom nav */}
 			<nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t border-border bg-white px-2 py-2 md:hidden">
 				{MOBILE_NAV.map(({ label, href, icon: Icon }) => {
-					const isActive = pathname === href;
+					const isActive = isNavActive(href, pathname);
 					return (
 						<Link
 							key={href}

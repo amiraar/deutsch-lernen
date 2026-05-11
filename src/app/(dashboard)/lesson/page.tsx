@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CheckCircle2, Clock } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock } from "lucide-react";
 
-import { Badge, Card, LoadingSpinner, Toast } from "@/components/ui";
+import { Badge, Card, EmptyState, PageSkeleton, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { cn } from "@/lib/utils";
@@ -71,11 +71,7 @@ export default function LessonListPage() {
 	}, [clearToast, lessonsQuery.error, showToast]);
 
 	if (lessonsQuery.isLoading) {
-		return (
-			<div className="flex items-center justify-center py-10">
-				<LoadingSpinner label="Memuat pelajaran" />
-			</div>
-		);
+		return <PageSkeleton />;
 	}
 
 	if (lessonsQuery.error) {
@@ -136,9 +132,11 @@ export default function LessonListPage() {
 						</div>
 
 						{total === 0 ? (
-							<Card className="text-sm text-muted-foreground">
-								Belum ada pelajaran untuk level ini.
-							</Card>
+							<EmptyState
+								icon={<BookOpen size={24} className="text-muted-foreground" />}
+								title="Belum ada pelajaran"
+								description="Pelajaran untuk level ini belum tersedia. Coba pilih level lain."
+							/>
 						) : (
 							<div className="grid gap-4 md:grid-cols-2">
 								{group.lessons.map((lesson) => (

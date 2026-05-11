@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 import type { AppRouter } from "@/server/root";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -17,14 +18,22 @@ type DueCard = RouterOutputs["flashcard"]["getDueCards"][number];
 export function FlashcardDeck() {
 	const { data, isLoading, error } = trpc.flashcard.getDueCards.useQuery();
 	const reviewMutation = trpc.flashcard.reviewCard.useMutation();
+	const router = useRouter();
 
 	const [queue, setQueue] = React.useState<DueCard[]>([]);
 	const [completedCount, setCompletedCount] = React.useState(0);
+	const ratingCountsRef = React.useRef<Record<number, number>>({
+		0: 0,
+		1: 0,
+		3: 0,
+		5: 0,
+	});
 
 	React.useEffect(() => {
 		if (data) {
 			setQueue(data);
 			setCompletedCount(0);
+			ratingCountsRef.current = { 0: 0, 1: 0, 3: 0, 5: 0 };
 		}
 	}, [data]);
 
@@ -40,6 +49,7 @@ export function FlashcardDeck() {
 				quality,
 			});
 
+			ratingCountsRef.current[quality] = (ratingCountsRef.current[quality] ?? 0) + 1;
 			setQueue((prev) => prev.slice(1));
 			setCompletedCount((prev) => prev + 1);
 		} catch (err) {
@@ -63,6 +73,25 @@ export function FlashcardDeck() {
 		);
 	}
 
+	if (!queue.length && completedCount > 0) {
+		const ratingCounts = ratingCountsRef.current;
+		return (
+			<Card className="space-y-4 text-center">
+				<p className="text-lg font-semibold text-foreground">Sesi selesai!</p>
+				<p className="text-sm text-muted-foreground">
+					Kamu telah mereview {completedCount} kartu.
+				</p>
+				<div className="space-y-1 text-sm text-muted-foreground">
+					<p>Lagi: {ratingCounts[0] ?? 0} kartu</p>
+					<p>Sulit: {ratingCounts[1] ?? 0} kartu</p>
+					<p>Oke: {ratingCounts[3] ?? 0} kartu</p>
+					<p>Mudah: {ratingCounts[5] ?? 0} kartu</p>
+				</div>
+				<Button onClick={() => router.push("/dashboard")}>Selesai</Button>
+			</Card>
+		);
+	}
+
 	if (!queue.length) {
 		return (
 			<Card className="space-y-3 text-center">
@@ -70,9 +99,6 @@ export function FlashcardDeck() {
 				<p className="text-sm text-muted-foreground">
 					Kamu telah mereview {completedCount} kartu.
 				</p>
-				<Button variant="secondary" onClick={() => window.location.reload()}>
-					Cek lagi
-				</Button>
 			</Card>
 		);
 	}

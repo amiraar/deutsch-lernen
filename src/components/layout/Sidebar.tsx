@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
-import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
+import { Badge, Button, Card, ConfirmDialog, LoadingSpinner, Toast } from "@/components/ui";
 import type { BadgeVariant } from "@/components/ui/Badge";
 import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
 import { trpc } from "@/lib/trpcClient";
@@ -31,13 +31,25 @@ const NAV_ITEMS = [
 	{ label: "Profil", href: "/profile", icon: User },
 ];
 
+function isNavActive(href: string, pathname: string): boolean {
+	if (href === "/dashboard") return pathname === "/dashboard";
+	return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 /**
  * Sidebar navigation for the dashboard layout.
  */
 export function Sidebar() {
 	const pathname = usePathname();
 	const { data, isLoading, error } = trpc.progress.getUserStats.useQuery();
-	const { isSigningOut, toast, handleSignOut } = useLogoutWithToast();
+	const {
+		isSigningOut,
+		isConfirmOpen,
+		toast,
+		requestSignOut,
+		handleSignOut,
+		cancelSignOut,
+	} = useLogoutWithToast();
 
 	React.useEffect(() => {
 		if (error?.data?.code === "UNAUTHORIZED") {
@@ -61,7 +73,7 @@ export function Sidebar() {
 				{/* Nav */}
 				<nav className="p-3">
 					{NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-						const isActive = pathname === href || (href !== "/dashboard" && pathname.startsWith(href.split("/")[1] ? `/${href.split("/")[1]}` : href));
+						const isActive = isNavActive(href, pathname);
 						return (
 							<Link
 								key={href}
@@ -110,7 +122,7 @@ export function Sidebar() {
 								variant="danger"
 								size="sm"
 								isLoading={isSigningOut}
-								onClick={handleSignOut}
+								onClick={requestSignOut}
 							>
 								Keluar
 							</Button>
@@ -120,6 +132,16 @@ export function Sidebar() {
 			{toast ? (
 				<Toast message={toast.message} variant={toast.variant} />
 			) : null}
+				<ConfirmDialog
+					isOpen={isConfirmOpen}
+					title="Keluar"
+					description="Yakin ingin keluar?"
+					confirmLabel="Keluar"
+					cancelLabel="Batal"
+					variant="danger"
+					onConfirm={handleSignOut}
+					onCancel={cancelSignOut}
+				/>
 		</aside>
 	);
 }

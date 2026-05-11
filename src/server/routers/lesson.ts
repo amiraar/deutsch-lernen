@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { LevelEnum } from "@/generated/prisma/client";
 import { getCachedLesson, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
 import { get, set, del } from "@/lib/redis";
+import { toUserMessage } from "@/lib/toUserMessage";
 import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";
 import { protectedProcedure, router } from "@/server/trpc";
 
@@ -89,10 +90,14 @@ export const lessonRouter = router({
 				await set(cacheKey, result, LESSON_TTL);
 				return result;
 			} catch (error) {
-				const message = error instanceof Error ? error.message : "Unknown error";
+				if (error instanceof TRPCError) {
+					throw error;
+				}
+
+				console.error("[lesson.getLessons]", error);
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: `Gagal mengambil daftar pelajaran. ${message}`,
+					message: toUserMessage(error, "Gagal mengambil daftar pelajaran."),
 				});
 			}
 		}),
@@ -164,6 +169,22 @@ export const lessonRouter = router({
 						select: { xp: true, streakDays: true },
 					});
 
+					const lessonVocab = await tx.lessonVocab.findMany({
+						where: { lessonId: input.lessonId },
+						select: { vocabWordId: true },
+					});
+
+					if (lessonVocab.length > 0) {
+						await tx.flashcardReview.createMany({
+							data: lessonVocab.map((entry) => ({
+								userId: ctx.userId,
+								vocabWordId: entry.vocabWordId,
+								nextReviewAt: now,
+							})),
+							skipDuplicates: true,
+						});
+					}
+
 					return { completion, updatedUser };
 				});
 
@@ -181,10 +202,10 @@ export const lessonRouter = router({
 					throw error;
 				}
 
-				const message = error instanceof Error ? error.message : "Unknown error";
+				console.error("[lesson.completeLesson]", error);
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: `Gagal menyelesaikan pelajaran. ${message}`,
+					message: toUserMessage(error, "Gagal menyelesaikan pelajaran."),
 				});
 			}
 		}),

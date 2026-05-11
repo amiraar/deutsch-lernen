@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Sparkles } from "lucide-react";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { TutorWindow } from "@/components/tutor/TutorWindow";
+import { trpc } from "@/lib/trpcClient";
 
 const SUGGESTIONS = [
 	"Koreksi kalimat saya",
@@ -17,9 +19,26 @@ const SUGGESTIONS = [
 export default function TutorPage() {
 	const [initialMessage, setInitialMessage] = React.useState("");
 	const [key, setKey] = React.useState(0);
+	const searchParams = useSearchParams();
+	const lessonId = searchParams.get("lessonId");
+
+	const lessonQuery = trpc.lesson.getLessonById.useQuery(
+		{ id: lessonId ?? "" },
+		{
+			enabled: Boolean(lessonId),
+			refetchOnWindowFocus: false,
+			staleTime: 5 * 60 * 1000,
+		}
+	);
+
+	const lessonTitle = lessonQuery.data?.title;
+	const contextPrefix = lessonTitle
+		? `Saya sedang belajar lesson '${lessonTitle}'. `
+		: "";
 
 	const handleSuggestion = (text: string) => {
-		setInitialMessage(text);
+		const message = contextPrefix ? `${contextPrefix}${text}` : text;
+		setInitialMessage(message);
 		setKey((k) => k + 1);
 	};
 
@@ -49,7 +68,11 @@ export default function TutorPage() {
 			</div>
 
 			<ErrorBoundary>
-				<TutorWindow key={key} initialMessage={initialMessage} />
+				<TutorWindow
+					key={key}
+					initialMessage={initialMessage}
+					contextNote={lessonTitle}
+				/>
 			</ErrorBoundary>
 		</div>
 	);

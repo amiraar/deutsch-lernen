@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import type { LessonContent } from "@/types/lesson-content";
+import { CulturalNote } from "@/components/lesson/CulturalNote";
 import { Card } from "@/components/ui";
 
 type LessonContentProps = {
@@ -59,6 +60,13 @@ export function LessonContentView({ content, title, description }: LessonContent
 							</tbody>
 						</table>
 					</div>
+
+					{section.culturalNote ? (
+						<CulturalNote
+							title={section.culturalNote.title}
+							content={section.culturalNote.content}
+						/>
+					) : null}
 
 					{section.tip ? (
 						<div className="rounded-lg border border-primary/20 bg-primary/10 px-4 py-3">

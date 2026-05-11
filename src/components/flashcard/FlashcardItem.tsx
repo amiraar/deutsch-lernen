@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { Eye } from "lucide-react";
 
 import type { AppRouter } from "@/server/root";
 import type { inferRouterOutputs } from "@trpc/server";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui";
+import { Badge, Button } from "@/components/ui";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 type VocabWordSerialized =
@@ -52,6 +53,14 @@ const RATING_BUTTONS: {
  */
 export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 	const [isFlipped, setIsFlipped] = React.useState(false);
+	const hasFlipped = React.useRef(false);
+
+	const handleFlip = () => {
+		hasFlipped.current = true;
+		setIsFlipped(true);
+	};
+
+	const shouldPulse = !isFlipped && !hasFlipped.current;
 
 	return (
 		<div className="w-full space-y-4">
@@ -70,13 +79,22 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 							"absolute inset-0 flex h-full w-full cursor-pointer flex-col items-center justify-center gap-4",
 							"rounded-2xl border border-border bg-card shadow-sm [backface-visibility:hidden]"
 						)}
-						onClick={() => setIsFlipped(true)}
+						onClick={handleFlip}
 					>
 						<Badge variant={word.level as "A1" | "A2" | "B1" | "B2"}>
 							{word.level}
 						</Badge>
 						<p className="text-3xl font-bold text-foreground">{word.german}</p>
-						<p className="text-xs text-muted-foreground">Ketuk untuk melihat arti</p>
+						<div className={cn(shouldPulse ? "animate-pulse" : "")}>
+							<Button
+								variant="secondary"
+								size="sm"
+								leftIcon={<Eye size={16} />}
+								onClick={handleFlip}
+							>
+								Lihat Arti
+							</Button>
+						</div>
 					</div>
 
 					{/* Back */}

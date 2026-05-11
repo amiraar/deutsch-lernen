@@ -2,7 +2,7 @@
 
 import { User, Mail, Award, Zap } from "lucide-react";
 
-import { Badge, Button, Card, LoadingSpinner, Toast } from "@/components/ui";
+import { Badge, Button, Card, ConfirmDialog, PageSkeleton, Toast } from "@/components/ui";
 import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
 import { trpc } from "@/lib/trpcClient";
 import { LEVEL_LABELS } from "@/constants";
@@ -10,14 +10,17 @@ import { LEVEL_LABELS } from "@/constants";
 export default function ProfilePage() {
 	const meQuery = trpc.auth.me.useQuery();
 	const statsQuery = trpc.progress.getUserStats.useQuery();
-	const { isSigningOut, toast, handleSignOut } = useLogoutWithToast();
+	const {
+		isSigningOut,
+		isConfirmOpen,
+		toast,
+		requestSignOut,
+		handleSignOut,
+		cancelSignOut,
+	} = useLogoutWithToast();
 
 	if (meQuery.isLoading) {
-		return (
-			<div className="flex items-center gap-2 text-sm text-muted-foreground">
-				<LoadingSpinner size="sm" /> Memuat profil...
-			</div>
-		);
+		return <PageSkeleton />;
 	}
 
 	if (meQuery.error || !meQuery.data) {
@@ -102,13 +105,23 @@ export default function ProfilePage() {
 			<Button
 				variant="danger"
 				isLoading={isSigningOut}
-				onClick={handleSignOut}
+				onClick={requestSignOut}
 			>
 				Keluar
 			</Button>
 			{toast ? (
 				<Toast message={toast.message} variant={toast.variant} />
 			) : null}
+			<ConfirmDialog
+				isOpen={isConfirmOpen}
+				title="Keluar"
+				description="Yakin ingin keluar?"
+				confirmLabel="Keluar"
+				cancelLabel="Batal"
+				variant="danger"
+				onConfirm={handleSignOut}
+				onCancel={cancelSignOut}
+			/>
 		</div>
 	);
 }

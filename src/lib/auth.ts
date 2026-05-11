@@ -5,21 +5,12 @@ import { z } from "zod";
 
 import prisma from "@/lib/prisma";
 import { checkAuthLimit } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/getClientIp";
 
 const credentialsSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(1),
 });
-
-function getClientIp(request: Request): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const ips = forwardedFor.split(",").map((ip) => ip.trim()).filter(Boolean);
-    // Last IP is appended by the trusted proxy — harder to spoof
-    return ips[ips.length - 1] ?? "unknown";
-  }
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	session: { strategy: "jwt" },
@@ -93,17 +84,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 				if (needsSync) {
 					try {
-					const fresh = await prisma.user.findUnique({
-						where: { id: token.id as string },
-						select: { level: true, xp: true },
-					});
-					if (fresh) {
-						token.level = fresh.level;
-						token.xp = fresh.xp;
-						token.syncedAt = now;
-					}
+						const fresh = await prisma.user.findUnique({
+							where: { id: token.id as string },
+							select: { level: true, xp: true, lastStudiedAt: true },
+						});
+						if (fresh) {
+							token.level = fresh.level;
+							token.xp = fresh.xp;
+							token.onboardingDone = fresh.lastStudiedAt !== null;
+							token.syncedAt = now;
+						}
 					} catch {
-					// Non-fatal: keep stale values rather than breaking auth
+						// Non-fatal: keep stale values rather than breaking auth
 					}
 				}
 			}

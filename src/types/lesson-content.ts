@@ -8,6 +8,10 @@ export type LessonContentSection = {
 	title: string;
 	explanation: string;
 	examples: LessonContentExample[];
+	culturalNote?: {
+		title: string;
+		content: string;
+	};
 	tip?: string;
 };
 
