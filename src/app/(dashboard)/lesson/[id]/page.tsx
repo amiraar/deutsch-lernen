@@ -14,11 +14,16 @@ import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import type { LessonContent } from "@/types/lesson-content";
 
-type LessonData = {
+type LessonMetaData = {
 	id: string;
 	title: string;
 	description: string;
 	content: LessonContent | null;
+	exercisesCount: number;
+};
+
+type LessonWithExercises = {
+	id: string;
 	exercises?: SerializedExercise[];
 };
 
@@ -27,7 +32,11 @@ export default function LessonPage() {
 	const lessonId = params?.id as string;
 	const router = useRouter();
 
-	const lessonQuery = trpc.lesson.getLessonById.useQuery({ id: lessonId });
+	const lessonMetaQuery = trpc.lesson.getLessonMeta.useQuery({ id: lessonId });
+	const exercisesQuery = trpc.lesson.getLessonById.useQuery(
+		{ id: lessonId },
+		{ enabled: false }
+	);
 	const completeMutation = trpc.lesson.completeLesson.useMutation();
 
 	const [phase, setPhase] = React.useState<"content" | "exercises">("content");
@@ -37,6 +46,7 @@ export default function LessonPage() {
 	const [isModalOpen, setIsModalOpen] = React.useState(false);
 	const [xpEarned, setXpEarned] = React.useState(0);
 	const [showXpToast, setShowXpToast] = React.useState(false);
+	const [isStartingExercises, setIsStartingExercises] = React.useState(false);
 	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
@@ -48,18 +58,28 @@ export default function LessonPage() {
 	}, [phase]);
 
 	React.useEffect(() => {
-		if (lessonQuery.error) {
+		if (lessonMetaQuery.error) {
 			showToast("Gagal memuat pelajaran. Coba lagi.", "error");
 		} else {
 			clearToast();
 		}
-	}, [clearToast, lessonQuery.error, showToast]);
+	}, [clearToast, lessonMetaQuery.error, showToast]);
 
-	const lesson = lessonQuery.data as LessonData | undefined;
-	const exercises = lesson?.exercises ?? [];
+	const lessonMeta = lessonMetaQuery.data as LessonMetaData | undefined;
+	const lessonWithExercises = exercisesQuery.data as LessonWithExercises | undefined;
+	const exercises = lessonWithExercises?.exercises ?? [];
 	const current = exercises[currentIndex];
 
-	const handleStartExercises = () => {
+	const handleStartExercises = async () => {
+		setIsStartingExercises(true);
+		const result = await exercisesQuery.refetch();
+		setIsStartingExercises(false);
+
+		if (result.error || !result.data) {
+			showToast("Gagal memuat latihan. Coba lagi.", "error");
+			return;
+		}
+
 		setPhase("exercises");
 	};
 
@@ -83,7 +103,7 @@ export default function LessonPage() {
 		}
 	};
 
-	if (lessonQuery.isLoading) {
+	if (lessonMetaQuery.isLoading) {
 		return (
 			<div className="flex items-center justify-center py-10">
 				<LoadingSpinner label="Memuat pelajaran" />
@@ -91,11 +111,11 @@ export default function LessonPage() {
 		);
 	}
 
-	if (lessonQuery.error || !lessonQuery.data) {
+	if (lessonMetaQuery.error || !lessonMetaQuery.data) {
 		return (
 			<div className="space-y-3">
 				<Card className="text-sm text-destructive">
-					{lessonQuery.error?.message ?? "Pelajaran tidak ditemukan."}
+					{lessonMetaQuery.error?.message ?? "Pelajaran tidak ditemukan."}
 				</Card>
 				{toast ? (
 					<Toast message={toast.message} variant={toast.variant} />
@@ -104,15 +124,19 @@ export default function LessonPage() {
 		);
 	}
 
-	const hasContent = lesson?.content && typeof lesson.content === "object" && "introduction" in lesson.content;
+	const hasContent =
+		lessonMeta?.content &&
+		typeof lessonMeta.content === "object" &&
+		"introduction" in lessonMeta.content;
 
 	if (phase === "content" && hasContent) {
+		const exercisesCount = lessonMeta?.exercisesCount ?? 0;
 		return (
 			<div className="space-y-6">
 				<LessonContentView
-					content={lesson!.content as LessonContent}
-					title={lesson!.title}
-					description={lesson!.description}
+					content={lessonMeta!.content as LessonContent}
+					title={lessonMeta!.title}
+					description={lessonMeta!.description}
 				/>
 				<Link
 					href={`/tutor?lessonId=${encodeURIComponent(lessonId)}`}
@@ -122,10 +146,15 @@ export default function LessonPage() {
 				</Link>
 				<div className="sticky bottom-4 space-y-2">
 					<p className="text-center text-xs text-muted-foreground">
-						{exercises.length} soal latihan
+						{exercisesCount} soal latihan
 					</p>
-					<Button className="w-full" size="lg" onClick={handleStartExercises}>
-						Mulai Latihan →
+					<Button
+						className="w-full"
+						size="lg"
+						onClick={handleStartExercises}
+						disabled={isStartingExercises}
+					>
+						{isStartingExercises ? "Memuat latihan..." : "Mulai Latihan →"}
 					</Button>
 				</div>
 				{toast ? (

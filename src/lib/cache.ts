@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { del, get, set } from "@/lib/redis";
 
 export const LESSON_TTL = 60 * 60;
+export const LESSON_META_TTL = 60 * 60;
 export const VOCAB_TTL = 60 * 60 * 24;
 export const USER_STATS_TTL = 60 * 2; // 2 minutes — shorter window reduces stale data risk
 export const SRS_QUEUE_TTL = 60;
@@ -75,6 +76,10 @@ function lessonKey(id: string): string {
 	return `lesson:${id}`;
 }
 
+function lessonMetaKey(id: string): string {
+	return `lesson-meta:${id}`;
+}
+
 function vocabKey(level: string): string {
 	return `vocab:${level}`;
 }
@@ -109,6 +114,54 @@ export async function getCachedLesson(id: string) {
 	}
 
 	return lesson;
+}
+
+type LessonMetaCache = {
+	id: string;
+	title: string;
+	description: string;
+	content: unknown;
+	exercisesCount: number;
+};
+
+/**
+ * Reads a lesson without exercises from cache, then falls back to Prisma.
+ */
+export async function getCachedLessonMeta(id: string): Promise<LessonMetaCache | null> {
+	if (!id) {
+		throw new Error("Lesson id is required");
+	}
+
+	const safeCached = await safeGet<LessonMetaCache>(lessonMetaKey(id));
+	if (safeCached) {
+		return safeCached;
+	}
+
+	const lesson = await prisma.lesson.findUnique({
+		where: { id },
+		select: {
+			id: true,
+			title: true,
+			description: true,
+			content: true,
+			_count: { select: { exercises: true } },
+		},
+	});
+
+	if (!lesson) {
+		return null;
+	}
+
+	const meta = {
+		id: lesson.id,
+		title: lesson.title,
+		description: lesson.description,
+		content: lesson.content,
+		exercisesCount: lesson._count.exercises,
+	};
+
+	await safeSet(lessonMetaKey(id), meta, LESSON_META_TTL);
+	return meta;
 }
 
 /**

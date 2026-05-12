@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
 import { LevelEnum } from "@/generated/prisma/client";
-import { getCachedLesson, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
+import { getCachedLesson, getCachedLessonMeta, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
 import { get, set, del } from "@/lib/redis";
 import { toUserMessage } from "@/lib/toUserMessage";
 import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";
@@ -100,6 +100,21 @@ export const lessonRouter = router({
 					message: toUserMessage(error, "Gagal mengambil daftar pelajaran."),
 				});
 			}
+		}),
+
+	getLessonMeta: protectedProcedure
+		.input(getLessonByIdInput)
+		.query(async ({ input }) => {
+			const lesson = await getCachedLessonMeta(input.id);
+
+			if (!lesson) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Pelajaran tidak ditemukan.",
+				});
+			}
+
+			return lesson;
 		}),
 
 	getLessonById: protectedProcedure

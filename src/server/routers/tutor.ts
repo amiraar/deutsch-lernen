@@ -80,7 +80,7 @@ export const tutorRouter = router({
 	evaluatePronunciation: aiProcedure
 		.input(
 			z.object({
-				audioBase64: z.string().min(1),
+				audioBase64: z.string().min(1).max(5_000_000),
 				expectedText: z.string().min(1),
 			})
 		)
