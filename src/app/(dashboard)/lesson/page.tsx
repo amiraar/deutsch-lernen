@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { BookOpen, CheckCircle2, Clock } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, Search } from "lucide-react";
 
-import { Badge, Card, EmptyState, PageSkeleton, Toast } from "@/components/ui";
+import { Badge, Card, EmptyState, Input, PageSkeleton, Toast } from "@/components/ui";
 import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { cn } from "@/lib/utils";
@@ -48,6 +48,7 @@ function FilterButton({
 
 export default function LessonListPage() {
 	const [selectedLevel, setSelectedLevel] = React.useState<"all" | Level>("all");
+	const [searchQuery, setSearchQuery] = React.useState("");
 	const lessonsQuery = trpc.lesson.getLessons.useQuery();
 	const { toast, showToast, clearToast } = useToastMessage();
 
@@ -57,10 +58,16 @@ export default function LessonListPage() {
 		lessons: lessons.filter((lesson) => lesson.level === level),
 	}));
 
+	const query = searchQuery.trim().toLowerCase();
 	const visibleGroups =
-		selectedLevel === "all"
-			? grouped
-			: grouped.filter((group) => group.level === selectedLevel);
+		(selectedLevel === "all" ? grouped : grouped.filter((group) => group.level === selectedLevel))
+			.map((group) => ({
+				...group,
+				lessons: query
+					? group.lessons.filter((l) => l.title.toLowerCase().includes(query))
+					: group.lessons,
+			}))
+			.filter((group) => !query || group.lessons.length > 0);
 
 	React.useEffect(() => {
 		if (lessonsQuery.error) {
@@ -96,6 +103,19 @@ export default function LessonListPage() {
 				</p>
 			</div>
 
+			<div className="relative">
+				<Search
+					size={15}
+					className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+				/>
+				<Input
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					placeholder="Cari pelajaran..."
+					className="pl-8"
+				/>
+			</div>
+
 			<div className="flex flex-wrap gap-2">
 				<FilterButton
 					label="Semua"
@@ -111,6 +131,14 @@ export default function LessonListPage() {
 					/>
 				))}
 			</div>
+
+			{visibleGroups.length === 0 && query ? (
+				<EmptyState
+					icon={<Search size={24} className="text-muted-foreground" />}
+					title="Pelajaran tidak ditemukan"
+					description={`Tidak ada pelajaran yang cocok dengan "${searchQuery}".`}
+				/>
+			) : null}
 
 			{visibleGroups.map((group) => {
 				const completed = group.lessons.filter((lesson) => lesson.isCompleted)

@@ -3,6 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import { Flame, Trophy, BookOpen, Layers, ArrowRight, Clock } from "lucide-react";
+import {
+	Bar,
+	BarChart,
+	Cell,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 
 import { signOut } from "next-auth/react";
 
@@ -101,6 +110,41 @@ export default function DashboardPage() {
 
 	const nextLesson = lessonsQuery.data?.find((l: { isCompleted: boolean }) => !l.isCompleted);
 	const dueCount = dueCardsQuery.data?.length ?? 0;
+
+	const DAY_LABELS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+	const weeklyActivity = React.useMemo(() => {
+		return Array.from({ length: 7 }, (_, i) => {
+			const date = new Date();
+			date.setHours(0, 0, 0, 0);
+			date.setDate(date.getDate() - (6 - i));
+			const next = new Date(date);
+			next.setDate(next.getDate() + 1);
+			const count =
+				activityQuery.data?.lessons?.filter((l: RecentLesson) => {
+					const d = new Date(l.completedAt);
+					return d >= date && d < next;
+				}).length ?? 0;
+			return { day: DAY_LABELS[date.getDay()]!, count, isToday: i === 6 };
+		});
+	}, [activityQuery.data]);
+
+	const levelCompletion = React.useMemo(() => {
+		if (!lessonsQuery.data) return [];
+		return LEVEL_ORDER.map((lvl) => {
+			const all = lessonsQuery.data.filter(
+				(l: { level: string }) => l.level === lvl
+			);
+			const done = (all as { isCompleted: boolean }[]).filter(
+				(l) => l.isCompleted
+			).length;
+			return {
+				level: lvl,
+				completed: done,
+				total: all.length,
+				pct: all.length > 0 ? Math.round((done / all.length) * 100) : 0,
+			};
+		});
+	}, [lessonsQuery.data]);
 
 	return (
 		<div className="space-y-8">
@@ -261,7 +305,85 @@ export default function DashboardPage() {
 							</div>
 						</Card>
 					) : null}
+
+					{/* Weekly activity chart */}
+					<Card variant="elevated" className="space-y-3">
+						<h3 className="text-sm font-semibold text-foreground">
+							Aktivitas 7 Hari Terakhir
+						</h3>
+						{activityQuery.isLoading ? (
+							<div className="h-32 animate-pulse rounded bg-slate-100" />
+						) : (
+							<ResponsiveContainer width="100%" height={120}>
+								<BarChart data={weeklyActivity} barSize={24}>
+									<XAxis
+										dataKey="day"
+										tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+										axisLine={false}
+										tickLine={false}
+									/>
+									<YAxis hide allowDecimals={false} />
+									<Tooltip
+										cursor={{ fill: "transparent" }}
+										contentStyle={{
+											fontSize: 12,
+											borderRadius: 8,
+											border: "1px solid var(--border)",
+										}}
+										formatter={(value) => [
+											`${value as number} pelajaran`,
+											"Selesai",
+										]}
+									/>
+									<Bar dataKey="count" radius={[4, 4, 0, 0]}>
+										{weeklyActivity.map((entry) => (
+											<Cell
+												key={entry.day}
+												fill={
+													entry.isToday
+														? "hsl(var(--primary))"
+														: "hsl(var(--primary) / 0.25)"
+												}
+											/>
+										))}
+									</Bar>
+								</BarChart>
+							</ResponsiveContainer>
+						)}
+					</Card>
 				</div>
+
+				{/* Right sidebar */}
+			<div className="space-y-6">
+				{/* Level completion */}
+				<Card variant="elevated" className="space-y-4">
+					<h3 className="text-sm font-semibold text-foreground">
+						Progress per Level
+					</h3>
+					<div className="space-y-3">
+						{levelCompletion.map(({ level: lvl, completed, total, pct }) => (
+							<div key={lvl} className="space-y-1">
+								<div className="flex items-center justify-between text-xs">
+									<div className="flex items-center gap-1.5">
+										<Badge variant={lvl}>{lvl}</Badge>
+										<span className="text-muted-foreground">
+											{completed}/{total}
+										</span>
+									</div>
+									<span className="font-medium text-foreground">{pct}%</span>
+								</div>
+								<ProgressBar value={pct} />
+							</div>
+						))}
+						{!lessonsQuery.data ? (
+							<div className="space-y-3">
+								{[1, 2, 3, 4].map((i) => (
+									<div key={i} className="h-6 animate-pulse rounded bg-slate-200" />
+								))}
+							</div>
+						) : null}
+					</div>
+				</Card>
 
 				{/* Recent activity */}
 				<Card variant="elevated" className="h-fit space-y-4">
@@ -287,6 +409,7 @@ export default function DashboardPage() {
 					</ul>
 				</Card>
 			</div>
+		</div>
 			{toast ? (
 				<Toast message={toast.message} variant={toast.variant} />
 			) : null}

@@ -20,29 +20,39 @@ export type FlashcardItemProps = {
 const RATING_BUTTONS: {
 	quality: 0 | 1 | 3 | 5;
 	label: string;
+	key: string;
+	ariaLabel: string;
 	className: string;
 }[] = [
 	{
 		quality: 0,
 		label: "Lagi",
+		key: "1",
+		ariaLabel: "Tidak ingat – ulangi secepatnya (tekan 1)",
 		className:
 			"border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100",
 	},
 	{
 		quality: 1,
 		label: "Sulit",
+		key: "2",
+		ariaLabel: "Sulit – sedikit ingat (tekan 2)",
 		className:
 			"border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100",
 	},
 	{
 		quality: 3,
 		label: "Oke",
+		key: "3",
+		ariaLabel: "Oke – ingat dengan usaha (tekan 3)",
 		className:
 			"border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-100",
 	},
 	{
 		quality: 5,
 		label: "Mudah",
+		key: "4",
+		ariaLabel: "Mudah – ingat dengan jelas (tekan 4)",
 		className:
 			"border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100",
 	},
@@ -54,11 +64,37 @@ const RATING_BUTTONS: {
 export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 	const [isFlipped, setIsFlipped] = React.useState(false);
 	const hasFlipped = React.useRef(false);
+	const flipButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
 	const handleFlip = () => {
 		hasFlipped.current = true;
 		setIsFlipped(true);
 	};
+
+	// Auto-focus flip button on new card so Space/Enter works immediately
+	React.useEffect(() => {
+		flipButtonRef.current?.focus();
+	}, [word.id]);
+
+	// Keyboard shortcuts: 1-4 to rate when flipped
+	React.useEffect(() => {
+		if (!isFlipped) return;
+		const map: Record<string, 0 | 1 | 3 | 5> = {
+			"1": 0,
+			"2": 1,
+			"3": 3,
+			"4": 5,
+		};
+		const handleKeyDown = (e: KeyboardEvent) => {
+			const quality = map[e.key];
+			if (quality !== undefined) {
+				e.preventDefault();
+				onRate(quality);
+			}
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isFlipped, onRate]);
 
 	const shouldPulse = !isFlipped && !hasFlipped.current;
 
@@ -87,6 +123,7 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 						<p className="text-3xl font-bold text-foreground">{word.german}</p>
 						<div className={cn(shouldPulse ? "animate-pulse" : "")}>
 							<Button
+								ref={flipButtonRef}
 								variant="secondary"
 								size="sm"
 								leftIcon={<Eye size={16} />}
@@ -122,9 +159,10 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 			{/* Rating buttons — only shown when flipped */}
 			{isFlipped ? (
 				<div className="grid grid-cols-4 gap-2">
-					{RATING_BUTTONS.map(({ quality, label, className }) => (
+					{RATING_BUTTONS.map(({ quality, label, ariaLabel, className }) => (
 						<button
 							key={quality}
+							aria-label={ariaLabel}
 							onClick={() => onRate(quality)}
 							className={cn(
 								"rounded-xl border py-3 text-sm font-semibold transition-colors",

@@ -21,7 +21,7 @@ export type SerializedExercise = {
 
 type ExerciseBlockProps = {
 	exercise: SerializedExercise;
-	onComplete: (correct: boolean) => void;
+	onComplete: (correct: boolean, userAnswer: string) => void;
 };
 
 const XP_PER_EXERCISE = 10;
@@ -69,7 +69,7 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 		if (!correct) {
 			setShakeKey((value) => value + 1);
 		}
-		onComplete(correct);
+		onComplete(correct, option);
 	};
 
 	return (
@@ -130,7 +130,7 @@ function FillInBlank({ exercise, onComplete }: ExerciseBlockProps) {
 		const correct =
 			normalizeAnswer(value) === normalizeAnswer(exercise.correctAnswer);
 		setIsCorrect(correct);
-		onComplete(correct);
+		onComplete(correct, value);
 	};
 
 	return (
@@ -177,7 +177,7 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 			});
 			setIsCorrect(result.isCorrect);
 			setFeedback(result.feedback);
-			onComplete(result.isCorrect);
+			onComplete(result.isCorrect, value);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Unknown error";
 			setFeedback(`Gagal mengevaluasi tulisan. ${message}`);
@@ -286,7 +286,7 @@ function Pronunciation({ exercise, onComplete }: ExerciseBlockProps) {
 				} finally {
 					setIsEvaluating(false);
 					setIsCorrect(true);
-					onComplete(true);
+				onComplete(true, "🎤");
 				}
 			};
 

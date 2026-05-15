@@ -58,8 +58,8 @@ export function Sidebar() {
 	}, [error]);
 
 	return (
-		<aside className="hidden w-64 flex-col justify-between border-r border-border bg-white md:flex">
-			<div>
+		<aside className="hidden w-64 flex-col border-r border-border bg-white md:flex">
+			<div className="flex flex-1 flex-col overflow-y-auto">
 				{/* Logo */}
 				<div className="border-b border-border px-6 py-5">
 					<div className="flex items-center gap-2">

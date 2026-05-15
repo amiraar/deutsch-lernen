@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -78,7 +79,15 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 					className
 				)}
 			>
-				{title ? <h2 className="text-lg font-semibold">{title}</h2> : null}
+				<button
+					type="button"
+					aria-label="Tutup dialog"
+					className="absolute right-4 top-4 rounded-sm p-1 text-muted-foreground opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring"
+					onClick={onClose}
+				>
+					<X size={18} />
+				</button>
+				{title ? <h2 className="pr-6 text-lg font-semibold">{title}</h2> : null}
 				<div className="mt-4">{children}</div>
 			</div>
 		</div>

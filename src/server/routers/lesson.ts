@@ -104,7 +104,7 @@ export const lessonRouter = router({
 
 	getLessonMeta: protectedProcedure
 		.input(getLessonByIdInput)
-		.query(async ({ input }) => {
+		.query(async ({ ctx, input }) => {
 			const lesson = await getCachedLessonMeta(input.id);
 
 			if (!lesson) {
@@ -114,7 +114,12 @@ export const lessonRouter = router({
 				});
 			}
 
-			return lesson;
+			const completion = await ctx.prisma.lessonCompletion.findFirst({
+				where: { lessonId: input.id, userId: ctx.userId },
+				select: { id: true },
+			});
+
+			return { ...lesson, isCompleted: completion !== null };
 		}),
 
 	getLessonById: protectedProcedure
