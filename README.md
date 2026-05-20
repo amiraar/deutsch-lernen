@@ -1,6 +1,6 @@
 # Deutsch Lernen
 
-Platform belajar bahasa Jerman berbasis AI dengan tRPC, Prisma, NextAuth, dan Redis.
+Platform belajar bahasa Jerman berbasis AI dengan tRPC, Prisma, NextAuth, dan Redis
 
 ## Setup Lokal
 
