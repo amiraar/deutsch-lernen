@@ -5,7 +5,7 @@ import { BookOpen } from "lucide-react";
 
 import type { Message } from "@/types";
 import { trpc } from "@/lib/trpcClient";
-import { Button, Badge, Input } from "@/components/ui";
+import { Button, Badge, Input, Markdown } from "@/components/ui";
 
 type TutorWindowProps = {
 	className?: string;
@@ -121,7 +121,11 @@ export function TutorWindow({ className, initialMessage, contextNote }: TutorWin
 										: "max-w-[75%] rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-2.5 text-sm text-foreground"
 								}
 							>
-								{message.content}
+								{message.role === "assistant" ? (
+									<Markdown content={message.content} />
+								) : (
+									message.content
+								)}
 							</div>
 						</div>
 					))

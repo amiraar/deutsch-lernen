@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpcClient";
 import { speak } from "@/lib/ai/tts";
-import { Button, Card, Input } from "@/components/ui";
+import { Button, Card, Input, Markdown } from "@/components/ui";
 
 export type SerializedExercise = {
 	id: string;
@@ -48,7 +48,7 @@ function AnswerFooter({
 			{!isCorrect ? (
 				<p className="text-muted-foreground">Jawaban benar: {correctAnswer}</p>
 			) : null}
-			<p className="text-muted-foreground">{explanation}</p>
+			<Markdown content={explanation} className="text-muted-foreground space-y-1" />
 		</div>
 	);
 }
@@ -199,7 +199,7 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 			</Button>
 			{feedback ? (
 				<Card variant="colored" className="text-sm text-muted-foreground">
-					{feedback}
+					<Markdown content={feedback} className="text-muted-foreground space-y-1" />
 				</Card>
 			) : null}
 			{isCorrect !== null ? (

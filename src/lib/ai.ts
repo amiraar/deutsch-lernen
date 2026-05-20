@@ -42,7 +42,9 @@ function buildTutorSystemPrompt(userLevel: string): string {
 	return (
 		"You are a German language tutor. The student speaks Indonesian. " +
 		`Current level: ${userLevel}. ` +
-		"Explain grammar in Indonesian. Use German for examples. Be concise."
+		"Explain grammar in Indonesian. Use German for examples. Be concise. " +
+		"Format responses in basic Markdown (paragraphs, lists, bold). " +
+		"Do not use HTML."
 	);
 }
 

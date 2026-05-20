@@ -4,7 +4,7 @@ import * as React from "react";
 
 import type { LessonContent } from "@/types/lesson-content";
 import { CulturalNote } from "@/components/lesson/CulturalNote";
-import { Card } from "@/components/ui";
+import { Card, Markdown } from "@/components/ui";
 
 type LessonContentProps = {
 	content: LessonContent;
@@ -21,13 +21,13 @@ export function LessonContentView({ content, title, description }: LessonContent
 			</div>
 
 			<Card className="p-4">
-				<p className="text-sm text-foreground leading-relaxed">{content.introduction}</p>
+				<Markdown content={content.introduction} className="text-foreground" />
 			</Card>
 
 			{content.sections.map((section, i) => (
 				<div key={i} className="space-y-3">
 					<h2 className="text-lg font-semibold text-foreground">{section.title}</h2>
-					<p className="text-sm text-muted-foreground leading-relaxed">{section.explanation}</p>
+					<Markdown content={section.explanation} className="text-muted-foreground" />
 
 					<div className="overflow-x-auto rounded-lg border border-border">
 						<table className="w-full text-sm">
@@ -70,7 +70,13 @@ export function LessonContentView({ content, title, description }: LessonContent
 
 					{section.tip ? (
 						<div className="rounded-lg border border-primary/20 bg-primary/10 px-4 py-3">
-							<p className="text-sm font-medium text-primary">💡 {section.tip}</p>
+							<div className="flex items-start gap-2">
+								<span className="text-sm font-medium text-primary">💡</span>
+								<Markdown
+									content={section.tip}
+									className="text-primary font-medium space-y-0"
+								/>
+							</div>
 						</div>
 					) : null}
 				</div>
@@ -82,7 +88,7 @@ export function LessonContentView({ content, title, description }: LessonContent
 					{content.summary.map((point, i) => (
 						<li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
 							<span className="mt-0.5 text-primary">✓</span>
-							<span>{point}</span>
+							<Markdown content={point} className="text-muted-foreground space-y-0" />
 						</li>
 					))}
 				</ul>

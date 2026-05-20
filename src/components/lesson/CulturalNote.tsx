@@ -1,6 +1,6 @@
 import { Globe } from "lucide-react";
 
-import { Card } from "@/components/ui";
+import { Card, Markdown } from "@/components/ui";
 
 type CulturalNoteProps = {
 	title: string;
@@ -15,7 +15,7 @@ export function CulturalNote({ title, content }: CulturalNoteProps) {
 			</div>
 			<div className="space-y-1">
 				<p className="font-bold text-amber-900">{title}</p>
-				<p className="text-sm text-amber-800">{content}</p>
+				<Markdown content={content} className="text-amber-800 text-sm space-y-1" />
 			</div>
 		</Card>
 	);

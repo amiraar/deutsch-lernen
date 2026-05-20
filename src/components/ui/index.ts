@@ -5,6 +5,7 @@ export { ConfirmDialog } from "./ConfirmDialog";
 export { EmptyState } from "./EmptyState";
 export { Input } from "./Input";
 export { LoadingSpinner } from "./LoadingSpinner";
+export { Markdown } from "./Markdown";
 export { Modal } from "./Modal";
 export { PageSkeleton } from "./PageSkeleton";
 export { ProgressBar } from "./ProgressBar";
