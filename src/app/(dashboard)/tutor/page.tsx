@@ -46,8 +46,8 @@ export default function TutorPage() {
 		<div className="space-y-6">
 			<div>
 				<div className="flex items-center gap-2">
-					<Sparkles size={20} className="text-primary" />
-					<h1 className="text-xl font-bold text-foreground">AI Tutor</h1>
+					<Sparkles size={22} className="text-accent" />
+					<h1 className="font-display text-3xl font-semibold text-foreground">AI Tutor</h1>
 				</div>
 				<p className="mt-1 text-sm text-muted-foreground">
 					Tanyakan apa saja tentang bahasa Jerman — dijawab dalam bahasa Indonesia.

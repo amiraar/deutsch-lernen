@@ -97,7 +97,7 @@ export default function LessonListPage() {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl font-bold text-foreground">Pelajaran</h1>
+				<h1 className="font-display text-3xl font-semibold text-foreground">Pelajaran</h1>
 				<p className="mt-1 text-sm text-muted-foreground">
 					Pilih level dan lanjutkan belajar sesuai kemampuanmu.
 				</p>
@@ -149,7 +149,7 @@ export default function LessonListPage() {
 					<div key={group.level} className="space-y-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
-								<h2 className="text-lg font-semibold text-foreground">
+								<h2 className="font-display text-xl font-semibold text-foreground">
 									Level {group.level}
 								</h2>
 								<Badge variant={group.level}>{group.level}</Badge>
@@ -171,7 +171,7 @@ export default function LessonListPage() {
 									<Link key={lesson.id} href={`/lesson/${lesson.id}`}>
 										<Card
 											variant="elevated"
-											className="flex h-full items-center justify-between gap-4 p-4 transition hover:border-primary/40"
+											className="flex h-full items-center justify-between gap-4 p-4 transition hover:-translate-y-0.5 hover:border-primary/40"
 										>
 											<div className="space-y-2">
 												<div className="flex items-center gap-2">

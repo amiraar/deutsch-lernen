@@ -42,11 +42,11 @@ export default function ProfilePage() {
 
 	return (
 		<div className="space-y-6">
-			<h1 className="text-xl font-bold text-foreground">Profil</h1>
+			<h1 className="font-display text-3xl font-semibold text-foreground">Profil</h1>
 
 			{/* Avatar + name card */}
 			<Card variant="elevated" className="flex items-center gap-5">
-				<div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+				<div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-ink font-display text-xl font-semibold text-accent">
 					{initials}
 				</div>
 				<div className="space-y-1">
@@ -81,8 +81,8 @@ export default function ProfilePage() {
 					</div>
 				</Card>
 				<Card className="flex items-center gap-4">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100">
-						<Award size={18} className="text-violet-500" />
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/10">
+						<Award size={18} className="text-violet-600" />
 					</div>
 					<div>
 						<p className="text-xs text-muted-foreground">Pelajaran Selesai</p>
@@ -92,8 +92,8 @@ export default function ProfilePage() {
 					</div>
 				</Card>
 				<Card className="flex items-center gap-4">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-						<Zap size={18} className="text-amber-500" />
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/10">
+						<Zap size={18} className="text-amber-600" />
 					</div>
 					<div>
 						<p className="text-xs text-muted-foreground">Total XP</p>

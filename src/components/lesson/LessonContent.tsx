@@ -16,7 +16,7 @@ export function LessonContentView({ content, title, description }: LessonContent
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl font-bold text-foreground">{title}</h1>
+				<h1 className="font-display text-3xl font-semibold text-foreground">{title}</h1>
 				<p className="mt-1 text-sm text-muted-foreground">{description}</p>
 			</div>
 
@@ -26,7 +26,7 @@ export function LessonContentView({ content, title, description }: LessonContent
 
 			{content.sections.map((section, i) => (
 				<div key={i} className="space-y-3">
-					<h2 className="text-lg font-semibold text-foreground">{section.title}</h2>
+					<h2 className="font-display text-xl font-semibold text-foreground">{section.title}</h2>
 					<Markdown content={section.explanation} className="text-muted-foreground" />
 
 					<div className="overflow-x-auto rounded-lg border border-border">

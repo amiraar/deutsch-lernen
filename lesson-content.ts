@@ -1441,4 +1441,225 @@ export const LESSON_CONTENT: Record<string, LessonContent> = {
       "Menolak: Leider kann ich... / Ich bitte um Verständnis",
     ],
   },
+  "farben-und-adjektive": {
+    topic: "colors",
+    introduction:
+      "Warna termasuk kosakata pertama yang paling sering kamu pakai — mendeskripsikan baju, benda, dan makanan. Di pelajaran ini kamu belajar warna dasar sekaligus cara memakainya sebagai kata sifat dalam kalimat sederhana.",
+    sections: [
+      {
+        title: "Warna Dasar",
+        explanation:
+          "Sebelas warna ini mencakup hampir semua kebutuhan sehari-hari. Warna dalam bahasa Jerman ditulis dengan huruf kecil karena termasuk kata sifat.",
+        examples: [
+          { german: "rot", indonesian: "merah" },
+          { german: "blau", indonesian: "biru" },
+          { german: "gelb", indonesian: "kuning" },
+          { german: "grün", indonesian: "hijau" },
+          { german: "schwarz", indonesian: "hitam" },
+          { german: "weiß", indonesian: "putih", note: "ß dibaca seperti 'ss'" },
+          { german: "braun", indonesian: "cokelat" },
+          { german: "grau", indonesian: "abu-abu" },
+        ],
+        tip: "Untuk warna muda/tua, tambahkan hell- atau dunkel- di depan: hellblau (biru muda), dunkelgrün (hijau tua).",
+      },
+      {
+        title: "Warna Setelah Kata Kerja 'sein'",
+        explanation:
+          "Cara paling mudah memakai warna: letakkan setelah kata kerja sein (ist/sind). Dalam posisi ini warna TIDAK berubah bentuk.",
+        examples: [
+          { german: "Der Apfel ist rot.", indonesian: "Apel itu merah." },
+          { german: "Die Blume ist gelb.", indonesian: "Bunga itu kuning." },
+          { german: "Das Auto ist schwarz.", indonesian: "Mobil itu hitam." },
+          { german: "Die Häuser sind grau.", indonesian: "Rumah-rumah itu abu-abu." },
+        ],
+        tip: "Pola aman untuk pemula: [benda] + ist/sind + [warna]. Tidak perlu memikirkan akhiran.",
+      },
+      {
+        title: "Warna di Depan Kata Benda",
+        explanation:
+          "Jika warna diletakkan di depan kata benda, ia mendapat akhiran sesuai gender dan kasus. Untuk sekarang, cukup kenali polanya di kasus Nominativ dengan artikel tentu: semua gender memakai akhiran -e.",
+        examples: [
+          { german: "der rote Apfel", indonesian: "apel merah itu" },
+          { german: "die gelbe Blume", indonesian: "bunga kuning itu" },
+          { german: "das schwarze Auto", indonesian: "mobil hitam itu" },
+          { german: "Ich mag den roten Apfel.", indonesian: "Saya suka apel merah itu.", note: "Akkusativ maskulin: -en" },
+        ],
+        culturalNote: {
+          title: "Warna dan budaya Jerman",
+          content:
+            "'Blau sein' secara harfiah berarti 'sedang biru' — tapi artinya 'sedang mabuk'! Dan 'alles im grünen Bereich' (semua di area hijau) berarti 'semuanya beres'. Warna sering muncul dalam idiom Jerman.",
+        },
+      },
+    ],
+    summary: [
+      "Warna ditulis huruf kecil: rot, blau, gelb, grün...",
+      "Setelah sein, warna tidak berubah: Das Auto ist rot.",
+      "Di depan kata benda, warna mendapat akhiran: der rote Apfel",
+      "hell-/dunkel- = muda/tua: hellblau, dunkelgrün",
+    ],
+  },
+  "wetter-und-jahreszeiten": {
+    topic: "weather",
+    introduction:
+      "Cuaca adalah topik basa-basi nomor satu di Jerman — hampir setiap percakapan ringan dimulai dari sini. Kamu akan belajar mendeskripsikan cuaca, empat musim, dan pola kalimat dengan 'es' yang khas Jerman.",
+    sections: [
+      {
+        title: "Kalimat Cuaca dengan 'es'",
+        explanation:
+          "Bahasa Jerman memakai subjek semu 'es' (seperti 'it' dalam bahasa Inggris) untuk berbicara tentang cuaca. Pola ini wajib — kalimatnya tidak bisa berdiri tanpa 'es'.",
+        examples: [
+          { german: "Es regnet.", indonesian: "Sedang hujan." },
+          { german: "Es schneit.", indonesian: "Sedang turun salju." },
+          { german: "Es ist sonnig.", indonesian: "Cerah." },
+          { german: "Es ist bewölkt.", indonesian: "Berawan." },
+          { german: "Es ist windig.", indonesian: "Berangin." },
+        ],
+        tip: "Wie ist das Wetter? = Bagaimana cuacanya? Jawab selalu dengan 'Es ist...' atau 'Es + kata kerja'.",
+      },
+      {
+        title: "Suhu dan Perasaan",
+        explanation:
+          "Untuk suhu, gunakan es ist + kata sifat. Hati-hati: 'Saya kedinginan' TIDAK memakai ich bin, melainkan mir ist.",
+        examples: [
+          { german: "Es ist heiß.", indonesian: "Panas (cuaca)." },
+          { german: "Es ist warm.", indonesian: "Hangat." },
+          { german: "Es ist kühl.", indonesian: "Sejuk." },
+          { german: "Es ist kalt.", indonesian: "Dingin." },
+          { german: "Mir ist kalt.", indonesian: "Saya kedinginan.", note: "BUKAN 'Ich bin kalt'!" },
+        ],
+        tip: "'Ich bin kalt' berarti 'saya orang yang dingin (tidak ramah)'. Untuk merasa dingin/panas: Mir ist kalt / Mir ist heiß.",
+      },
+      {
+        title: "Empat Musim",
+        explanation:
+          "Jerman punya empat musim yang jelas. Semua nama musim bergender maskulin (der), dan memakai preposisi 'im' untuk mengatakan 'pada musim...'.",
+        examples: [
+          { german: "der Frühling", indonesian: "musim semi", note: "Maret–Mei" },
+          { german: "der Sommer", indonesian: "musim panas", note: "Juni–Agustus" },
+          { german: "der Herbst", indonesian: "musim gugur", note: "September–November" },
+          { german: "der Winter", indonesian: "musim dingin", note: "Desember–Februari" },
+          { german: "Im Winter schneit es oft.", indonesian: "Pada musim dingin sering turun salju." },
+        ],
+        culturalNote: {
+          title: "Obsesi orang Jerman dengan cuaca",
+          content:
+            "Jangan heran kalau orang Jerman membicarakan cuaca berkali-kali sehari. Saat matahari muncul setelah berminggu-minggu mendung, taman dan kafe langsung penuh — fenomena ini dijuluki 'Biergartenwetter' (cuaca kebun bir).",
+        },
+      },
+    ],
+    summary: [
+      "Cuaca selalu memakai subjek semu 'es': Es regnet, Es ist kalt",
+      "Merasa dingin/panas: Mir ist kalt (bukan Ich bin kalt)",
+      "Empat musim semuanya maskulin: der Frühling, der Sommer, der Herbst, der Winter",
+      "'Pada musim...' = im: im Sommer, im Winter",
+    ],
+  },
+  "praeteritum": {
+    topic: "past_tense",
+    introduction:
+      "Selain Perfekt, bahasa Jerman punya bentuk lampau kedua: Präteritum. Bentuk ini dipakai dalam tulisan (berita, novel, dongeng) dan untuk kata kerja sein, haben, serta modal — bahkan dalam percakapan. Menguasainya membuat kamu bisa membaca teks Jerman sungguhan.",
+    sections: [
+      {
+        title: "Kapan Präteritum Dipakai?",
+        explanation:
+          "Aturan praktis: percakapan memakai Perfekt, tulisan memakai Präteritum. Pengecualian penting: sein, haben, dan kata kerja modal hampir selalu memakai Präteritum, bahkan saat berbicara.",
+        examples: [
+          { german: "Ich war gestern krank.", indonesian: "Saya sakit kemarin.", note: "war = Präteritum dari sein" },
+          { german: "Wir hatten keine Zeit.", indonesian: "Kami tidak punya waktu.", note: "hatten = Präteritum dari haben" },
+          { german: "Ich konnte nicht kommen.", indonesian: "Saya tidak bisa datang.", note: "konnte = Präteritum dari können" },
+          { german: "Er musste arbeiten.", indonesian: "Dia harus bekerja." },
+        ],
+        tip: "Tidak ada orang Jerman yang bilang 'Ich bin krank gewesen' dalam obrolan santai — semua bilang 'Ich war krank'. Hafalkan war dan hatte lebih dulu!",
+      },
+      {
+        title: "Kata Kerja Beraturan: Akhiran -te",
+        explanation:
+          "Kata kerja beraturan membentuk Präteritum dengan menambahkan -te ke akar kata: lernen → lernte. Perhatikan bentuk ich dan er/sie/es sama persis.",
+        examples: [
+          { german: "ich lernte / er lernte", indonesian: "saya belajar / dia belajar (dulu)" },
+          { german: "du lerntest", indonesian: "kamu belajar (dulu)" },
+          { german: "wir lernten / sie lernten", indonesian: "kami / mereka belajar (dulu)" },
+          { german: "Sie wohnte in Berlin.", indonesian: "Dia (dulu) tinggal di Berlin." },
+        ],
+      },
+      {
+        title: "Kata Kerja Tak Beraturan: Ganti Vokal",
+        explanation:
+          "Kata kerja kuat mengubah vokalnya — sama seperti bahasa Inggris (go → went). Bentuk-bentuk ini harus dihafal, tapi kabar baiknya: kamu akan bertemu mereka terus-menerus saat membaca.",
+        examples: [
+          { german: "gehen → ging", indonesian: "pergi", note: "Ich ging nach Hause." },
+          { german: "kommen → kam", indonesian: "datang", note: "Sie kam zu spät." },
+          { german: "sehen → sah", indonesian: "melihat", note: "Er sah einen Film." },
+          { german: "geben → gab", indonesian: "memberi", note: "Es gab ein Problem. (Ada masalah.)" },
+          { german: "finden → fand", indonesian: "menemukan", note: "Ich fand den Schlüssel." },
+        ],
+        culturalNote: {
+          title: "Es war einmal...",
+          content:
+            "Semua dongeng Jerman dimulai dengan 'Es war einmal...' (pada suatu ketika...) — Präteritum dari 'es ist'. Membaca dongeng Grimm dalam bahasa aslinya adalah cara klasik melatih Präteritum.",
+        },
+      },
+    ],
+    summary: [
+      "Percakapan → Perfekt; tulisan → Präteritum",
+      "sein/haben/modal selalu Präteritum: war, hatte, konnte, musste",
+      "Beraturan: akar + -te (lernte, wohnte)",
+      "Tak beraturan: ganti vokal (ging, kam, sah, gab)",
+      "ich dan er/sie/es selalu sama bentuknya di Präteritum",
+    ],
+  },
+  "redewendungen": {
+    topic: "idioms",
+    introduction:
+      "Idiom membuat bahasamu terdengar hidup dan alami. Orang Jerman memakai ungkapan-ungkapan ini setiap hari — dan banyak di antaranya lucu kalau diterjemahkan mentah-mentah. Di level B2, memahami idiom adalah kunci memahami percakapan asli, film, dan humor Jerman.",
+    sections: [
+      {
+        title: "Idiom Sehari-hari",
+        explanation:
+          "Ungkapan-ungkapan ini sangat sering muncul dalam percakapan santai. Pelajari arti kiasannya, bukan terjemahan harfiahnya.",
+        examples: [
+          { german: "Ich verstehe nur Bahnhof.", indonesian: "Saya tidak mengerti sama sekali.", note: "harfiah: 'Saya cuma paham stasiun'" },
+          { german: "Das ist mir Wurst.", indonesian: "Saya tidak peduli / terserah.", note: "harfiah: 'Itu sosis bagi saya'" },
+          { german: "Ich drücke dir die Daumen.", indonesian: "Semoga berhasil!", note: "harfiah: 'Kutekan jempolku untukmu'" },
+          { german: "Du hast Schwein gehabt!", indonesian: "Kamu beruntung sekali!", note: "harfiah: 'Kamu dapat babi'" },
+          { german: "Es ist nicht mein Bier.", indonesian: "Itu bukan urusan saya.", note: "harfiah: 'Itu bukan bir saya'" },
+        ],
+        tip: "Alih-alih 'Viel Glück', orang Jerman lebih sering bilang 'Ich drücke dir die Daumen' — sambil benar-benar mengepalkan jempol!",
+      },
+      {
+        title: "Idiom di Dunia Kerja",
+        explanation:
+          "Di kantor dan rapat, idiom-idiom ini muncul terus. Memahaminya membantumu mengikuti diskusi dengan penutur asli.",
+        examples: [
+          { german: "etwas auf die lange Bank schieben", indonesian: "menunda-nunda sesuatu", note: "harfiah: 'menggeser ke bangku panjang'" },
+          { german: "den Nagel auf den Kopf treffen", indonesian: "tepat sasaran", note: "harfiah: 'memukul paku tepat di kepalanya'" },
+          { german: "zwei Fliegen mit einer Klappe schlagen", indonesian: "sekali dayung dua pulau terlampaui", note: "harfiah: 'memukul dua lalat dengan satu tepukan'" },
+          { german: "die Daumen drehen", indonesian: "duduk menganggur", note: "harfiah: 'memutar-mutar jempol'" },
+        ],
+      },
+      {
+        title: "Ungkapan dengan Bagian Tubuh",
+        explanation:
+          "Banyak idiom Jerman memakai bagian tubuh — persis seperti bahasa Indonesia ('ringan tangan', 'besar kepala').",
+        examples: [
+          { german: "Hals- und Beinbruch!", indonesian: "Semoga sukses!", note: "harfiah: 'patah leher dan kaki' — seperti 'break a leg'" },
+          { german: "die Nase voll haben", indonesian: "sudah muak", note: "harfiah: 'hidungnya penuh'" },
+          { german: "auf großem Fuß leben", indonesian: "hidup mewah", note: "harfiah: 'hidup dengan kaki besar'" },
+          { german: "Ohren spitzen", indonesian: "pasang telinga baik-baik" },
+        ],
+        culturalNote: {
+          title: "Kenapa 'paham stasiun'?",
+          content:
+            "'Ich verstehe nur Bahnhof' konon berasal dari Perang Dunia I: tentara yang lelah hanya ingin mendengar kata 'Bahnhof' — stasiun kereta yang membawa mereka pulang. Kata lain tak masuk ke telinga mereka.",
+        },
+      },
+    ],
+    summary: [
+      "Idiom dipahami dari makna kiasan, bukan harfiah",
+      "Ich verstehe nur Bahnhof = tidak mengerti sama sekali",
+      "Ich drücke dir die Daumen = semoga berhasil",
+      "Das ist mir Wurst = terserah / tidak peduli",
+      "Banyak idiom memakai makanan dan bagian tubuh",
+    ],
+  },
 };

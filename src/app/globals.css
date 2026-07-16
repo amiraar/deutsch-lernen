@@ -1,40 +1,71 @@
 @import "tailwindcss";
 
+/*
+ * Design language: "Tinte & Gold" (ink & gold)
+ * Warm paper surfaces, Prussian-blue ink as the primary hue,
+ * and a restrained gold accent. Editorial rather than app-template.
+ */
 @theme {
-  /* Primary: Indigo (spec-specified) */
-  --color-primary: #4f46e5;
+  /* Primary: Prussian blue */
+  --color-primary: #1e4e8c;
+  --color-primary-strong: #16406f;
   --color-primary-foreground: #ffffff;
 
-  /* Secondary */
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #1e293b;
+  /* Accent: warm gold */
+  --color-accent: #d97706;
+  --color-accent-strong: #b45309;
+  --color-accent-foreground: #ffffff;
 
-  /* Surfaces */
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
-  --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
+  /* Secondary surface */
+  --color-secondary: #ece9e0;
+  --color-secondary-foreground: #2b2f38;
+
+  /* Surfaces: warm paper */
+  --color-background: #f6f4ee;
+  --color-foreground: #212836;
+  --color-card: #fffefb;
+  --color-card-foreground: #212836;
+
+  /* Ink panel (dark sidebar / footers) */
+  --color-ink: #16233a;
+  --color-ink-soft: #1f3050;
+  --color-ink-foreground: #eef1f6;
+  --color-ink-muted: #93a3bd;
 
   /* Muted */
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
+  --color-muted: #edeae2;
+  --color-muted-foreground: #6b7280;
 
   /* Semantic */
-  --color-success: #10b981;
+  --color-success: #1d7a4c;
   --color-success-foreground: #ffffff;
-  --color-warning: #f59e0b;
+  --color-warning: #b45309;
   --color-warning-foreground: #ffffff;
-  --color-destructive: #f43f5e;
+  --color-destructive: #bb2d3b;
   --color-destructive-foreground: #ffffff;
 
   /* Borders & focus */
-  --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
-  --color-ring: #4f46e5;
+  --color-border: #e3dfd3;
+  --color-input: #d8d3c4;
+  --color-ring: #1e4e8c;
 
   /* Fonts */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Motion */
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 * {
@@ -44,9 +75,13 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
 
 /* Smooth focus rings */
@@ -79,4 +114,13 @@ body {
 
 .animate-shake {
   animation: shake 0.4s ease-in-out;
+}
+
+/* Subtle dotted-paper texture for hero sections */
+.bg-paper-dots {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-primary) 14%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
 }

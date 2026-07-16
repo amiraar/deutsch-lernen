@@ -70,7 +70,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				) : null}
 				<div
 					className={cn(
-						"flex items-center gap-2 overflow-hidden rounded-md border bg-background px-3",
+						"flex items-center gap-2 overflow-hidden rounded-xl border bg-card px-3 shadow-sm",
 						"focus-within:ring-2 focus-within:ring-ring",
 						error ? "border-destructive" : "border-input",
 						disabled ? "opacity-60" : "",

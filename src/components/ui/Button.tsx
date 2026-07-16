@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "accent";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -17,19 +17,21 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
 	primary:
-		"bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring",
+		"bg-primary text-primary-foreground shadow-sm hover:bg-primary-strong focus-visible:ring-ring",
 	secondary:
-		"bg-secondary text-secondary-foreground hover:bg-secondary/90 focus-visible:ring-ring",
+		"border border-input bg-card text-foreground shadow-sm hover:bg-muted focus-visible:ring-ring",
 	ghost:
 		"bg-transparent text-foreground hover:bg-muted focus-visible:ring-ring",
 	danger:
-		"bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-ring",
+		"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 focus-visible:ring-ring",
+	accent:
+		"bg-accent text-accent-foreground shadow-sm hover:bg-accent-strong focus-visible:ring-ring",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-	sm: "h-9 px-3 text-sm",
-	md: "h-10 px-4 text-sm",
-	lg: "h-12 px-6 text-base",
+	sm: "h-9 px-4 text-sm",
+	md: "h-10 px-5 text-sm",
+	lg: "h-12 px-7 text-base",
 };
 
 /**
@@ -58,9 +60,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				ref={ref}
 				type={type ?? "button"}
 				className={cn(
-					"inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors",
+					"inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all",
 					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-					"disabled:pointer-events-none disabled:opacity-60",
+					"active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60",
 					variantClasses[variant],
 					sizeClasses[size],
 					className
