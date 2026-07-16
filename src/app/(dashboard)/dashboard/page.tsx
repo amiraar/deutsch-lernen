@@ -95,6 +95,7 @@ export default function DashboardPage() {
 		clearToast();
 	}, [clearToast, lessonsQuery.error, showToast, statsQuery.error]);
 
+	const greeting = getGreeting();
 	const stats = statsQuery.data;
 	const streakDays = stats?.streakDays ?? 0;
 	const xp = stats?.xp ?? 0;
@@ -151,10 +152,10 @@ export default function DashboardPage() {
 			{/* Greeting */}
 			<div>
 				<h1 className="font-display text-3xl font-semibold text-foreground">
-					{getGreeting().german}! 👋
+					{greeting.german}! 👋
 				</h1>
 				<p className="mt-1 text-sm text-muted-foreground">
-					{getGreeting().indonesian}.{" "}
+					{greeting.indonesian}.{" "}
 					{streakDays > 0
 						? `Kamu sudah belajar ${streakDays} hari berturut-turut. Pertahankan!`
 						: "Mulai belajar hari ini untuk membangun streak-mu!"}

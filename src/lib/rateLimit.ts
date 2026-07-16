@@ -1,14 +1,8 @@
 import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
 import { TRPCError } from "@trpc/server";
-import type Redis from "ioredis";
-import type { RedisOptions } from "ioredis";
+import Redis from "ioredis";
 
 import { resolveRedisUrl } from "@/lib/redis";
-
-type RedisConstructor = new (
-	url: string,
-	options?: RedisOptions
-) => Redis;
 
 type LimiterOptions = {
 	points: number;
@@ -37,22 +31,27 @@ function createLimiter(opts: LimiterOptions) {
 	}
 
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const RedisModule = require("ioredis") as
-		| { default?: RedisConstructor }
-		| RedisConstructor;
-		const RedisClient =
-		"default" in RedisModule && RedisModule.default
-			? RedisModule.default
-			: (RedisModule as RedisConstructor);
-		const client = new RedisClient(redisUrl, {
-			maxRetriesPerRequest: 3,
+		const client = new Redis(redisUrl, {
+			maxRetriesPerRequest: 1,
 			lazyConnect: true,
+			enableOfflineQueue: false,
 		});
-		return new RateLimiterRedis({ storeClient: client, ...opts });
+		// Without a listener, ioredis connection failures surface as
+		// unhandled error events that spam the logs.
+		client.on("error", (err: Error) => {
+			console.warn(`[RateLimit] Redis connection error: ${err.message}`);
+		});
+		return new RateLimiterRedis({
+			storeClient: client,
+			// Falls back to per-instance memory limiting when Redis is
+			// unreachable, so auth/API keep working during a Redis outage.
+			insuranceLimiter: new RateLimiterMemory(opts),
+			...opts,
+		});
 	} catch (err) {
 		const message = err instanceof Error ? err.message : "Unknown error";
-		throw new Error(`[RateLimit] Failed to create Redis rate limiter: ${message}`);
+		console.error(`[RateLimit] Failed to create Redis rate limiter, using memory fallback: ${message}`);
+		return new RateLimiterMemory(opts);
 	}
 }
 
@@ -106,8 +105,10 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 			throw new Error(`Too many attempts. Try again in ${minutes} minutes.`);
 		}
 
+		// Infrastructure failure (e.g. Redis unreachable) — fail open so a
+		// rate-limiter outage never locks every user out of login.
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`Auth rate limit failed: ${message}`);
+		console.error(`[RateLimit] auth check failed open: ${message}`);
 	}
 }
 
@@ -135,7 +136,7 @@ export async function checkApiLimit(userId: string): Promise<void> {
 		}
 
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`API rate limit failed: ${message}`);
+		console.error(`[RateLimit] api check failed open: ${message}`);
 	}
 }
 
@@ -164,6 +165,6 @@ export async function checkAiLimit(userId: string): Promise<void> {
 		}
 
 		const message = error instanceof Error ? error.message : "Unknown error";
-		throw new Error(`AI rate limit failed: ${message}`);
+		console.error(`[RateLimit] ai check failed open: ${message}`);
 	}
 }
