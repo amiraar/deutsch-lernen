@@ -13,7 +13,8 @@ export type CardProps<T extends React.ElementType = "div"> = {
 
 const variantClasses: Record<CardVariant, string> = {
 	default: "border border-border bg-card text-card-foreground",
-	elevated: "border border-border bg-card text-card-foreground shadow-sm",
+	elevated:
+		"border border-border bg-card text-card-foreground shadow-[0_1px_2px_rgba(33,40,54,0.05),0_8px_24px_-12px_rgba(33,40,54,0.12)]",
 	colored: "bg-muted text-foreground",
 };
 
@@ -31,7 +32,7 @@ export function Card<T extends React.ElementType = "div">({
 
 	return (
 		<Component
-			className={cn("rounded-lg p-4", variantClasses[variant], className)}
+			className={cn("rounded-2xl p-5", variantClasses[variant], className)}
 			{...props}
 		>
 			{children}

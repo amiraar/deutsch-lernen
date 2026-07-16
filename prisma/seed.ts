@@ -951,6 +951,205 @@ const lessons = [
       },
     ],
   },
+  {
+    title: "Warna & Kata Sifat",
+    slug: "farben-und-adjektive",
+    description: "Warna dasar dan cara memakainya sebagai kata sifat.",
+    level: LevelEnum.A1,
+    order: 21,
+    estimatedMinutes: 15,
+    content: LESSON_CONTENT["farben-und-adjektive"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'grün' berarti...",
+        correctAnswer: "Hijau",
+        options: ["Merah", "Biru", "Hijau", "Kuning"],
+        explanation: "grün = hijau.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Der Apfel ist ___. (merah)",
+        correctAnswer: "rot",
+        options: [],
+        explanation: "Setelah 'ist', warna tidak berubah bentuk: rot.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Mobil itu hitam.",
+        correctAnswer: "Das Auto ist schwarz.",
+        options: [],
+        explanation: "Pola: [benda] + ist + [warna].",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'hellblau' berarti...",
+        correctAnswer: "Biru muda",
+        options: ["Biru tua", "Biru muda", "Abu-abu", "Ungu"],
+        explanation: "hell- = muda, dunkel- = tua.",
+      },
+      {
+        type: ExerciseType.PRONUNCIATION,
+        prompt: "Ucapkan: weiß und schwarz",
+        correctAnswer: "weiß und schwarz",
+        options: [],
+        explanation: "Latihan pengucapan warna.",
+      },
+    ],
+  },
+  {
+    title: "Cuaca & Musim",
+    slug: "wetter-und-jahreszeiten",
+    description: "Mendeskripsikan cuaca, suhu, dan empat musim.",
+    level: LevelEnum.A2,
+    order: 22,
+    estimatedMinutes: 20,
+    content: LESSON_CONTENT["wetter-und-jahreszeiten"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'Es regnet' berarti...",
+        correctAnswer: "Sedang hujan",
+        options: ["Sedang panas", "Sedang hujan", "Sedang bersalju", "Berawan"],
+        explanation: "regnen = hujan; es regnet = sedang hujan.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "___ ist kalt. (Saya kedinginan)",
+        correctAnswer: "Mir",
+        options: [],
+        explanation: "Merasa dingin memakai Dativ: Mir ist kalt.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Pada musim dingin sering turun salju.",
+        correctAnswer: "Im Winter schneit es oft.",
+        options: [],
+        explanation: "'Pada musim...' = im + musim.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Musim gugur dalam bahasa Jerman adalah...",
+        correctAnswer: "der Herbst",
+        options: ["der Frühling", "der Sommer", "der Herbst", "der Winter"],
+        explanation: "Herbst = musim gugur (September–November).",
+      },
+      {
+        type: ExerciseType.PRONUNCIATION,
+        prompt: "Ucapkan: Es ist sonnig und warm",
+        correctAnswer: "Es ist sonnig und warm",
+        options: [],
+        explanation: "Latihan pengucapan kalimat cuaca.",
+      },
+    ],
+  },
+  {
+    title: "Präteritum",
+    slug: "praeteritum",
+    description: "Bentuk lampau untuk tulisan, sein, haben, dan modal.",
+    level: LevelEnum.B1,
+    order: 23,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["praeteritum"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Präteritum dari 'sein' (ich) adalah...",
+        correctAnswer: "war",
+        options: ["bin", "war", "gewesen", "wurde"],
+        explanation: "ich war = saya (dulu) adalah.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Wir ___ keine Zeit. (haben, Präteritum)",
+        correctAnswer: "hatten",
+        options: [],
+        explanation: "haben → hatte; wir hatten.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Saya tidak bisa datang.",
+        correctAnswer: "Ich konnte nicht kommen.",
+        options: [],
+        explanation: "können → konnte (Präteritum).",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "Präteritum dari 'gehen' adalah...",
+        correctAnswer: "ging",
+        options: ["gegangen", "gehte", "ging", "geht"],
+        explanation: "gehen adalah verba kuat: ging.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Es ___ einmal... (awal dongeng)",
+        correctAnswer: "war",
+        options: [],
+        explanation: "Es war einmal = pada suatu ketika.",
+      },
+    ],
+  },
+  {
+    title: "Idiom & Ungkapan",
+    slug: "redewendungen",
+    description: "Idiom sehari-hari agar bahasamu terdengar alami.",
+    level: LevelEnum.B2,
+    order: 24,
+    estimatedMinutes: 25,
+    content: LESSON_CONTENT["redewendungen"],
+    exercises: [
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'Ich verstehe nur Bahnhof' berarti...",
+        correctAnswer: "Saya tidak mengerti sama sekali",
+        options: [
+          "Saya suka kereta",
+          "Saya tidak mengerti sama sekali",
+          "Saya mau pulang",
+          "Saya paham sedikit",
+        ],
+        explanation: "Idiom: tidak paham sama sekali.",
+      },
+      {
+        type: ExerciseType.FILL_IN_BLANK,
+        prompt: "Ich drücke dir die ___. (semoga berhasil)",
+        correctAnswer: "Daumen",
+        options: [],
+        explanation: "Ich drücke dir die Daumen = semoga berhasil.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'Das ist mir Wurst' berarti...",
+        correctAnswer: "Terserah, saya tidak peduli",
+        options: [
+          "Saya lapar",
+          "Terserah, saya tidak peduli",
+          "Itu enak",
+          "Saya marah",
+        ],
+        explanation: "Idiom dengan makanan: tidak peduli.",
+      },
+      {
+        type: ExerciseType.TRANSLATION,
+        prompt: "Kamu beruntung sekali!",
+        correctAnswer: "Du hast Schwein gehabt!",
+        options: [],
+        explanation: "Schwein haben = beruntung.",
+      },
+      {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        prompt: "'zwei Fliegen mit einer Klappe schlagen' setara dengan...",
+        correctAnswer: "Sekali dayung dua pulau terlampaui",
+        options: [
+          "Besar pasak daripada tiang",
+          "Sekali dayung dua pulau terlampaui",
+          "Air susu dibalas air tuba",
+          "Tak ada rotan akar pun jadi",
+        ],
+        explanation: "Menyelesaikan dua hal sekaligus.",
+      },
+    ],
+  },
 ];
 
 const vocab = [
@@ -1045,38 +1244,69 @@ const moreVocab = [
   { german: "Bewerbung", indonesian: "lamaran", example: "Ich schicke meine Bewerbung.", exampleTranslation: "Saya mengirim lamaran saya.", level: LevelEnum.B2, tags: ["formal_language"] },
   { german: "Zustimmung", indonesian: "persetujuan", example: "Danke für die Zustimmung.", exampleTranslation: "Terima kasih atas persetujuannya.", level: LevelEnum.B2, tags: ["formal_language"] },
   { german: "Ablehnung", indonesian: "penolakan", example: "Die Ablehnung war höflich.", exampleTranslation: "Penolakannya sopan.", level: LevelEnum.B2, tags: ["formal_language"] },
+  { german: "rot", indonesian: "merah", example: "Der Apfel ist rot.", exampleTranslation: "Apel itu merah.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "blau", indonesian: "biru", example: "Der Himmel ist blau.", exampleTranslation: "Langit itu biru.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "gelb", indonesian: "kuning", example: "Die Blume ist gelb.", exampleTranslation: "Bunga itu kuning.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "grün", indonesian: "hijau", example: "Das Gras ist grün.", exampleTranslation: "Rumput itu hijau.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "schwarz", indonesian: "hitam", example: "Das Auto ist schwarz.", exampleTranslation: "Mobil itu hitam.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "weiß", indonesian: "putih", example: "Der Schnee ist weiß.", exampleTranslation: "Salju itu putih.", level: LevelEnum.A1, tags: ["colors"] },
+  { german: "regnen", indonesian: "hujan", example: "Es regnet heute.", exampleTranslation: "Hari ini hujan.", level: LevelEnum.A2, tags: ["weather"] },
+  { german: "schneien", indonesian: "turun salju", example: "Im Winter schneit es.", exampleTranslation: "Pada musim dingin turun salju.", level: LevelEnum.A2, tags: ["weather"] },
+  { german: "die Sonne", indonesian: "matahari", example: "Die Sonne scheint.", exampleTranslation: "Matahari bersinar.", level: LevelEnum.A2, tags: ["weather"] },
+  { german: "der Winter", indonesian: "musim dingin", example: "Der Winter ist kalt.", exampleTranslation: "Musim dingin itu dingin.", level: LevelEnum.A2, tags: ["weather"] },
+  { german: "der Sommer", indonesian: "musim panas", example: "Im Sommer ist es warm.", exampleTranslation: "Pada musim panas hangat.", level: LevelEnum.A2, tags: ["weather"] },
+  { german: "die Redewendung", indonesian: "idiom/ungkapan", example: "Diese Redewendung ist lustig.", exampleTranslation: "Idiom ini lucu.", level: LevelEnum.B2, tags: ["idioms"] },
+  { german: "Daumen drücken", indonesian: "mendoakan berhasil", example: "Ich drücke dir die Daumen!", exampleTranslation: "Semoga berhasil!", level: LevelEnum.B2, tags: ["idioms"] },
+  { german: "Schwein haben", indonesian: "beruntung", example: "Du hast Schwein gehabt!", exampleTranslation: "Kamu beruntung sekali!", level: LevelEnum.B2, tags: ["idioms"] },
+  { german: "die Nase voll haben", indonesian: "sudah muak", example: "Ich habe die Nase voll.", exampleTranslation: "Saya sudah muak.", level: LevelEnum.B2, tags: ["idioms"] },
 ];
 
 async function main() {
   const existingLessons = await prisma.lesson.count();
-  if (existingLessons >= 20) {
+  const isFreshSeed = existingLessons === 0;
+
+  if (existingLessons >= lessons.length) {
     console.log("Seed sudah lengkap, skip.");
     return;
   }
 
-  const passwordHash1 = await bcrypt.hash("password123", 12);
-  const passwordHash2 = await bcrypt.hash("password456", 12);
+  let user1: { id: string } | null = null;
 
-  const [user1, user2] = await prisma.$transaction([
-    prisma.user.create({
-      data: {
-        email: "user1@example.com",
-        passwordHash: passwordHash1,
-        name: "Dewi",
-        level: LevelEnum.A1,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: "user2@example.com",
-        passwordHash: passwordHash2,
-        name: "Rizky",
-        level: LevelEnum.A2,
-      },
-    }),
-  ]);
+  if (isFreshSeed) {
+    const passwordHash1 = await bcrypt.hash("password123", 12);
+    const passwordHash2 = await bcrypt.hash("password456", 12);
+
+    [user1] = await prisma.$transaction([
+      prisma.user.create({
+        data: {
+          email: "user1@example.com",
+          passwordHash: passwordHash1,
+          name: "Dewi",
+          level: LevelEnum.A1,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          email: "user2@example.com",
+          passwordHash: passwordHash2,
+          name: "Rizky",
+          level: LevelEnum.A2,
+        },
+      }),
+    ]);
+  }
+
+  // Top-up aware: only create lessons whose slug is not in the database yet.
+  const existingSlugSet = new Set(
+    (await prisma.lesson.findMany({ select: { slug: true } })).map(
+      (lesson) => lesson.slug
+    )
+  );
 
   for (const lesson of lessons) {
+    if (existingSlugSet.has(lesson.slug)) {
+      continue;
+    }
     await prisma.lesson.create({
       data: {
         title: lesson.title,
@@ -1093,8 +1323,16 @@ async function main() {
     });
   }
 
+  const existingVocabSet = new Set(
+    (await prisma.vocabWord.findMany({ select: { german: true } })).map(
+      (word) => word.german
+    )
+  );
+
   const vocabWords = await prisma.vocabWord.createMany({
-    data: [...vocab, ...moreVocab],
+    data: [...vocab, ...moreVocab].filter(
+      (word) => !existingVocabSet.has(word.german)
+    ),
   });
 
   const vocabForLinks = await prisma.vocabWord.findMany({
@@ -1122,6 +1360,10 @@ async function main() {
     { lessonSlug: "nebensatze", tags: ["subordinate_clauses"] },
     { lessonSlug: "wortbildung", tags: ["word_formation"] },
     { lessonSlug: "formelle-sprache", tags: ["formal_language"] },
+    { lessonSlug: "farben-und-adjektive", tags: ["colors"] },
+    { lessonSlug: "wetter-und-jahreszeiten", tags: ["weather"] },
+    { lessonSlug: "praeteritum", tags: ["past_tense"] },
+    { lessonSlug: "redewendungen", tags: ["idioms"] },
   ];
 
   const lessonBySlug = await prisma.lesson.findMany({
@@ -1162,21 +1404,24 @@ async function main() {
     });
   }
 
-  const vocabEntries = await prisma.vocabWord.findMany({
-    where: { level: LevelEnum.A1 },
-    take: 10,
-  });
+  if (user1) {
+    const vocabEntries = await prisma.vocabWord.findMany({
+      where: { level: LevelEnum.A1 },
+      take: 10,
+    });
 
-  await prisma.flashcardReview.createMany({
-    data: vocabEntries.map((word, index) => ({
-      userId: user1.id,
-      vocabWordId: word.id,
-      easeFactor: 2.5,
-      interval: 1,
-      repetitions: 0,
-      nextReviewAt: new Date(Date.now() - index * 86400000),
-    })),
-  });
+    const demoUserId = user1.id;
+    await prisma.flashcardReview.createMany({
+      data: vocabEntries.map((word, index) => ({
+        userId: demoUserId,
+        vocabWordId: word.id,
+        easeFactor: 2.5,
+        interval: 1,
+        repetitions: 0,
+        nextReviewAt: new Date(Date.now() - index * 86400000),
+      })),
+    });
+  }
 
   console.log("Seed completed", { vocabWords: vocabWords.count });
 }

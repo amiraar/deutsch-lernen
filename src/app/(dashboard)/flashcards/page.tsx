@@ -71,8 +71,8 @@ export default function FlashcardsPage() {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-xl font-bold text-foreground">Flashcard Review</h1>
-				<p className="text-sm text-muted-foreground">Review kartu-kartumu sebelum terlupakan.</p>
+				<h1 className="font-display text-3xl font-semibold text-foreground">Flashcard Review</h1>
+				<p className="mt-1 text-sm text-muted-foreground">Review kartu-kartumu sebelum terlupakan.</p>
 			</div>
 			{showEmptyState ? (
 				<EmptyState
@@ -89,7 +89,7 @@ export default function FlashcardsPage() {
 
 			<section className="space-y-4">
 				<div>
-					<h2 className="text-lg font-semibold text-foreground">Jelajahi Kosakata</h2>
+					<h2 className="font-display text-xl font-semibold text-foreground">Jelajahi Kosakata</h2>
 					<p className="text-sm text-muted-foreground">
 						Cari kosakata baru dan tambahkan ke antrian review-mu.
 					</p>

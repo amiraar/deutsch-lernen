@@ -17,14 +17,14 @@ export type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
 };
 
 const variantClasses: Record<BadgeVariant, string> = {
-	A1: "bg-indigo-100 text-indigo-700",
-	A2: "bg-sky-100 text-sky-700",
-	B1: "bg-violet-100 text-violet-700",
-	B2: "bg-emerald-100 text-emerald-700",
-	success: "bg-emerald-100 text-emerald-700",
-	warning: "bg-amber-100 text-amber-700",
-	error: "bg-rose-100 text-rose-700",
-	neutral: "bg-slate-100 text-slate-600",
+	A1: "border-emerald-600/20 bg-emerald-600/10 text-emerald-800",
+	A2: "border-cyan-700/20 bg-cyan-700/10 text-cyan-900",
+	B1: "border-violet-600/20 bg-violet-600/10 text-violet-800",
+	B2: "border-amber-600/25 bg-amber-600/10 text-amber-800",
+	success: "border-emerald-600/20 bg-emerald-600/10 text-emerald-800",
+	warning: "border-amber-600/25 bg-amber-600/10 text-amber-800",
+	error: "border-rose-600/20 bg-rose-600/10 text-rose-800",
+	neutral: "border-border bg-muted text-muted-foreground",
 };
 
 /**
@@ -38,7 +38,7 @@ export function Badge({
 	return (
 		<span
 			className={cn(
-				"inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+				"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide",
 				variantClasses[variant],
 				className
 			)}

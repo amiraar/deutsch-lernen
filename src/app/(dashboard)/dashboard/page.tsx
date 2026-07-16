@@ -53,20 +53,20 @@ function getNextLevelXp(level: Level): number {
 	return XP_THRESHOLDS[nextLevel];
 }
 
-function getGreeting(): string {
+function getGreeting(): { german: string; indonesian: string } {
 	const hour = new Date().getHours();
-	if (hour < 12) return "Selamat pagi";
-	if (hour < 17) return "Selamat siang";
-	return "Selamat malam";
+	if (hour < 12) return { german: "Guten Morgen", indonesian: "Selamat pagi" };
+	if (hour < 17) return { german: "Guten Tag", indonesian: "Selamat siang" };
+	return { german: "Guten Abend", indonesian: "Selamat malam" };
 }
 
 function StatCardSkeleton() {
 	return (
 		<Card variant="elevated" className="flex items-center gap-4">
-			<div className="h-11 w-11 animate-pulse rounded-xl bg-slate-200" />
+			<div className="h-11 w-11 animate-pulse rounded-xl bg-muted" />
 			<div className="space-y-2">
-				<div className="h-6 w-16 animate-pulse rounded bg-slate-200" />
-				<div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
+				<div className="h-6 w-16 animate-pulse rounded bg-muted" />
+				<div className="h-3 w-24 animate-pulse rounded bg-muted" />
 			</div>
 		</Card>
 	);
@@ -150,10 +150,11 @@ export default function DashboardPage() {
 		<div className="space-y-8">
 			{/* Greeting */}
 			<div>
-				<h1 className="text-2xl font-bold text-foreground">
-					{getGreeting()}! 👋
+				<h1 className="font-display text-3xl font-semibold text-foreground">
+					{getGreeting().german}! 👋
 				</h1>
 				<p className="mt-1 text-sm text-muted-foreground">
+					{getGreeting().indonesian}.{" "}
 					{streakDays > 0
 						? `Kamu sudah belajar ${streakDays} hari berturut-turut. Pertahankan!`
 						: "Mulai belajar hari ini untuk membangun streak-mu!"}
@@ -175,8 +176,8 @@ export default function DashboardPage() {
 			) : (
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-amber-100">
-							<Flame size={22} className="text-amber-500" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-amber-600/10">
+							<Flame size={22} className="text-amber-600" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{streakDays}</p>
@@ -185,8 +186,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-violet-100">
-							<Trophy size={22} className="text-violet-500" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-violet-600/10">
+							<Trophy size={22} className="text-violet-600" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{xp}</p>
@@ -195,8 +196,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100">
-							<BookOpen size={22} className="text-emerald-500" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-600/10">
+							<BookOpen size={22} className="text-emerald-700" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{stats?.lessonsCompleted ?? 0}</p>
@@ -205,8 +206,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100">
-							<Layers size={22} className="text-sky-500" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-cyan-700/10">
+							<Layers size={22} className="text-cyan-800" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{dueCount}</p>
@@ -256,8 +257,8 @@ export default function DashboardPage() {
 						<h3 className="text-sm font-semibold text-foreground">Lanjutkan Belajar</h3>
 						{lessonsQuery.isLoading ? (
 							<div className="space-y-3">
-								<div className="h-5 w-48 animate-pulse rounded bg-slate-200" />
-								<div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
+								<div className="h-5 w-48 animate-pulse rounded bg-muted" />
+								<div className="h-3 w-24 animate-pulse rounded bg-muted" />
 							</div>
 						) : nextLesson ? (
 							<div className="flex items-center justify-between gap-4">
@@ -289,13 +290,13 @@ export default function DashboardPage() {
 					</Card>
 
 					{dueCount > 0 ? (
-						<Card className="border-sky-200 bg-sky-50">
+						<Card className="border-accent/30 bg-accent/5">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm font-semibold text-sky-800">
+									<p className="text-sm font-semibold text-accent-strong">
 										{dueCount} kartu siap direview
 									</p>
-									<p className="text-xs text-sky-600">Jangan biarkan kata-kata terlupakan!</p>
+									<p className="text-xs text-muted-foreground">Jangan biarkan kata-kata terlupakan!</p>
 								</div>
 								<Link href="/flashcards">
 									<Button size="sm" variant="secondary" rightIcon={<ArrowRight size={14} />}>
@@ -312,7 +313,7 @@ export default function DashboardPage() {
 							Aktivitas 7 Hari Terakhir
 						</h3>
 						{activityQuery.isLoading ? (
-							<div className="h-32 animate-pulse rounded bg-slate-100" />
+							<div className="h-32 animate-pulse rounded bg-muted" />
 						) : (
 							<ResponsiveContainer width="100%" height={120}>
 								<BarChart data={weeklyActivity} barSize={24}>
@@ -341,8 +342,8 @@ export default function DashboardPage() {
 												key={entry.day}
 												fill={
 													entry.isToday
-														? "hsl(var(--primary))"
-														: "hsl(var(--primary) / 0.25)"
+														? "var(--color-accent)"
+														: "color-mix(in srgb, var(--color-primary) 30%, transparent)"
 												}
 											/>
 										))}
@@ -378,7 +379,7 @@ export default function DashboardPage() {
 						{!lessonsQuery.data ? (
 							<div className="space-y-3">
 								{[1, 2, 3, 4].map((i) => (
-									<div key={i} className="h-6 animate-pulse rounded bg-slate-200" />
+									<div key={i} className="h-6 animate-pulse rounded bg-muted" />
 								))}
 							</div>
 						) : null}
@@ -392,12 +393,12 @@ export default function DashboardPage() {
 						{activityQuery.data?.lessons?.slice(0, 6).map((item, index) => (
 							<li key={item.id ?? index} className="flex items-center justify-between gap-2">
 								<div className="flex items-center gap-2">
-									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-indigo-400" />
+									<div className="h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
 									<span className="text-xs text-muted-foreground">Pelajaran selesai</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<span className="text-xs font-medium text-foreground">Skor {item.score}</span>
-									<span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
+									<span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent-strong">
 										+{item.xpEarned} XP
 									</span>
 								</div>
