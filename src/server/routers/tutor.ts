@@ -12,13 +12,14 @@ import { aiProcedure, router } from "@/server/trpc";
 
 const messageSchema = z.object({
 	id: z.string().optional(),
-	role: z.enum(["user", "assistant", "system"]),
-	content: z.string().min(1),
+	// "system" is not accepted from clients — it would override the tutor prompt.
+	role: z.enum(["user", "assistant"]),
+	content: z.string().min(1).max(20_000),
 });
 
 export const tutorRouter = router({
 	chat: aiProcedure
-		.input(z.object({ messages: z.array(messageSchema) }))
+		.input(z.object({ messages: z.array(messageSchema).min(1).max(50) }))
 		.mutation(async ({ ctx, input }) => {
 			try {
 				const sanitizedMessages = input.messages.map((message) => ({
@@ -48,8 +49,8 @@ export const tutorRouter = router({
 	evaluateWriting: aiProcedure
 		.input(
 			z.object({
-				german: z.string().min(1),
-				expectedMeaning: z.string().min(1),
+				german: z.string().min(1).max(2000),
+				expectedMeaning: z.string().min(1).max(2000),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -80,8 +81,8 @@ export const tutorRouter = router({
 	evaluatePronunciation: aiProcedure
 		.input(
 			z.object({
-				audioBase64: z.string().min(1).max(5_000_000),
-				expectedText: z.string().min(1),
+				audioBase64: z.string().min(1).max(2_000_000),
+				expectedText: z.string().min(1).max(2000),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {

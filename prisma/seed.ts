@@ -1272,7 +1272,8 @@ async function main() {
 
   let user1: { id: string } | null = null;
 
-  if (isFreshSeed) {
+  // Demo accounts use known passwords — opt-in only, never on production deploys.
+  if (isFreshSeed && process.env.SEED_DEMO_USERS === "true") {
     const passwordHash1 = await bcrypt.hash("password123", 12);
     const passwordHash2 = await bcrypt.hash("password456", 12);
 

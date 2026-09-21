@@ -14,7 +14,7 @@ export const getLessonByIdInput = z.object({
 
 export const completeLessonInput = z.object({
 	lessonId: z.string().min(1, "ID pelajaran tidak valid."),
-	score: z.number().min(0).max(100),
+	score: z.number().int().min(0).max(100),
 });
 
 export type GetLessonsInput = z.infer<typeof getLessonsInput>;

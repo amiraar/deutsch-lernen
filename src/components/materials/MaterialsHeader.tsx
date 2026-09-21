@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 /**
- * Page header with back-link for Materi sub-pages.
+ * Page header with back-link for Materials ("Materi") sub-pages.
  */
 export function MaterialsHeader({
 	title,

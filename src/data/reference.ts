@@ -1,5 +1,5 @@
 /**
- * Static reference material for the "Materi" library.
+ * Static reference material for the Materials ("Materi") library.
  * All explanations are in Indonesian, targeting learners of German (A1–B2).
  */
 
@@ -49,7 +49,7 @@ export type VocabTheme = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Grammatik                                                           */
+/* Grammar                                                             */
 /* ------------------------------------------------------------------ */
 
 export const GRAMMAR_TOPICS: GrammarTopic[] = [
@@ -264,7 +264,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Buku Frasa                                                          */
+/* Phrasebook                                                          */
 /* ------------------------------------------------------------------ */
 
 export const PHRASE_CATEGORIES: PhraseCategory[] = [
@@ -378,7 +378,7 @@ export const PHRASE_CATEGORIES: PhraseCategory[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Kata kerja tak beraturan                                            */
+/* Irregular verbs                                                     */
 /* ------------------------------------------------------------------ */
 
 export const IRREGULAR_VERBS: IrregularVerb[] = [
@@ -417,7 +417,7 @@ export const IRREGULAR_VERBS: IrregularVerb[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Angka & Waktu                                                       */
+/* Numbers & time                                                      */
 /* ------------------------------------------------------------------ */
 
 export const NUMBER_TABLES: GrammarTable[] = [
@@ -488,7 +488,7 @@ export const NUMBER_TABLES: GrammarTable[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Kosakata tematik                                                    */
+/* Thematic vocabulary                                                 */
 /* ------------------------------------------------------------------ */
 
 export const VOCAB_THEMES: VocabTheme[] = [

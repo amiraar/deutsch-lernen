@@ -7,6 +7,8 @@ import type { Message } from "@/types";
 import { trpc } from "@/lib/trpcClient";
 import { Button, Badge, Input, Markdown } from "@/components/ui";
 
+const MAX_HISTORY = 50;
+
 type TutorWindowProps = {
 	className?: string;
 	initialMessage?: string;
@@ -52,7 +54,17 @@ export function TutorWindow({ className, initialMessage, contextNote }: TutorWin
 			setInput("");
 
 			try {
-				const response = await chatMutation.mutateAsync({ messages: nextMessages });
+				// Server accepts at most 50 messages; keep the history starting on a user turn.
+				const history = nextMessages
+					.filter(
+						(m): m is Message & { role: "user" | "assistant" } =>
+							m.role === "user" || m.role === "assistant"
+					)
+					.slice(-MAX_HISTORY);
+				while (history.length > 1 && history[0].role !== "user") {
+					history.shift();
+				}
+				const response = await chatMutation.mutateAsync({ messages: history });
 				setMessages((prev) => [
 					...prev,
 					{ role: "assistant", content: response.response },

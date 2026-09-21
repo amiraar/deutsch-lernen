@@ -1,15 +1,15 @@
 /**
- * Structured lesson content untuk setiap lesson di seed.
- * Dipakai di seed.ts (update content field) dan di LessonContent component.
+ * Structured content for every seeded lesson.
+ * Used by seed.ts (updates the content field) and by the LessonContent component.
  *
- * Struktur tiap lesson:
- * - introduction: paragraf pembuka
- * - sections: array bagian materi, tiap bagian punya:
+ * Shape of each lesson:
+ * - introduction: opening paragraph
+ * - sections: array of material sections, each with:
  *   - title
- *   - explanation: teks penjelasan (Bahasa Indonesia)
+ *   - explanation: explanation text (in Indonesian)
  *   - examples: array { german, indonesian, note? }
- *   - tip?: catatan penting / memory trick
- * - summary: poin-poin ringkasan
+ *   - tip?: key note / memory trick
+ * - summary: summary bullet points
  */
 
 export type LessonExample = {

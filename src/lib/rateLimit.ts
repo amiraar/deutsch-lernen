@@ -17,10 +17,16 @@ function isRedisConfigured(): boolean {
 	);
 }
 
+// Without Redis, production falls back to per-instance memory limiting
+// (createLimiter) instead of disabling limits; only dev skips entirely.
+function shouldSkipLimit(): boolean {
+	return !isRedisConfigured() && process.env.NODE_ENV !== "production";
+}
+
 function warnNoRedis(context: string): void {
 	console.warn(
 		`[RateLimit] REDIS_URL not set — skipping rate limit check for "${context}". ` +
-		"This is unsafe in production. Configure REDIS_URL to enable effective rate limiting."
+		"Production uses per-instance memory limits without it. Configure REDIS_URL for shared limits."
 	);
 }
 
@@ -92,7 +98,7 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 		throw new Error("IP address is required for auth rate limiting");
 	}
 
-	if (!isRedisConfigured()) {
+	if (shouldSkipLimit()) {
 		warnNoRedis("auth");
 		return;
 	}
@@ -102,7 +108,10 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 	} catch (error) {
 		if (isRateLimitResult(error)) {
 			const minutes = toMinutes(error.msBeforeNext);
-			throw new Error(`Too many attempts. Try again in ${minutes} minutes.`);
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: `Terlalu banyak percobaan. Coba lagi dalam ${minutes} menit.`,
+			});
 		}
 
 		// Infrastructure failure (e.g. Redis unreachable) — fail open so a
@@ -120,7 +129,7 @@ export async function checkApiLimit(userId: string): Promise<void> {
 		throw new Error("userId is required for API rate limiting");
 	}
 
-	if (!isRedisConfigured()) {
+	if (shouldSkipLimit()) {
 		warnNoRedis("api");
 		return;
 	}
@@ -148,7 +157,7 @@ export async function checkAiLimit(userId: string): Promise<void> {
 		throw new Error("userId is required for AI rate limiting");
 	}
 
-	if (!isRedisConfigured()) {
+	if (shouldSkipLimit()) {
 		warnNoRedis("ai");
 		return;
 	}
