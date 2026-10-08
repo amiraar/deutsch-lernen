@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import Redis from "ioredis";
 
 import { resolveRedisUrl } from "@/lib/redis";
+import { logSecurityEvent } from "@/lib/securityLog";
 
 type LimiterOptions = {
 	points: number;
@@ -108,6 +109,7 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 	} catch (error) {
 		if (isRateLimitResult(error)) {
 			const minutes = toMinutes(error.msBeforeNext);
+			logSecurityEvent("rate_limit_blocked", { scope: "auth_ip", ip });
 			throw new TRPCError({
 				code: "TOO_MANY_REQUESTS",
 				message: `Terlalu banyak percobaan. Coba lagi dalam ${minutes} menit.`,
@@ -117,7 +119,7 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 		// Infrastructure failure (e.g. Redis unreachable) — fail open so a
 		// rate-limiter outage never locks every user out of login.
 		const message = error instanceof Error ? error.message : "Unknown error";
-		console.error(`[RateLimit] auth check failed open: ${message}`);
+		logSecurityEvent("rate_limit_error", { scope: "auth_ip", ip, reason: message });
 	}
 }
 
@@ -145,7 +147,7 @@ export async function checkApiLimit(userId: string): Promise<void> {
 		}
 
 		const message = error instanceof Error ? error.message : "Unknown error";
-		console.error(`[RateLimit] api check failed open: ${message}`);
+		logSecurityEvent("rate_limit_error", { scope: "api", userId, reason: message });
 	}
 }
 
@@ -174,6 +176,6 @@ export async function checkAiLimit(userId: string): Promise<void> {
 		}
 
 		const message = error instanceof Error ? error.message : "Unknown error";
-		console.error(`[RateLimit] ai check failed open: ${message}`);
+		logSecurityEvent("rate_limit_error", { scope: "ai", userId, reason: message });
 	}
 }

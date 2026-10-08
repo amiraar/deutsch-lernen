@@ -6,6 +6,7 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { checkAuthLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/getClientIp";
+import { logSecurityEvent } from "@/lib/securityLog";
 
 const credentialsSchema = z.object({
 	email: z.string().email(),
@@ -36,6 +37,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				});
 
 				if (!user || !user.passwordHash) {
+					logSecurityEvent("login_failed", {
+						email: parsed.data.email,
+						ip,
+						reason: "unknown_account",
+					});
 					return null;
 				}
 
@@ -45,8 +51,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				);
 
 				if (!isValid) {
+					logSecurityEvent("login_failed", {
+						email: parsed.data.email,
+						ip,
+						userId: user.id,
+						reason: "bad_password",
+					});
 					return null;
 				}
+
+				logSecurityEvent("login_succeeded", { userId: user.id, ip });
 
 				return {
 					id: user.id,

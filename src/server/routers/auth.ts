@@ -6,6 +6,7 @@ import { getClientIp } from "@/lib/getClientIp";
 import { checkAuthLimit } from "@/lib/rateLimit";
 import { LevelEnum } from "@/generated/prisma/client";
 import { toUserMessage } from "@/lib/toUserMessage";
+import { logSecurityEvent } from "@/lib/securityLog";
 import { registerSchema } from "@/lib/validations/user";
 import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 
@@ -31,7 +32,7 @@ export const authRouter = router({
 
 				const passwordHash = await bcrypt.hash(input.password, 12);
 
-				return await ctx.prisma.user.create({
+				const created = await ctx.prisma.user.create({
 					data: {
 						email: input.email,
 						passwordHash,
@@ -49,6 +50,13 @@ export const authRouter = router({
 						streakDays: true,
 					},
 				});
+
+				logSecurityEvent("account_created", {
+					userId: created.id,
+					ip,
+				});
+
+				return created;
 			} catch (error) {
 				if (error instanceof TRPCError) {
 					throw error;
