@@ -10,6 +10,8 @@ export type SecurityEvent =
 	| "login_failed"
 	| "login_succeeded"
 	| "account_created"
+	| "account_deleted"
+	| "data_exported"
 	| "password_reset_requested"
 	| "password_reset_completed"
 	| "session_revoked"

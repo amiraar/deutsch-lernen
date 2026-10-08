@@ -4,26 +4,18 @@ import { LevelEnum } from "@/generated/prisma/client";
 import {
 	getCachedLesson,
 	getCachedLessonMeta,
+	invalidateLessonCache,
 	invalidateUserStats,
 	LESSON_TTL,
 } from "@/lib/cache";
 import { gradeAnswer, scoreFromAnswers, XP_PER_CORRECT_ANSWER } from "@/lib/grading";
-import { get, set, del } from "@/lib/redis";
+import { get, set } from "@/lib/redis";
 import { toUserMessage } from "@/lib/toUserMessage";
 import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";
 import { protectedProcedure, router } from "@/server/trpc";
 
 function lessonListKey(userId: string, level?: LevelEnum): string {
 	return `lessons:${userId}:${level ?? "all"}`;
-}
-
-async function invalidateLessonCache(userId: string): Promise<void> {
-	const keys = [
-		lessonListKey(userId),
-		...Object.values(LevelEnum).map((lvl) => lessonListKey(userId, lvl)),
-	];
-	// ioredis DEL accepts multiple keys in a single command
-	await Promise.all(keys.map((key) => del(key)));
 }
 
 function calculateStreak(

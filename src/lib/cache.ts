@@ -1,4 +1,5 @@
 import type { Level, UserStats } from "@/types";
+import { LevelEnum } from "@/generated/prisma/client";
 import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { del, get, set } from "@/lib/redis";
@@ -83,6 +84,10 @@ function lessonMetaKey(id: string): string {
 
 function vocabKey(level: string): string {
 	return `vocab:${level}`;
+}
+
+function lessonListKey(userId: string, level?: Level): string {
+	return `lessons:${userId}:${level ?? "all"}`;
 }
 
 function userStatsKey(userId: string): string {
@@ -227,6 +232,22 @@ export async function getCachedUserStats(userId: string): Promise<UserStats> {
 
 	await safeSet(userStatsKey(userId), stats, USER_STATS_TTL);
 	return stats;
+}
+
+/**
+ * Clears the cached lesson lists for a user, so completion state updates
+ * immediately. Shared by lesson completion and account deletion.
+ */
+export async function invalidateLessonCache(userId: string): Promise<void> {
+	if (!userId) {
+		throw new Error("userId is required");
+	}
+
+	const keys = [
+		lessonListKey(userId),
+		...Object.values(LevelEnum).map((lvl) => lessonListKey(userId, lvl)),
+	];
+	await Promise.all(keys.map((key) => safeDel(key)));
 }
 
 /**

@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 import { z } from "zod";
 
+import { invalidateLessonCache, invalidateUserStats } from "@/lib/cache";
 import { getAppUrl, sendPasswordResetEmail } from "@/lib/email";
 import { getClientIp } from "@/lib/getClientIp";
 import { checkAuthAccountLimit, checkAuthLimit } from "@/lib/rateLimit";
@@ -10,6 +11,7 @@ import { LevelEnum } from "@/generated/prisma/client";
 import { toUserMessage } from "@/lib/toUserMessage";
 import { logSecurityEvent } from "@/lib/securityLog";
 import {
+	deleteAccountSchema,
 	registerSchema,
 	requestPasswordResetSchema,
 	resetPasswordSchema,
@@ -18,6 +20,8 @@ import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 
 const PASSWORD_RESET_TTL_MS = 30 * 60 * 1000;
 const PASSWORD_RESET_PREFIX = "password-reset:";
+// Caps the export query so a single account cannot pull an unbounded result set.
+const EXPORT_ROW_LIMIT = 1000;
 
 /**
  * Only the hash of a reset token is stored, so a leaked database dump cannot be
@@ -245,6 +249,141 @@ export const authRouter = router({
 				});
 			}
 		}),
+
+	deleteAccount: protectedProcedure
+		.input(deleteAccountSchema)
+		.mutation(async ({ ctx, input }) => {
+			const ip = getClientIp(ctx.req);
+
+			try {
+				const user = await ctx.prisma.user.findUnique({
+					where: { id: ctx.userId },
+					select: { id: true, email: true, passwordHash: true },
+				});
+
+				if (!user) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Pengguna tidak ditemukan.",
+					});
+				}
+
+				// Deletion is irreversible, so it takes the password, not just a cookie.
+				await checkAuthAccountLimit(user.email);
+				const isValid = await bcrypt.compare(input.password, user.passwordHash);
+
+				if (!isValid) {
+					logSecurityEvent("login_failed", {
+						userId: user.id,
+						ip,
+						reason: "delete_account_bad_password",
+					});
+					throw new TRPCError({
+						code: "UNAUTHORIZED",
+						message: "Password salah.",
+					});
+				}
+
+				// No relation declares onDelete, so child rows are removed first.
+				await ctx.prisma.$transaction([
+					ctx.prisma.flashcardReview.deleteMany({ where: { userId: ctx.userId } }),
+					ctx.prisma.lessonCompletion.deleteMany({ where: { userId: ctx.userId } }),
+					ctx.prisma.session.deleteMany({ where: { userId: ctx.userId } }),
+					ctx.prisma.account.deleteMany({ where: { userId: ctx.userId } }),
+					ctx.prisma.verificationToken.deleteMany({
+						where: { identifier: PASSWORD_RESET_PREFIX + ctx.userId },
+					}),
+					ctx.prisma.user.delete({ where: { id: ctx.userId } }),
+				]);
+
+				await invalidateUserStats(ctx.userId);
+				await invalidateLessonCache(ctx.userId);
+
+				logSecurityEvent("account_deleted", { userId: ctx.userId, ip });
+
+				return { ok: true };
+			} catch (error) {
+				if (error instanceof TRPCError) {
+					throw error;
+				}
+
+				console.error("[auth.deleteAccount]", error);
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: toUserMessage(error, "Gagal menghapus akun."),
+				});
+			}
+		}),
+
+	exportMyData: protectedProcedure.query(async ({ ctx }) => {
+		try {
+			const [profile, lessonCompletions, flashcardReviews] = await Promise.all([
+				ctx.prisma.user.findUnique({
+					where: { id: ctx.userId },
+					select: {
+						id: true,
+						email: true,
+						name: true,
+						level: true,
+						xp: true,
+						streakDays: true,
+						lastStudiedAt: true,
+						createdAt: true,
+					},
+				}),
+				ctx.prisma.lessonCompletion.findMany({
+					where: { userId: ctx.userId },
+					orderBy: { completedAt: "desc" },
+					take: EXPORT_ROW_LIMIT,
+					select: {
+						lessonId: true,
+						score: true,
+						xpEarned: true,
+						completedAt: true,
+					},
+				}),
+				ctx.prisma.flashcardReview.findMany({
+					where: { userId: ctx.userId },
+					orderBy: { updatedAt: "desc" },
+					take: EXPORT_ROW_LIMIT,
+					select: {
+						easeFactor: true,
+						interval: true,
+						repetitions: true,
+						nextReviewAt: true,
+						lastReviewedAt: true,
+						vocabWord: { select: { german: true, indonesian: true } },
+					},
+				}),
+			]);
+
+			if (!profile) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Pengguna tidak ditemukan.",
+				});
+			}
+
+			logSecurityEvent("data_exported", { userId: ctx.userId });
+
+			return {
+				exportedAt: new Date().toISOString(),
+				profile,
+				lessonCompletions,
+				flashcardReviews,
+			};
+		} catch (error) {
+			if (error instanceof TRPCError) {
+				throw error;
+			}
+
+			console.error("[auth.exportMyData]", error);
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: toUserMessage(error, "Gagal mengekspor data."),
+			});
+		}
+	}),
 
 	updateLevel: protectedProcedure
 		.input(z.object({ level: z.nativeEnum(LevelEnum) }))

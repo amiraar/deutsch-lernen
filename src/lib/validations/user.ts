@@ -29,7 +29,12 @@ export const resetPasswordSchema = z.object({
 	password: passwordSchema,
 });
 
+export const deleteAccountSchema = z.object({
+	password: z.string().min(1, "Password tidak boleh kosong."),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type RequestPasswordResetInput = z.infer<typeof requestPasswordResetSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

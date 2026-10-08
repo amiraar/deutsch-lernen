@@ -1,9 +1,21 @@
 "use client";
 
+import * as React from "react";
+import { signOut } from "next-auth/react";
 import { User, Mail, Award, Zap } from "lucide-react";
 
-import { Badge, Button, Card, ConfirmDialog, PageSkeleton, Toast } from "@/components/ui";
+import {
+	Badge,
+	Button,
+	Card,
+	ConfirmDialog,
+	Input,
+	Modal,
+	PageSkeleton,
+	Toast,
+} from "@/components/ui";
 import { useLogoutWithToast } from "@/hooks/useLogoutWithToast";
+import { useToastMessage } from "@/hooks/useToastMessage";
 import { trpc } from "@/lib/trpcClient";
 import { LEVEL_LABELS } from "@/constants";
 
@@ -18,6 +30,53 @@ export default function ProfilePage() {
 		handleSignOut,
 		cancelSignOut,
 	} = useLogoutWithToast();
+
+	const {
+		toast: dataToast,
+		showToast: showDataToast,
+	} = useToastMessage({ durationMs: 4000 });
+	const exportQuery = trpc.auth.exportMyData.useQuery(undefined, { enabled: false });
+	const deleteAccount = trpc.auth.deleteAccount.useMutation();
+	const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
+	const [deletePassword, setDeletePassword] = React.useState("");
+	const [deleteError, setDeleteError] = React.useState<string | null>(null);
+
+	const handleExport = async () => {
+		const result = await exportQuery.refetch();
+
+		if (result.error || !result.data) {
+			showDataToast("Gagal mengunduh data. Coba lagi.", "error");
+			return;
+		}
+
+		// Built in the browser: the export never passes through a third party.
+		const blob = new Blob([JSON.stringify(result.data, null, 2)], {
+			type: "application/json",
+		});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "deutsch-lernen-data.json";
+		link.click();
+		URL.revokeObjectURL(url);
+		showDataToast("Data berhasil diunduh.", "success");
+	};
+
+	const handleDeleteAccount = async () => {
+		setDeleteError(null);
+
+		try {
+			await deleteAccount.mutateAsync({ password: deletePassword });
+			setIsDeleteOpen(false);
+			setDeletePassword("");
+			await signOut({ callbackUrl: "/", redirect: false });
+			window.location.href = "/";
+		} catch (error) {
+			setDeleteError(
+				error instanceof Error ? error.message : "Gagal menghapus akun."
+			);
+		}
+	};
 
 	if (meQuery.isLoading) {
 		return <PageSkeleton />;
@@ -102,6 +161,38 @@ export default function ProfilePage() {
 				</Card>
 			</div>
 
+			{/* Data rights: export and permanent deletion (UU PDP). */}
+			<Card className="space-y-4">
+				<div>
+					<h2 className="text-base font-semibold text-foreground">Data & privasi</h2>
+					<p className="mt-1 text-sm text-muted-foreground">
+						Unduh salinan datamu atau hapus akun beserta seluruh riwayat belajar.
+					</p>
+				</div>
+				<div className="flex flex-wrap gap-3">
+					<Button
+						variant="secondary"
+						isLoading={exportQuery.isFetching}
+						onClick={handleExport}
+					>
+						Unduh data saya
+					</Button>
+					<Button
+						variant="danger"
+						onClick={() => {
+							setDeleteError(null);
+							setDeletePassword("");
+							setIsDeleteOpen(true);
+						}}
+					>
+						Hapus akun
+					</Button>
+				</div>
+				<p className="text-xs text-muted-foreground">
+					Penghapusan bersifat permanen dan tidak bisa dibatalkan.
+				</p>
+			</Card>
+
 			<Button
 				variant="danger"
 				isLoading={isSigningOut}
@@ -112,6 +203,46 @@ export default function ProfilePage() {
 			{toast ? (
 				<Toast message={toast.message} variant={toast.variant} />
 			) : null}
+			{dataToast ? (
+				<Toast message={dataToast.message} variant={dataToast.variant} />
+			) : null}
+			<Modal
+				isOpen={isDeleteOpen}
+				onClose={() => setIsDeleteOpen(false)}
+				title="Hapus akun"
+			>
+				<div className="space-y-4">
+					<p className="text-sm text-muted-foreground">
+						Semua progres, riwayat pelajaran, dan kartu review akan dihapus
+						permanen. Masukkan password untuk mengonfirmasi.
+					</p>
+					{deleteError ? (
+						<div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+							{deleteError}
+						</div>
+					) : null}
+					<Input
+						label="Password"
+						type="password"
+						value={deletePassword}
+						onChange={(e) => setDeletePassword(e.target.value)}
+						showPasswordToggle
+						autoComplete="current-password"
+					/>
+					<div className="flex justify-end gap-3">
+						<Button variant="secondary" onClick={() => setIsDeleteOpen(false)}>
+							Batal
+						</Button>
+						<Button
+							variant="danger"
+							isLoading={deleteAccount.isPending}
+							onClick={handleDeleteAccount}
+						>
+							Hapus permanen
+						</Button>
+					</div>
+				</div>
+			</Modal>
 			<ConfirmDialog
 				isOpen={isConfirmOpen}
 				title="Keluar"
