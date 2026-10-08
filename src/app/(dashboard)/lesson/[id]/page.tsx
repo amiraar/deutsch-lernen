@@ -45,6 +45,13 @@ export default function LessonPage() {
 	const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 	const [isModalOpen, setIsModalOpen] = React.useState(false);
 	const [xpEarned, setXpEarned] = React.useState(0);
+	// Server-graded result; the local counts are only a live preview.
+	const [serverResult, setServerResult] = React.useState<{
+		score: number;
+		xpAwarded: number;
+		alreadyCompleted: boolean;
+	} | null>(null);
+	const answersRef = React.useRef<Array<{ exerciseId: string; answer: string }>>([]);
 	const [showXpToast, setShowXpToast] = React.useState(false);
 	const [isStartingExercises, setIsStartingExercises] = React.useState(false);
 	const { toast, showToast, clearToast } = useToastMessage();
@@ -83,24 +90,42 @@ export default function LessonPage() {
 		setPhase("exercises");
 	};
 
-	const handleComplete = async (correct: boolean) => {
-		const nextCorrectCount = correctCount + (correct ? 1 : 0);
+	const handleComplete = async (correct: boolean, userAnswer: string) => {
 		setCorrectCount((prev) => prev + (correct ? 1 : 0));
+
+		if (current) {
+			answersRef.current = [
+				...answersRef.current.filter((entry) => entry.exerciseId !== current.id),
+				{ exerciseId: current.id, answer: userAnswer },
+			];
+		}
 
 		if (currentIndex < exercises.length - 1) {
 			setCurrentIndex((prev) => prev + 1);
-		} else {
-			const score = Math.round((nextCorrectCount / exercises.length) * 100);
-			await completeMutation.mutateAsync({
-				lessonId,
-				score,
-			});
-			setXpEarned(nextCorrectCount * 10);
-			setShowXpToast(true);
-			window.setTimeout(() => {
-				setIsModalOpen(true);
-			}, 300);
+			return;
 		}
+
+		try {
+			// No score is sent: the server grades the answers and returns the result.
+			const result = await completeMutation.mutateAsync({
+				lessonId,
+				answers: answersRef.current,
+			});
+			setServerResult({
+				score: result.score,
+				xpAwarded: result.xpAwarded,
+				alreadyCompleted: result.alreadyCompleted,
+			});
+			setXpEarned(result.xpAwarded);
+			setShowXpToast(result.xpAwarded > 0);
+		} catch {
+			showToast("Gagal menyimpan hasil latihan. Coba lagi.", "error");
+			return;
+		}
+
+		window.setTimeout(() => {
+			setIsModalOpen(true);
+		}, 300);
 	};
 
 	if (lessonMetaQuery.isLoading) {
@@ -194,15 +219,20 @@ export default function LessonPage() {
 					</div>
 					<div>
 						<p className="text-4xl font-bold text-foreground">
-							{Math.round((correctCount / Math.max(exercises.length, 1)) * 100)}
+							{serverResult?.score ?? 0}
 							<span className="text-xl text-muted-foreground">/100</span>
 						</p>
 						<p className="mt-1 text-sm text-muted-foreground">Skor kamu</p>
 					</div>
 					<div className="rounded-lg bg-primary/5 px-4 py-3">
 						<p className="text-sm font-semibold text-primary">
-							+{correctCount * 10} XP diperoleh
+							+{serverResult?.xpAwarded ?? 0} XP diperoleh
 						</p>
+						{serverResult?.alreadyCompleted ? (
+							<p className="mt-1 text-xs text-muted-foreground">
+								Pelajaran ini sudah pernah selesai, jadi XP tidak ditambah lagi.
+							</p>
+						) : null}
 					</div>
 					<Button className="w-full" onClick={() => router.push("/dashboard")}>
 						Kembali ke Dashboard

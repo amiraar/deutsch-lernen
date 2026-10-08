@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { gradeAnswer, XP_PER_CORRECT_ANSWER } from "@/lib/grading";
 import { trpc } from "@/lib/trpcClient";
 import { speak } from "@/lib/ai/tts";
 import { Button, Card, Input, Markdown } from "@/components/ui";
@@ -24,11 +25,6 @@ type ExerciseBlockProps = {
 	onComplete: (correct: boolean, userAnswer: string) => void;
 };
 
-const XP_PER_EXERCISE = 10;
-
-function normalizeAnswer(value: string): string {
-	return value.trim().toLowerCase();
-}
 
 function AnswerFooter({
 	isCorrect,
@@ -43,7 +39,7 @@ function AnswerFooter({
 		<div className="mt-4 space-y-2 text-sm">
 			<p className="font-medium text-foreground">
 				{isCorrect ? "Jawaban benar" : "Jawaban kurang tepat"} · XP +
-				{isCorrect ? XP_PER_EXERCISE : 0}
+				{isCorrect ? XP_PER_CORRECT_ANSWER : 0}
 			</p>
 			{!isCorrect ? (
 				<p className="text-muted-foreground">Jawaban benar: {correctAnswer}</p>
@@ -63,7 +59,8 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 			return;
 		}
 
-		const correct = option === exercise.correctAnswer;
+		// Same helper the server uses, so feedback and the stored score agree.
+		const correct = gradeAnswer(exercise, option);
 		setSelected(option);
 		setIsCorrect(correct);
 		if (!correct) {
@@ -127,8 +124,7 @@ function FillInBlank({ exercise, onComplete }: ExerciseBlockProps) {
 			return;
 		}
 
-		const correct =
-			normalizeAnswer(value) === normalizeAnswer(exercise.correctAnswer);
+		const correct = gradeAnswer(exercise, value);
 		setIsCorrect(correct);
 		onComplete(correct, value);
 	};

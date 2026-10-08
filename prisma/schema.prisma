@@ -163,6 +163,7 @@ model LessonCompletion {
   lesson      Lesson   @relation(fields: [lessonId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
 
+  @@unique([userId, lessonId])
   @@index([userId])
   @@index([lessonId])
 }

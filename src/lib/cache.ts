@@ -1,4 +1,5 @@
 import type { Level, UserStats } from "@/types";
+import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { del, get, set } from "@/lib/redis";
 
@@ -88,17 +89,21 @@ function userStatsKey(userId: string): string {
 	return `user-stats:${userId}`;
 }
 
+/** Lesson plus its exercises, as stored in the cache. */
+export type CachedLesson = Prisma.LessonGetPayload<{ include: { exercises: true } }>;
+
 /**
  * Reads a lesson with exercises from cache, then falls back to Prisma.
+ *
+ * Note: a cache hit revives `Date` fields as ISO strings. Callers that grade
+ * answers only read `id`, `type` and `correctAnswer`, which are plain strings.
  */
-export async function getCachedLesson(id: string) {
+export async function getCachedLesson(id: string): Promise<CachedLesson | null> {
 	if (!id) {
 		throw new Error("Lesson id is required");
 	}
 
-	const safeCached = await safeGet<
-		Awaited<ReturnType<typeof prisma.lesson.findUnique>>
-	>(lessonKey(id));
+	const safeCached = await safeGet<CachedLesson>(lessonKey(id));
 
 	if (safeCached) {
 		return safeCached;

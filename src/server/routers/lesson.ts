@@ -1,7 +1,13 @@
 import { TRPCError } from "@trpc/server";
 
 import { LevelEnum } from "@/generated/prisma/client";
-import { getCachedLesson, getCachedLessonMeta, invalidateUserStats, LESSON_TTL } from "@/lib/cache";
+import {
+	getCachedLesson,
+	getCachedLessonMeta,
+	invalidateUserStats,
+	LESSON_TTL,
+} from "@/lib/cache";
+import { gradeAnswer, scoreFromAnswers, XP_PER_CORRECT_ANSWER } from "@/lib/grading";
 import { get, set, del } from "@/lib/redis";
 import { toUserMessage } from "@/lib/toUserMessage";
 import { completeLessonInput, getLessonByIdInput, getLessonsInput } from "@/lib/validations/lesson";
@@ -141,9 +147,36 @@ export const lessonRouter = router({
 		.input(completeLessonInput)
 		.mutation(async ({ ctx, input }) => {
 			const now = new Date();
-			const xpEarned = Math.round(input.score / 10) * 10;
 
 			try {
+				const lesson = await getCachedLesson(input.lessonId);
+
+				if (!lesson) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Pelajaran tidak ditemukan.",
+					});
+				}
+
+				// The client reports the answers it gave; the score comes from
+				// re-grading them here against the stored correct answers.
+				const answerByExerciseId = new Map(
+					input.answers.map((entry) => [entry.exerciseId, entry.answer])
+				);
+
+				const correctCount = lesson.exercises.reduce((total, exercise) => {
+					const answer = answerByExerciseId.get(exercise.id);
+
+					if (answer === undefined) {
+						return total;
+					}
+
+					return gradeAnswer(exercise, answer) ? total + 1 : total;
+				}, 0);
+
+				const score = scoreFromAnswers(correctCount, lesson.exercises.length);
+				const earnableXp = correctCount * XP_PER_CORRECT_ANSWER;
+
 				const result = await ctx.prisma.$transaction(async (tx) => {
 					const user = await tx.user.findUnique({
 						where: { id: ctx.userId },
@@ -157,32 +190,58 @@ export const lessonRouter = router({
 						});
 					}
 
+					const existing = await tx.lessonCompletion.findUnique({
+						where: {
+							userId_lessonId: {
+								userId: ctx.userId,
+								lessonId: input.lessonId,
+							},
+						},
+						select: { id: true, score: true },
+					});
+
 					const nextStreak = calculateStreak(
 						user.lastStudiedAt,
 						user.streakDays,
 						now
 					);
 
-					const completion = await tx.lessonCompletion.create({
-						data: {
-							userId: ctx.userId,
-							lessonId: input.lessonId,
-							score: input.score,
-							xpEarned,
-							completedAt: now,
-						},
-						select: {
-							id: true,
-							score: true,
-							xpEarned: true,
-							completedAt: true,
-						},
-					});
+					// XP is granted once per lesson. Replaying the mutation refreshes the
+					// streak and raises the stored score when the retry was better, but
+					// never pays out again.
+					const xpAwarded = existing ? 0 : earnableXp;
+
+					const completion = existing
+						? await tx.lessonCompletion.update({
+								where: { id: existing.id },
+								data: { score: Math.max(existing.score, score) },
+								select: {
+									id: true,
+									score: true,
+									xpEarned: true,
+									completedAt: true,
+								},
+							})
+						: await tx.lessonCompletion.create({
+								data: {
+									userId: ctx.userId,
+									lessonId: input.lessonId,
+									score,
+									xpEarned: earnableXp,
+									completedAt: now,
+								},
+								select: {
+									id: true,
+									score: true,
+									xpEarned: true,
+									completedAt: true,
+								},
+							});
 
 					const updatedUser = await tx.user.update({
 						where: { id: ctx.userId },
 						data: {
-							xp: user.xp + xpEarned,
+							xp: user.xp + xpAwarded,
 							streakDays: nextStreak,
 							lastStudiedAt: now,
 						},
@@ -205,7 +264,12 @@ export const lessonRouter = router({
 						});
 					}
 
-					return { completion, updatedUser };
+					return {
+						completion,
+						updatedUser,
+						xpAwarded,
+						alreadyCompleted: existing !== null,
+					};
 				});
 
 				await invalidateUserStats(ctx.userId);
@@ -216,6 +280,9 @@ export const lessonRouter = router({
 					completion: result.completion,
 					xp: result.updatedUser.xp,
 					streakDays: result.updatedUser.streakDays,
+					score,
+					xpAwarded: result.xpAwarded,
+					alreadyCompleted: result.alreadyCompleted,
 				};
 			} catch (error) {
 				if (error instanceof TRPCError) {
