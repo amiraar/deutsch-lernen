@@ -14,7 +14,10 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-	session: { strategy: "jwt" },
+	// 7 days instead of the 30-day default; every request refreshes it, so an
+	// idle session expires after a week. Shorter life limits a stolen cookie,
+	// which matters because a JWT session cannot be revoked server-side.
+	session: { strategy: "jwt", maxAge: 7 * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
 	providers: [
 		Credentials({
 			name: "credentials",
