@@ -10,6 +10,8 @@ export type SecurityEvent =
 	| "login_failed"
 	| "login_succeeded"
 	| "account_created"
+	| "password_reset_requested"
+	| "password_reset_completed"
 	| "session_revoked"
 	| "rate_limit_blocked"
 	/** The limiter itself failed (e.g. Redis unreachable) and the request was let through. */
