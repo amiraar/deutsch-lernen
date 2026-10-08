@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
-import { checkAuthLimit } from "@/lib/rateLimit";
+import { checkAuthAccountLimit, checkAuthLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/getClientIp";
 import { logSecurityEvent } from "@/lib/securityLog";
 
@@ -31,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 				const ip = getClientIp(request);
 				await checkAuthLimit(ip);
+				await checkAuthAccountLimit(parsed.data.email);
 
 				const user = await prisma.user.findUnique({
 					where: { email: parsed.data.email },

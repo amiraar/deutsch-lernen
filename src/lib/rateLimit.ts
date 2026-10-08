@@ -64,11 +64,21 @@ function createLimiter(opts: LimiterOptions) {
 
 // Lazily initialized — defers createLimiter to first request rather than module load.
 let _authLimiter: ReturnType<typeof createLimiter> | undefined;
+let _authAccountLimiter: ReturnType<typeof createLimiter> | undefined;
 let _apiLimiter: ReturnType<typeof createLimiter> | undefined;
 let _aiLimiter: ReturnType<typeof createLimiter> | undefined;
 
 function getAuthLimiter() {
 	return (_authLimiter ??= createLimiter({ points: 5, duration: 15 * 60, keyPrefix: "dl:auth" }));
+}
+function getAuthAccountLimiter() {
+	// Per-account limit: an IP limit alone does not stop a distributed attack
+	// that spreads attempts on one account across many addresses.
+	return (_authAccountLimiter ??= createLimiter({
+		points: 10,
+		duration: 15 * 60,
+		keyPrefix: "dl:auth:acct",
+	}));
 }
 function getApiLimiter() {
 	return (_apiLimiter ??= createLimiter({ points: 60, duration: 60, keyPrefix: "dl:api" }));
@@ -120,6 +130,45 @@ export async function checkAuthLimit(ip: string): Promise<void> {
 		// rate-limiter outage never locks every user out of login.
 		const message = error instanceof Error ? error.message : "Unknown error";
 		logSecurityEvent("rate_limit_error", { scope: "auth_ip", ip, reason: message });
+	}
+}
+
+/**
+ * Enforces login/register rate limiting per account, on top of the IP limit.
+ */
+export async function checkAuthAccountLimit(email: string): Promise<void> {
+	if (!email) {
+		throw new Error("Email is required for per-account auth rate limiting");
+	}
+
+	if (shouldSkipLimit()) {
+		return;
+	}
+
+	// Lowercased for the limiter key only — account lookup keeps the raw value.
+	const key = email.toLowerCase();
+
+	try {
+		await getAuthAccountLimiter().consume(key);
+	} catch (error) {
+		if (isRateLimitResult(error)) {
+			const minutes = toMinutes(error.msBeforeNext);
+			logSecurityEvent("rate_limit_blocked", {
+				scope: "auth_account",
+				email,
+			});
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: `Terlalu banyak percobaan untuk akun ini. Coba lagi dalam ${minutes} menit.`,
+			});
+		}
+
+		const message = error instanceof Error ? error.message : "Unknown error";
+		logSecurityEvent("rate_limit_error", {
+				scope: "auth_account",
+				email,
+				reason: message,
+			});
 	}
 }
 

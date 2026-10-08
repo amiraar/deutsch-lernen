@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 import { getClientIp } from "@/lib/getClientIp";
-import { checkAuthLimit } from "@/lib/rateLimit";
+import { checkAuthAccountLimit, checkAuthLimit } from "@/lib/rateLimit";
 import { LevelEnum } from "@/generated/prisma/client";
 import { toUserMessage } from "@/lib/toUserMessage";
 import { logSecurityEvent } from "@/lib/securityLog";
@@ -16,6 +16,7 @@ export const authRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			const ip = getClientIp(ctx.req);
 			await checkAuthLimit(ip);
+			await checkAuthAccountLimit(input.email);
 
 			try {
 				const existing = await ctx.prisma.user.findUnique({
