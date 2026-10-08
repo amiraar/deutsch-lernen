@@ -1,0 +1,8 @@
+# Security contact for deutsch-lernen.
+# Replace the placeholders below before launch; an unreachable address is worse
+# than no file at all.
+Contact: mailto:[EMAIL KEAMANAN]
+Expires: 2027-10-08T00:00:00.000Z
+Preferred-Languages: id, en
+Canonical: https://[DOMAIN]/.well-known/security.txt
+Policy: https://[DOMAIN]/privacy

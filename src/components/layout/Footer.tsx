@@ -21,6 +21,8 @@ export function Footer() {
 				<div className="flex gap-5 text-xs text-ink-muted">
 					<Link href="/login" className="transition-colors hover:text-white">Masuk</Link>
 					<Link href="/register" className="transition-colors hover:text-white">Daftar</Link>
+					<Link href="/privacy" className="transition-colors hover:text-white">Privasi</Link>
+					<Link href="/terms" className="transition-colors hover:text-white">Ketentuan</Link>
 				</div>
 			</div>
 		</footer>

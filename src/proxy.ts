@@ -8,6 +8,8 @@ const PUBLIC_PATHS = [
   "/register",
   "/forgot-password",
   "/reset-password",
+  "/privacy",
+  "/terms",
 ];
 
 function isPublic(pathname: string): boolean {
@@ -16,7 +18,10 @@ function isPublic(pathname: string): boolean {
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/trpc") ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon")
+    pathname.startsWith("/favicon") ||
+    // Files under public/ are proxied too, so without this the security
+    // contact file would redirect to /login.
+    pathname.startsWith("/.well-known/")
   );
 }
 
