@@ -101,19 +101,58 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				const needsSync = now - lastSync > SYNC_INTERVAL_MS;
 
 				if (needsSync) {
+					let fresh: {
+						level: string;
+						xp: number;
+						lastStudiedAt: Date | null;
+						passwordChangedAt: Date | null;
+					} | null = null;
+					let lookupFailed = false;
+
 					try {
-						const fresh = await prisma.user.findUnique({
+						fresh = await prisma.user.findUnique({
 							where: { id: token.id as string },
-							select: { level: true, xp: true, lastStudiedAt: true },
+							select: {
+								level: true,
+								xp: true,
+								lastStudiedAt: true,
+								passwordChangedAt: true,
+							},
 						});
-						if (fresh) {
-							token.level = fresh.level;
-							token.xp = fresh.xp;
-							token.onboardingDone = fresh.lastStudiedAt !== null;
-							token.syncedAt = now;
-						}
 					} catch {
-						// Non-fatal: keep stale values rather than breaking auth
+						// Non-fatal: a database blip must not log everyone out, so the
+						// stale token is kept and revocation is retried on the next sync.
+						lookupFailed = true;
+					}
+
+					if (!lookupFailed && !fresh) {
+						// The row is gone (account deleted): drop the session.
+						logSecurityEvent("session_revoked", {
+							userId: token.id as string,
+							reason: "account_deleted",
+						});
+						return null;
+					}
+
+					if (fresh) {
+						const changedAt = fresh.passwordChangedAt?.getTime() ?? 0;
+
+						if (typeof token.pwdAt !== "number") {
+							token.pwdAt = changedAt;
+						} else if (changedAt > token.pwdAt) {
+							// Password changed elsewhere; a JWT cannot be revoked server-side,
+							// so returning null here is what clears the cookie.
+							logSecurityEvent("session_revoked", {
+								userId: token.id as string,
+								reason: "password_changed",
+							});
+							return null;
+						}
+
+						token.level = fresh.level;
+						token.xp = fresh.xp;
+						token.onboardingDone = fresh.lastStudiedAt !== null;
+						token.syncedAt = now;
 					}
 				}
 			}

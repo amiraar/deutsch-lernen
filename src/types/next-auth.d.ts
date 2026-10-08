@@ -28,5 +28,7 @@ declare module "next-auth/jwt" {
 		xp?: number;
 		syncedAt?: number;
 		onboardingDone?: boolean;
+		/** User.passwordChangedAt as epoch ms, used to revoke stale sessions. */
+		pwdAt?: number;
 	}
 }
