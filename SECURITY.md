@@ -25,8 +25,9 @@ a fix is deployed.
 
 - Passwords: bcrypt, cost 12, maximum 72 bytes (the bcrypt limit).
 - Sessions: Auth.js JWT in an httpOnly, secure, SameSite=Lax cookie; 7-day
-  lifetime, refreshed on use. A password change or account deletion revokes
-  every other session within 5 minutes (the token sync interval).
+  lifetime counted from sign-in. A password change or account deletion revokes
+  every other session within 5 minutes (the token sync interval), including
+  sessions issued before this control existed.
 - Rate limiting: login and register are limited per IP (5 / 15 min) and per
   account (10 / 15 min); the API is limited per user (60 / min) and AI calls
   per user (10 / hour). Redis-backed, with an in-memory insurance limiter.

@@ -18,6 +18,7 @@ declare module "next-auth" {
 		id?: string;
 		level?: string;
 		xp?: number;
+		pwdAt?: number;
 	}
 }
 

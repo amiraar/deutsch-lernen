@@ -14,10 +14,9 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-	// 7 days instead of the 30-day default; every request refreshes it, so an
-	// idle session expires after a week. Shorter life limits a stolen cookie,
-	// which matters because a JWT session cannot be revoked server-side.
-	session: { strategy: "jwt", maxAge: 7 * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
+	// 7 days instead of the 30-day default. The cookie is only written at sign-in
+	// (server-side auth() does not re-issue it), so this is an absolute lifetime.
+	session: { strategy: "jwt", maxAge: 7 * 24 * 60 * 60 },
 	providers: [
 		Credentials({
 			name: "credentials",
@@ -74,6 +73,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					image: user.avatarUrl ?? undefined,
 					level: user.level,
 					xp: user.xp,
+					pwdAt: user.passwordChangedAt?.getTime() ?? 0,
 				} as {
 					id: string;
 					email: string;
@@ -82,6 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					image?: string;
 					level: string;
 					xp: number;
+					pwdAt: number;
 				};
 			},
 		}),
@@ -92,6 +93,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.id = user.id;
 				token.level = user.level;
 				token.xp = user.xp;
+				token.pwdAt = user.pwdAt;
 			}
 			const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -137,9 +139,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					if (fresh) {
 						const changedAt = fresh.passwordChangedAt?.getTime() ?? 0;
 
-						if (typeof token.pwdAt !== "number") {
-							token.pwdAt = changedAt;
-						} else if (changedAt > token.pwdAt) {
+						// Tokens issued before passwordChangedAt existed carry no pwdAt.
+						// 0 is their correct baseline: the column was null for every user.
+						if (changedAt > (token.pwdAt ?? 0)) {
 							// Password changed elsewhere; a JWT cannot be revoked server-side,
 							// so returning null here is what clears the cookie.
 							logSecurityEvent("session_revoked", {
