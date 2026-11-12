@@ -84,9 +84,13 @@ test("mobile bottom navigation does not cover page content", async ({ page }, te
 	await expect(nav).toBeVisible();
 	const navHeight = (await nav.boundingBox())!.height;
 
-	// The last control on the page must be reachable above the nav bar.
+	// "Keluar" is the last control on the profile page; it must be reachable
+	// above the nav bar once scrolled to the bottom. Waiting for it also skips
+	// the loading skeleton.
+	const last = page.locator("main").getByRole("button", { name: "Keluar", exact: true });
+	await expect(last).toBeVisible();
 	await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-	const last = page.locator("main button").last();
+	await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 	const box = (await last.boundingBox())!;
 	const viewport = page.viewportSize()!;
 	expect(box.y + box.height).toBeLessThanOrEqual(viewport.height - navHeight);

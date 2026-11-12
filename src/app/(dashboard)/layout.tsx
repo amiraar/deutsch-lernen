@@ -32,7 +32,9 @@ export default function DashboardLayout({
 		<div className="flex min-h-screen bg-background">
 			<Sidebar />
 
-			<main className="flex flex-1 flex-col">
+			{/* min-w-0: a flex item otherwise grows to its widest child (the
+			    reference tables), pushing the whole page off-screen on phones. */}
+			<main className="flex min-w-0 flex-1 flex-col">
 				<div className="mx-auto w-full max-w-6xl flex-1 p-5 pb-24 md:p-8 md:pb-10">
 					{children}
 				</div>
