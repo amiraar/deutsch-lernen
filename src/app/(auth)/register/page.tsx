@@ -35,7 +35,8 @@ export default function RegisterPage() {
 			if (result?.error) {
 				router.push("/login");
 			} else {
-				router.push("/dashboard");
+				// New accounts pick their starting level before anything else.
+				router.push("/onboarding");
 			}
 		} catch (err) {
 			const raw = err instanceof Error ? err.message : "Unknown error";

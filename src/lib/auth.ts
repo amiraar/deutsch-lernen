@@ -106,7 +106,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					let fresh: {
 						level: string;
 						xp: number;
-						lastStudiedAt: Date | null;
 						passwordChangedAt: Date | null;
 					} | null = null;
 					let lookupFailed = false;
@@ -117,7 +116,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 							select: {
 								level: true,
 								xp: true,
-								lastStudiedAt: true,
 								passwordChangedAt: true,
 							},
 						});
@@ -153,7 +151,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 						token.level = fresh.level;
 						token.xp = fresh.xp;
-						token.onboardingDone = fresh.lastStudiedAt !== null;
 						token.syncedAt = now;
 					}
 				}
