@@ -1,0 +1,27 @@
+# Throwaway Postgres + Redis for the E2E suite (npm run test:db:up).
+# Ports are offset so they never collide with a local Postgres/Redis on the
+# default ports. Data is not persisted: `down` wipes it.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: deutsch_lernen_test
+    ports:
+      - "54329:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d deutsch_lernen_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "63799:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
