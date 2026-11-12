@@ -49,9 +49,6 @@ These are known, deliberate, and recorded rather than silently ignored.
 
 - **No MFA/TOTP.** There is no admin role, no payment data, and no personal data
   beyond email, name and learning progress. Revisit if any of that changes.
-- **Four high npm advisories in Prisma CLI tooling** (`deepmerge-ts`, `mysql2`
-  via `@prisma/config`). They are build-time only and not reachable at runtime;
-  the only fix offered is a breaking downgrade to `prisma@6`.
 - **Translation and pronunciation exercises are graded as participation.**
   Multiple-choice and fill-in-the-blank answers are re-graded server-side; the
   other two would need an AI call per answer. XP is awarded once per lesson, so
