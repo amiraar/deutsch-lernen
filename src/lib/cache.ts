@@ -2,7 +2,7 @@ import type { Level, UserStats } from "@/types";
 import { LevelEnum } from "@/generated/prisma/client";
 import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
-import { del, get, set } from "@/lib/redis";
+import { del, get, resolveRedisUrl, set } from "@/lib/redis";
 
 export const LESSON_TTL = 60 * 60;
 export const LESSON_META_TTL = 60 * 60;
@@ -25,8 +25,11 @@ function warnCacheDisabledOnce() {
 	console.warn("[Cache] Redis tidak tersedia, cache dinonaktifkan");
 }
 
+// Must accept the same configuration as redis.ts (REDIS_URL or Upstash):
+// lesson lists are written through redis.set directly, so a stricter check
+// here would skip the invalidation and leave stale lists behind.
 function isRedisAvailable(): boolean {
-	if (!process.env.REDIS_URL) {
+	if (!resolveRedisUrl()) {
 		warnCacheDisabledOnce();
 		return false;
 	}
