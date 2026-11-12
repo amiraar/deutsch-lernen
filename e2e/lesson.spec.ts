@@ -69,12 +69,9 @@ async function answerCurrentExercise(page: Page, exercises: ExerciseRow[]): Prom
 	return exercise;
 }
 
-/** Moves past the answer feedback when the UI asks for it. */
-async function continueIfAsked(page: Page): Promise<void> {
-	const next = page.getByRole("button", { name: /^Lanjut/ });
-	if (await next.isVisible().catch(() => false)) {
-		await next.click();
-	}
+/** Moves on after reading the feedback, like a learner would. */
+async function continueToNext(page: Page): Promise<void> {
+	await page.getByRole("button", { name: /^(Lanjut|Selesaikan pelajaran)/ }).click();
 }
 
 test("a lesson can be completed end to end and pays XP once", async ({ page }) => {
@@ -90,9 +87,9 @@ test("a lesson can be completed end to end and pays XP once", async ({ page }) =
 	for (let index = 0; index < lesson.exercises.length; index++) {
 		const exercise = await answerCurrentExercise(page, lesson.exercises);
 		// Every exercise type must let the learner move on, AI available or not.
+		await continueToNext(page);
 		if (index < lesson.exercises.length - 1) {
-			await continueIfAsked(page);
-			await expect(page.locator("main")).not.toContainText(exercise.prompt, {
+			await expect(page.getByText(exercise.prompt, { exact: true })).toBeHidden({
 				timeout: 15_000,
 			});
 		}
