@@ -157,12 +157,15 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 	const [value, setValue] = React.useState("");
 	const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
 	const [feedback, setFeedback] = React.useState<string | null>(null);
+	// True when the AI could not grade and the participation fallback was used.
+	const [isUngraded, setIsUngraded] = React.useState(false);
+	const isDone = isCorrect !== null || isUngraded;
 
 	const evaluateMutation = trpc.tutor.evaluateWriting.useMutation();
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
-		if (isCorrect !== null) {
+		if (isDone || !value.trim()) {
 			return;
 		}
 
@@ -174,9 +177,14 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 			setIsCorrect(result.isCorrect);
 			setFeedback(result.feedback);
 			onComplete(result.isCorrect, value);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			setFeedback(`Gagal mengevaluasi tulisan. ${message}`);
+		} catch {
+			// AI down or rate-limited. The server grades translations as
+			// participation anyway, so the lesson must not get stuck here.
+			setIsUngraded(true);
+			setFeedback(
+				`Penilaian AI sedang tidak tersedia, jawabanmu tetap tercatat. Contoh jawaban: **${exercise.correctAnswer}**`
+			);
+			onComplete(gradeAnswer(exercise, value), value);
 		}
 	};
 
@@ -188,9 +196,13 @@ function Translation({ exercise, onComplete }: ExerciseBlockProps) {
 				placeholder="Tulis terjemahan bahasa Jerman"
 				value={value}
 				onChange={(event) => setValue(event.target.value)}
-				disabled={isCorrect !== null}
+				disabled={isDone}
 			/>
-			<Button type="submit" isLoading={evaluateMutation.isPending}>
+			<Button
+				type="submit"
+				isLoading={evaluateMutation.isPending}
+				disabled={isDone || !value.trim()}
+			>
 				Kirim
 			</Button>
 			{feedback ? (
