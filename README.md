@@ -58,6 +58,19 @@ Aplikasi mencoba `REDIS_URL` terlebih dahulu, lalu fallback ke Upstash REST jika
 - Opsional berbayar: Claude.
 - Urutan fallback diatur lewat `AI_PROVIDER_ORDER`, contoh `gemini,groq,claude`.
 
+## Testing
+
+```bash
+npm test              # unit + regression test (Vitest)
+npm run test:db:up    # Postgres + Redis khusus test (Docker)
+npm run test:e2e      # Playwright E2E: desktop + mobile (360px, Pixel 7) + axe
+npm run test:db:down  # hapus container dan datanya
+```
+
+E2E memakai build produksi (`next build && next start`) di port 3100 dan database Docker di port 54329/63799. Suite ini menolak berjalan jika `DATABASE_URL` bukan localhost, dan mengosongkan key AI, email, serta Upstash, sehingga nilai dari `.env` tidak pernah dipakai.
+
+`src/lib/palette.test.ts` menjaga palet warna: komponen hanya boleh memakai token tema di `src/app/globals.css`, bukan kelas warna Tailwind mentah.
+
 ## Menambah Pelajaran Baru
 
 1. Tambah data lesson dan exercises di database (seed atau admin UI).

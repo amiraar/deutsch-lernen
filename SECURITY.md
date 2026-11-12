@@ -38,8 +38,11 @@ a fix is deployed.
   React writes inline `style` attributes.
 - Authorization: every tRPC query and mutation scopes database access to the
   session user id; there are no admin roles and no cross-user endpoints.
-- Supply chain: CI runs `npm audit --omit=dev --audit-level=critical`, gitleaks
+- Supply chain: CI runs `npm audit --omit=dev --audit-level=high`, gitleaks
   scans the full history, Dependabot opens weekly update PRs.
+- Testing: lint, Vitest regression tests and Playwright E2E (desktop and
+  mobile, with axe accessibility checks) block merges. The E2E suite refuses
+  to run against a non-local database.
 - Logging: security events are emitted as single-line JSON (`{"type":"security"}`)
   with masked email addresses. No credentials, tokens or hashes are logged.
 
