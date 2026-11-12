@@ -170,7 +170,12 @@ return (
 <span>{completedCount} selesai</span>
 </div>
 <ProgressBar value={progress} />
-<FlashcardItem word={queue[0]!.vocabWord} onRate={handleRate} />
+{/* Keyed per card: each card must start face-down, not inherit the flip. */}
+<FlashcardItem
+key={queue[0]!.id}
+word={queue[0]!.vocabWord}
+onRate={handleRate}
+/>
 </div>
 );
 }
