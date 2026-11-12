@@ -7,9 +7,10 @@ import prisma from "@/lib/prisma";
 import { checkAuthAccountLimit, checkAuthLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/getClientIp";
 import { logSecurityEvent } from "@/lib/securityLog";
+import { emailSchema, emailWhere } from "@/lib/validations/user";
 
 const credentialsSchema = z.object({
-	email: z.string().email(),
+	email: emailSchema,
 	password: z.string().min(1),
 });
 
@@ -35,8 +36,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				await checkAuthLimit(ip);
 				await checkAuthAccountLimit(parsed.data.email);
 
-				const user = await prisma.user.findUnique({
-					where: { email: parsed.data.email },
+				const user = await prisma.user.findFirst({
+					where: emailWhere(parsed.data.email),
 				});
 
 				if (!user || !user.passwordHash) {

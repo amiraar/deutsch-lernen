@@ -59,6 +59,13 @@ test("login works with a differently-cased email", async ({ page }) => {
 	await expect(page).toHaveURL(/\/dashboard$/);
 });
 
+test("accounts stored with mixed case before normalisation can still log in", async ({ page }) => {
+	const legacy = await createUser({ email: uniqueEmail("Legacy").replace("@example", "@Example") });
+	await login(page, legacy.email.toLowerCase());
+
+	await expect(page).toHaveURL(/\/dashboard$/);
+});
+
 test("wrong password shows an error and stays on login", async ({ page }) => {
 	const user = await createUser();
 	await login(page, user.email, "salah-sekali");

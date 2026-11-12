@@ -12,6 +12,7 @@ import { toUserMessage } from "@/lib/toUserMessage";
 import { logSecurityEvent } from "@/lib/securityLog";
 import {
 	deleteAccountSchema,
+	emailWhere,
 	registerSchema,
 	requestPasswordResetSchema,
 	resetPasswordSchema,
@@ -40,8 +41,8 @@ export const authRouter = router({
 			await checkAuthAccountLimit(input.email);
 
 			try {
-				const existing = await ctx.prisma.user.findUnique({
-					where: { email: input.email },
+				const existing = await ctx.prisma.user.findFirst({
+					where: emailWhere(input.email),
 					select: { id: true },
 				});
 
@@ -128,8 +129,8 @@ export const authRouter = router({
 			await checkAuthAccountLimit(input.email);
 
 			try {
-				const user = await ctx.prisma.user.findUnique({
-					where: { email: input.email },
+				const user = await ctx.prisma.user.findFirst({
+					where: emailWhere(input.email),
 					select: { id: true, email: true },
 				});
 
