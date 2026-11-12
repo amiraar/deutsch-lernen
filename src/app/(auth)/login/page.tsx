@@ -30,7 +30,11 @@ export default function LoginPage() {
 		setIsLoading(false);
 
 		if (result?.error) {
-			setError("Email atau password salah.");
+			setError(
+				result.code === "rate_limited"
+					? "Terlalu banyak percobaan masuk. Coba lagi dalam beberapa menit."
+					: "Email atau password salah."
+			);
 			return;
 		}
 

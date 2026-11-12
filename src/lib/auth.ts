@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
-import NextAuth from "next-auth";
+import { TRPCError } from "@trpc/server";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
@@ -13,6 +14,14 @@ const credentialsSchema = z.object({
 	email: emailSchema,
 	password: z.string().min(1),
 });
+
+/**
+ * Lets the login page tell a rate-limited user to wait instead of showing
+ * "wrong password". The code reaches the client as signIn()'s `code`.
+ */
+class RateLimitedSignin extends CredentialsSignin {
+	code = "rate_limited";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	// 7 days instead of the 30-day default. The cookie is only written at sign-in
@@ -33,8 +42,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				}
 
 				const ip = getClientIp(request);
-				await checkAuthLimit(ip);
-				await checkAuthAccountLimit(parsed.data.email);
+				try {
+					await checkAuthLimit(ip);
+					await checkAuthAccountLimit(parsed.data.email);
+				} catch (error) {
+					if (error instanceof TRPCError && error.code === "TOO_MANY_REQUESTS") {
+						throw new RateLimitedSignin();
+					}
+					throw error;
+				}
 
 				const user = await prisma.user.findFirst({
 					where: emailWhere(parsed.data.email),
