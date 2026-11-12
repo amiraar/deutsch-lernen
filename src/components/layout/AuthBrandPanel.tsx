@@ -28,7 +28,7 @@ export function AuthBrandPanel({
 				<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-foreground">
 					DL
 				</div>
-				<span className="font-display text-base font-semibold text-white">
+				<span className="font-display text-base font-semibold text-ink-foreground">
 					Deutsch Lernen
 				</span>
 			</Link>
@@ -41,7 +41,7 @@ export function AuthBrandPanel({
 					<p className="text-sm text-ink-muted">— {phraseTranslation}</p>
 				</div>
 				<div>
-					<h2 className="font-display text-3xl font-semibold text-white">
+					<h2 className="font-display text-3xl font-semibold text-ink-foreground">
 						{heading}
 					</h2>
 					<p className="mt-2 text-ink-muted">{subheading}</p>
@@ -52,7 +52,7 @@ export function AuthBrandPanel({
 							key={text}
 							className="flex items-center gap-3 text-sm text-ink-foreground/90"
 						>
-							<div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+							<div className="flex h-8 w-8 items-center justify-center rounded-full bg-ink-foreground/10">
 								<Icon size={15} className="text-accent" />
 							</div>
 							{text}
@@ -61,7 +61,7 @@ export function AuthBrandPanel({
 				</ul>
 			</div>
 
-			<p className="relative text-xs text-ink-muted/70">
+			<p className="relative text-xs text-ink-muted">
 				&copy; {new Date().getFullYear()} Deutsch Lernen
 			</p>
 		</div>

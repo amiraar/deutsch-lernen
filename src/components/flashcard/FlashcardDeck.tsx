@@ -169,7 +169,7 @@ return (
 <span>{queue.length} kartu tersisa</span>
 <span>{completedCount} selesai</span>
 </div>
-<ProgressBar value={progress} />
+<ProgressBar value={progress} ariaLabel="Progres sesi review" />
 {/* Keyed per card: each card must start face-down, not inherit the flip. */}
 <FlashcardItem
 key={queue[0]!.id}

@@ -140,8 +140,8 @@ export default function ProfilePage() {
 					</div>
 				</Card>
 				<Card className="flex items-center gap-4">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/10">
-						<Award size={18} className="text-violet-600" />
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-level-b1/10">
+						<Award size={18} className="text-level-b1" />
 					</div>
 					<div>
 						<p className="text-xs text-muted-foreground">Pelajaran Selesai</p>
@@ -151,8 +151,8 @@ export default function ProfilePage() {
 					</div>
 				</Card>
 				<Card className="flex items-center gap-4">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/10">
-						<Zap size={18} className="text-amber-600" />
+					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+						<Zap size={18} className="text-accent-strong" />
 					</div>
 					<div>
 						<p className="text-xs text-muted-foreground">Total XP</p>

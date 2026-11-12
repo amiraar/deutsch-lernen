@@ -164,7 +164,7 @@ export default function DashboardPage() {
 
 			{/* Stats cards */}
 			{statsQuery.error ? (
-				<Card variant="elevated" className="border-rose-200 text-rose-600">
+				<Card variant="elevated" className="border-destructive/30 text-destructive">
 					Gagal memuat statistik. Coba refresh halaman.
 				</Card>
 			) : statsQuery.isLoading ? (
@@ -177,8 +177,8 @@ export default function DashboardPage() {
 			) : (
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-amber-600/10">
-							<Flame size={22} className="text-amber-600" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/10">
+							<Flame size={22} className="text-accent-strong" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{streakDays}</p>
@@ -187,8 +187,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-violet-600/10">
-							<Trophy size={22} className="text-violet-600" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-level-b1/10">
+							<Trophy size={22} className="text-level-b1" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{xp}</p>
@@ -197,8 +197,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-600/10">
-							<BookOpen size={22} className="text-emerald-700" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-level-a1/10">
+							<BookOpen size={22} className="text-level-a1" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{stats?.lessonsCompleted ?? 0}</p>
@@ -207,8 +207,8 @@ export default function DashboardPage() {
 					</Card>
 
 					<Card variant="elevated" className="flex items-center gap-4">
-						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-cyan-700/10">
-							<Layers size={22} className="text-cyan-800" />
+						<div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-level-a2/10">
+							<Layers size={22} className="text-level-a2" />
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">{dueCount}</p>
@@ -231,6 +231,7 @@ export default function DashboardPage() {
 						</div>
 						<ProgressBar
 							value={(completedToday / DAILY_LESSON_GOAL) * 100}
+							ariaLabel="Target pelajaran hari ini"
 							showPercent
 						/>
 					</Card>
@@ -283,7 +284,7 @@ export default function DashboardPage() {
 							</div>
 						) : (
 							<EmptyState
-								icon={<Trophy size={24} className="text-amber-500" />}
+								icon={<Trophy size={24} className="text-accent" />}
 								title="Semua pelajaran selesai!"
 								description="Kamu sudah menuntaskan semua pelajaran. Saatnya review atau lanjut besok."
 							/>
@@ -374,7 +375,7 @@ export default function DashboardPage() {
 									</div>
 									<span className="font-medium text-foreground">{pct}%</span>
 								</div>
-								<ProgressBar value={pct} />
+								<ProgressBar value={pct} ariaLabel={`Pelajaran ${lvl} selesai`} />
 							</div>
 						))}
 						{!lessonsQuery.data ? (

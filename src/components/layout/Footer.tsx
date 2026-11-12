@@ -11,7 +11,7 @@ export function Footer() {
 					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-xs font-bold text-accent-foreground">
 						DL
 					</div>
-					<span className="font-display text-sm font-semibold text-white">
+					<span className="font-display text-sm font-semibold text-ink-foreground">
 						Deutsch Lernen
 					</span>
 				</div>
@@ -19,10 +19,10 @@ export function Footer() {
 					&copy; {new Date().getFullYear()} Deutsch Lernen. Dibuat dengan ❤️ untuk pelajar bahasa.
 				</p>
 				<div className="flex gap-5 text-xs text-ink-muted">
-					<Link href="/login" className="transition-colors hover:text-white">Masuk</Link>
-					<Link href="/register" className="transition-colors hover:text-white">Daftar</Link>
-					<Link href="/privacy" className="transition-colors hover:text-white">Privasi</Link>
-					<Link href="/terms" className="transition-colors hover:text-white">Ketentuan</Link>
+					<Link href="/login" className="transition-colors hover:text-ink-foreground">Masuk</Link>
+					<Link href="/register" className="transition-colors hover:text-ink-foreground">Daftar</Link>
+					<Link href="/privacy" className="transition-colors hover:text-ink-foreground">Privasi</Link>
+					<Link href="/terms" className="transition-colors hover:text-ink-foreground">Ketentuan</Link>
 				</div>
 			</div>
 		</footer>

@@ -11,6 +11,8 @@ import { describe, expect, it } from "vitest";
 const RAW_PALETTE =
 	/\b(?:bg|text|border|ring|from|to|via|fill|stroke|outline|divide|placeholder)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g;
 const HEX_COLOR = /#[0-9a-fA-F]{6}\b/g;
+// muted-foreground sits just above 4.5:1 contrast; any opacity drops it below.
+const FADED_MUTED_TEXT = /\btext-muted-foreground\/\d+/g;
 
 const SRC = join(process.cwd(), "src");
 
@@ -28,7 +30,11 @@ describe("colour palette", () => {
 	it("components only use theme colour tokens", () => {
 		const offenders = componentFiles(SRC).flatMap((file) => {
 			const source = readFileSync(file, "utf8");
-			const matches = [...(source.match(RAW_PALETTE) ?? []), ...(source.match(HEX_COLOR) ?? [])];
+			const matches = [
+				...(source.match(RAW_PALETTE) ?? []),
+				...(source.match(HEX_COLOR) ?? []),
+				...(source.match(FADED_MUTED_TEXT) ?? []),
+			];
 			return matches.map((match) => `${relative(SRC, file)}: ${match}`);
 		});
 

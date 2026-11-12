@@ -81,9 +81,9 @@ function MultipleChoice({ exercise, onComplete }: ExerciseBlockProps) {
 						isCorrect === null
 							? "border-border"
 							: isAnswer
-								? "border-emerald-500 bg-emerald-50"
+								? "border-success bg-success/15 text-success hover:bg-success/15"
 								: isSelected
-									? "border-rose-500 bg-rose-50"
+									? "border-destructive bg-destructive/15 text-destructive hover:bg-destructive/15"
 									: "border-border";
 
 					return (

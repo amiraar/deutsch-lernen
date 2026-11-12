@@ -30,7 +30,7 @@ const RATING_BUTTONS: {
 		key: "1",
 		ariaLabel: "Tidak ingat – ulangi secepatnya (tekan 1)",
 		className:
-			"border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100",
+			"border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/15",
 	},
 	{
 		quality: 1,
@@ -38,7 +38,7 @@ const RATING_BUTTONS: {
 		key: "2",
 		ariaLabel: "Sulit – sedikit ingat (tekan 2)",
 		className:
-			"border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100",
+			"border-warning/20 bg-warning/10 text-warning hover:bg-warning/15",
 	},
 	{
 		quality: 3,
@@ -46,7 +46,7 @@ const RATING_BUTTONS: {
 		key: "3",
 		ariaLabel: "Oke – ingat dengan usaha (tekan 3)",
 		className:
-			"border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-100",
+			"border-primary/20 bg-primary/10 text-primary hover:bg-primary/15",
 	},
 	{
 		quality: 5,
@@ -54,7 +54,7 @@ const RATING_BUTTONS: {
 		key: "4",
 		ariaLabel: "Mudah – ingat dengan jelas (tekan 4)",
 		className:
-			"border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100",
+			"border-success/20 bg-success/10 text-success hover:bg-success/15",
 	},
 ];
 
@@ -146,7 +146,7 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 							<div className="space-y-1 text-center">
 								<p className="text-sm italic text-muted-foreground">{word.example}</p>
 								{word.exampleTranslation ? (
-									<p className="text-xs text-muted-foreground/70">
+									<p className="text-xs text-muted-foreground">
 										{word.exampleTranslation}
 									</p>
 								) : null}

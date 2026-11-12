@@ -25,7 +25,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 	danger:
 		"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 focus-visible:ring-ring",
 	accent:
-		"bg-accent text-accent-foreground shadow-sm hover:bg-accent-strong focus-visible:ring-ring",
+		"bg-accent text-accent-foreground shadow-sm hover:bg-accent/85 focus-visible:ring-ring",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

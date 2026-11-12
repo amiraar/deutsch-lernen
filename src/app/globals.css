@@ -14,7 +14,10 @@
   /* Accent: warm gold */
   --color-accent: #d97706;
   --color-accent-strong: #b45309;
-  --color-accent-foreground: #ffffff;
+  /* Ink on gold: white on #d97706 is only 3.2:1, ink is 4.9:1. */
+  --color-accent-foreground: #16233a;
+  /* Gold for text on the dark ink panels (7.3:1 on the badge tint). */
+  --color-accent-soft: #fbbf24;
 
   /* Secondary surface */
   --color-secondary: #ece9e0;
@@ -34,15 +37,22 @@
 
   /* Muted */
   --color-muted: #edeae2;
-  --color-muted-foreground: #6b7280;
+  --color-muted-foreground: #5f6672;
 
-  /* Semantic */
-  --color-success: #1d7a4c;
+  /* Semantic (text on a 10-15% tint of itself stays at or above 4.5:1) */
+  --color-success: #18683f;
   --color-success-foreground: #ffffff;
-  --color-warning: #b45309;
+  --color-warning: #9a4508;
   --color-warning-foreground: #ffffff;
   --color-destructive: #bb2d3b;
   --color-destructive-foreground: #ffffff;
+
+  /* CEFR levels: badges, tiles and charts. Used as text on their own
+     10-15% tint, every value keeps at least 4.5:1 on card and page. */
+  --color-level-a1: #065f46;
+  --color-level-a2: #155e75;
+  --color-level-b1: #6d28d9;
+  --color-level-b2: #92400e;
 
   /* Borders & focus */
   --color-border: #e3dfd3;

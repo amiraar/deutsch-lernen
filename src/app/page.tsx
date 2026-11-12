@@ -21,28 +21,28 @@ const FEATURES = [
 		title: "AI Tutor Pribadi",
 		description:
 			"Tanyakan grammar, kosakata, dan latihan personal kapan saja. Dijawab dalam bahasa Indonesia.",
-		color: "bg-violet-600/10 text-violet-700",
+		color: "bg-level-b1/10 text-level-b1",
 	},
 	{
 		icon: Layers,
 		title: "Spaced Repetition",
 		description:
 			"Algoritma SM-2 memastikan kamu review kata tepat sebelum lupa — efisien dan berbasis sains.",
-		color: "bg-emerald-600/10 text-emerald-700",
+		color: "bg-level-a1/10 text-level-a1",
 	},
 	{
 		icon: Mic,
 		title: "Latihan Pelafalan",
 		description:
 			"Rekam suaramu, dengarkan contoh pelafalan asli, dan latih pengucapan bahasa Jerman.",
-		color: "bg-amber-600/10 text-amber-700",
+		color: "bg-level-b2/10 text-level-b2",
 	},
 	{
 		icon: Library,
 		title: "Perpustakaan Materi",
 		description:
 			"Tabel grammar, buku frasa per situasi, kata kerja tak beraturan, dan referensi lengkap lainnya.",
-		color: "bg-cyan-700/10 text-cyan-800",
+		color: "bg-level-a2/10 text-level-a2",
 	},
 ];
 
@@ -181,7 +181,7 @@ export default function LandingPage() {
 						{LEVELS.map(({ level, label, description, topics }, index) => (
 							<Card key={level} variant="elevated" className="space-y-3">
 								<div className="flex items-center gap-3">
-									<span className="font-display text-2xl font-semibold text-border">
+									<span className="font-display text-2xl font-semibold text-accent">
 										0{index + 1}
 									</span>
 									<Badge variant={level}>{level}</Badge>
@@ -209,7 +209,7 @@ export default function LandingPage() {
 						<div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/20 blur-3xl" />
 						<div className="absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-primary/40 blur-3xl" />
 						<div className="relative">
-							<h2 className="mb-3 font-display text-3xl font-semibold text-white">
+							<h2 className="mb-3 font-display text-3xl font-semibold text-ink-foreground">
 								Siap mulai belajar?
 							</h2>
 							<p className="mb-8 text-sm text-ink-muted">

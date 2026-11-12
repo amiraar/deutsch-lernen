@@ -120,8 +120,8 @@ export default function RegisterPage() {
 										{ label: "Mengandung huruf kapital (A–Z)", ok: /[A-Z]/.test(password) },
 										{ label: "Mengandung angka atau simbol", ok: /[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password) },
 									].map(({ label, ok }) => (
-										<li key={label} className={`flex items-center gap-2 text-xs ${ok ? "text-green-600" : "text-destructive"}`}>
-											<span className={`inline-block h-1.5 w-1.5 rounded-full ${ok ? "bg-green-500" : "bg-destructive"}`} />
+										<li key={label} className={`flex items-center gap-2 text-xs ${ok ? "text-success" : "text-destructive"}`}>
+											<span className={`inline-block h-1.5 w-1.5 rounded-full ${ok ? "bg-success" : "bg-destructive"}`} />
 											{label}
 										</li>
 									))}
