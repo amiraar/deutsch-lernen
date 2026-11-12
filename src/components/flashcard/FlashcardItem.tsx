@@ -63,11 +63,9 @@ const RATING_BUTTONS: {
  */
 export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 	const [isFlipped, setIsFlipped] = React.useState(false);
-	const hasFlipped = React.useRef(false);
 	const flipButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
 	const handleFlip = () => {
-		hasFlipped.current = true;
 		setIsFlipped(true);
 	};
 
@@ -96,7 +94,8 @@ export function FlashcardItem({ word, onRate }: FlashcardItemProps) {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [isFlipped, onRate]);
 
-	const shouldPulse = !isFlipped && !hasFlipped.current;
+	// Flipping is one-way per card (the deck keys each card), so pulse until flipped.
+	const shouldPulse = !isFlipped;
 
 	return (
 		<div className="w-full space-y-4">
