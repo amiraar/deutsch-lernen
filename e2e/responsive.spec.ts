@@ -95,3 +95,15 @@ test("mobile bottom navigation does not cover page content", async ({ page }, te
 	const viewport = page.viewportSize()!;
 	expect(box.y + box.height).toBeLessThanOrEqual(viewport.height - navHeight);
 });
+
+test("landing navbar buttons stay on one line at 360px", async ({ page }) => {
+	await page.setViewportSize(NARROW);
+	await page.goto("/");
+
+	for (const name of ["Masuk", "Daftar Gratis"]) {
+		const button = page.getByRole("banner").getByRole("button", { name });
+		const height = await button.evaluate((element) => element.scrollHeight);
+		// One line of text fits in the 36px button; wrapping overflows it.
+		expect(height, name).toBeLessThanOrEqual(36);
+	}
+});
