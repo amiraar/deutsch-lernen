@@ -187,4 +187,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 		signIn: "/login",
 		error: "/login",
 	},
+	logger: {
+		// A failed sign-in (wrong password, rate limited) is an expected outcome,
+		// already recorded by logSecurityEvent; Auth.js would add a stack trace
+		// for each one. Every other auth error is still logged in full.
+		error(error) {
+			if (error instanceof CredentialsSignin) return;
+			console.error(error);
+		},
+	},
 });
