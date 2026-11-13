@@ -186,7 +186,7 @@ export default function LessonListPage() {
 												</div>
 											</div>
 											{lesson.isCompleted ? (
-												<div className="flex items-center gap-1 text-xs font-medium text-emerald-600">
+												<div className="flex items-center gap-1 text-xs font-medium text-success">
 													<CheckCircle2 size={16} />
 													Selesai
 												</div>

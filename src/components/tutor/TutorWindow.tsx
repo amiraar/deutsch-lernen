@@ -84,6 +84,8 @@ export function TutorWindow({ className, initialMessage, contextNote }: TutorWin
 	// Auto-send initial message when provided
 	React.useEffect(() => {
 		if (initialMessage) {
+			// One-off send of the question prefilled from a lesson, on mount only.
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			void sendMessage(initialMessage);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps

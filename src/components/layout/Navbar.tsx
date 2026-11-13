@@ -8,7 +8,7 @@ import { Button } from "@/components/ui";
 export function Navbar() {
 	return (
 		<header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-			<div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+			<div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
 				<Link href="/" className="flex items-center gap-2.5">
 					<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-sm font-bold text-accent">
 						DL
@@ -17,12 +17,12 @@ export function Navbar() {
 						Deutsch Lernen
 					</span>
 				</Link>
-				<div className="flex items-center gap-2">
+				<div className="flex shrink-0 items-center gap-1 sm:gap-2">
 					<Link href="/login">
 						<Button variant="ghost" size="sm">Masuk</Button>
 					</Link>
 					<Link href="/register">
-						<Button size="sm">Daftar Gratis</Button>
+						<Button size="sm" className="whitespace-nowrap">Daftar Gratis</Button>
 					</Link>
 				</div>
 			</div>

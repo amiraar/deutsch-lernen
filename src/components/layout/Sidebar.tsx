@@ -80,7 +80,7 @@ export function Sidebar() {
 							DL
 						</div>
 						<div className="leading-tight">
-							<span className="block font-display text-base font-semibold text-white">
+							<span className="block font-display text-base font-semibold text-ink-foreground">
 								Deutsch Lernen
 							</span>
 							<span className="block text-[11px] text-ink-muted">
@@ -107,8 +107,8 @@ export function Sidebar() {
 											className={cn(
 												"group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
 												isActive
-													? "bg-white/10 text-white"
-													: "text-ink-muted hover:bg-white/5 hover:text-white"
+													? "bg-ink-foreground/10 text-ink-foreground"
+													: "text-ink-muted hover:bg-ink-foreground/5 hover:text-ink-foreground"
 											)}
 										>
 											{isActive ? (
@@ -118,7 +118,7 @@ export function Sidebar() {
 												size={18}
 												className={cn(
 													"transition-colors",
-													isActive ? "text-accent" : "text-ink-muted group-hover:text-white"
+													isActive ? "text-accent" : "text-ink-muted group-hover:text-ink-foreground"
 												)}
 											/>
 											{label}
@@ -132,20 +132,20 @@ export function Sidebar() {
 			</div>
 
 			{/* User footer */}
-			<div className="border-t border-white/10 p-4">
+			<div className="border-t border-ink-foreground/10 p-4">
 				{isLoading ? (
 					<div className="flex items-center gap-2 text-sm text-ink-muted">
 						<LoadingSpinner size="sm" />
 						Memuat...
 					</div>
 				) : (
-					<div className="space-y-3 rounded-2xl bg-white/5 p-3">
+					<div className="space-y-3 rounded-2xl bg-ink-foreground/5 p-3">
 						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 text-xs font-bold text-accent">
+							<div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 text-xs font-bold text-accent-soft">
 								{data?.level ?? "A1"}
 							</div>
 							<div className="min-w-0 flex-1">
-								<p className="truncate text-sm font-medium text-white">
+								<p className="truncate text-sm font-medium text-ink-foreground">
 									Pelajar Jerman
 								</p>
 								<p className="text-xs text-ink-muted">{data?.xp ?? 0} XP</p>
@@ -156,13 +156,13 @@ export function Sidebar() {
 								disabled={isSigningOut}
 								aria-label="Keluar"
 								title="Keluar"
-								className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-white/10 hover:text-white disabled:opacity-60"
+								className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink-foreground/10 hover:text-ink-foreground disabled:opacity-60"
 							>
 								<LogOut size={16} />
 							</button>
 						</div>
 						{(data?.streakDays ?? 0) > 0 ? (
-							<div className="flex items-center gap-1.5 rounded-lg bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent">
+							<div className="flex items-center gap-1.5 rounded-lg bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent-soft">
 								<Flame size={13} />
 								{data?.streakDays} hari streak
 							</div>

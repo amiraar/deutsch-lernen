@@ -38,8 +38,11 @@ a fix is deployed.
   React writes inline `style` attributes.
 - Authorization: every tRPC query and mutation scopes database access to the
   session user id; there are no admin roles and no cross-user endpoints.
-- Supply chain: CI runs `npm audit --omit=dev --audit-level=critical`, gitleaks
+- Supply chain: CI runs `npm audit --omit=dev --audit-level=high`, gitleaks
   scans the full history, Dependabot opens weekly update PRs.
+- Testing: lint, Vitest regression tests and Playwright E2E (desktop and
+  mobile, with axe accessibility checks) block merges. The E2E suite refuses
+  to run against a non-local database.
 - Logging: security events are emitted as single-line JSON (`{"type":"security"}`)
   with masked email addresses. No credentials, tokens or hashes are logged.
 
@@ -49,9 +52,6 @@ These are known, deliberate, and recorded rather than silently ignored.
 
 - **No MFA/TOTP.** There is no admin role, no payment data, and no personal data
   beyond email, name and learning progress. Revisit if any of that changes.
-- **Four high npm advisories in Prisma CLI tooling** (`deepmerge-ts`, `mysql2`
-  via `@prisma/config`). They are build-time only and not reachable at runtime;
-  the only fix offered is a breaking downgrade to `prisma@6`.
 - **Translation and pronunciation exercises are graded as participation.**
   Multiple-choice and fill-in-the-blank answers are re-graded server-side; the
   other two would need an AI call per answer. XP is awarded once per lesson, so

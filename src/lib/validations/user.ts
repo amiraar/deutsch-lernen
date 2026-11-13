@@ -6,8 +6,22 @@ const passwordSchema = z
 	.min(8, "Password minimal 8 karakter.")
 	.max(72, "Password maksimal 72 karakter.");
 
+// Emails are stored and compared in lower case, so "Ana@x.com" and
+// "ana@x.com" are one account. Lookups stay case-insensitive (emailWhere)
+// for accounts registered before this normalisation existed.
+export const emailSchema = z
+	.string()
+	.trim()
+	.toLowerCase()
+	.email("Format email tidak valid.");
+
+/** Prisma filter that matches an email regardless of stored casing. */
+export function emailWhere(email: string) {
+	return { email: { equals: email, mode: "insensitive" as const } };
+}
+
 export const registerSchema = z.object({
-	email: z.string().email("Format email tidak valid."),
+	email: emailSchema,
 	password: passwordSchema,
 	name: z
 		.string()
@@ -16,12 +30,12 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-	email: z.string().email("Format email tidak valid."),
+	email: emailSchema,
 	password: z.string().min(1, "Password tidak boleh kosong."),
 });
 
 export const requestPasswordResetSchema = z.object({
-	email: z.string().email("Format email tidak valid."),
+	email: emailSchema,
 });
 
 export const resetPasswordSchema = z.object({

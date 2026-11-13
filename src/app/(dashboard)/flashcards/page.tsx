@@ -76,7 +76,7 @@ export default function FlashcardsPage() {
 			</div>
 			{showEmptyState ? (
 				<EmptyState
-					icon={<CalendarCheck size={24} className="text-emerald-500" />}
+					icon={<CalendarCheck size={24} className="text-success" />}
 					title="Semua kartu sudah direview!"
 					description="Tidak ada kartu yang perlu direview hari ini. Kembali besok."
 					action={{ label: "Kembali ke Dashboard", href: "/dashboard" }}

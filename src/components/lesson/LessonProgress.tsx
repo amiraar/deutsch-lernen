@@ -35,7 +35,7 @@ export function LessonProgress({
         <span>XP: {xpEarned}</span>
         <span>{formatElapsed(elapsedSeconds)}</span>
       </div>
-      <ProgressBar value={progress} />
+      <ProgressBar value={progress} ariaLabel="Progres latihan" />
     </div>
   );
 }

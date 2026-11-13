@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 export type ProgressBarProps = {
 	value: number;
 	label?: string;
+	/** Accessible name when there is no visible label. */
+	ariaLabel?: string;
 	showPercent?: boolean;
 	className?: string;
 };
@@ -15,6 +17,7 @@ export type ProgressBarProps = {
 export function ProgressBar({
 	value,
 	label,
+	ariaLabel,
 	showPercent = false,
 	className,
 }: ProgressBarProps) {
@@ -35,6 +38,7 @@ export function ProgressBar({
 					className="h-full rounded-full bg-gradient-to-r from-primary to-primary-strong transition-all duration-500"
 					style={{ width: `${clampedValue}%` }}
 					role="progressbar"
+					aria-label={label ?? ariaLabel ?? "Progres"}
 					aria-valuenow={clampedValue}
 					aria-valuemin={0}
 					aria-valuemax={100}

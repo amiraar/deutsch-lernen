@@ -25,7 +25,7 @@ const SECTIONS = [
 		description:
 			"Tabel artikel, kasus, konjugasi, preposisi, dan struktur kalimat — semua di satu tempat.",
 		meta: `${GRAMMAR_TOPICS.length} topik`,
-		color: "bg-violet-600/10 text-violet-700",
+		color: "bg-level-b1/10 text-level-b1",
 	},
 	{
 		href: "/materials/frasa",
@@ -34,7 +34,7 @@ const SECTIONS = [
 		description:
 			"Kalimat siap pakai untuk restoran, belanja, perjalanan, darurat, dan situasi formal.",
 		meta: `${PHRASE_CATEGORIES.reduce((n, c) => n + c.phrases.length, 0)} frasa`,
-		color: "bg-emerald-600/10 text-emerald-700",
+		color: "bg-level-a1/10 text-level-a1",
 	},
 	{
 		href: "/materials/verben",
@@ -43,7 +43,7 @@ const SECTIONS = [
 		description:
 			"Daftar verba kuat terpenting dengan Präsens, Präteritum, dan Perfekt.",
 		meta: `${IRREGULAR_VERBS.length} verba`,
-		color: "bg-cyan-700/10 text-cyan-800",
+		color: "bg-level-a2/10 text-level-a2",
 	},
 	{
 		href: "/materials/zahlen",
@@ -52,7 +52,7 @@ const SECTIONS = [
 		description:
 			"Cara membaca angka, tanggal, hari, bulan, dan jam — termasuk jebakan 'halb zehn'.",
 		meta: `${NUMBER_TABLES.length} tabel`,
-		color: "bg-amber-600/10 text-amber-700",
+		color: "bg-level-b2/10 text-level-b2",
 	},
 	{
 		href: "/materials/kosakata",
@@ -61,7 +61,7 @@ const SECTIONS = [
 		description:
 			"Kumpulan kata per tema: keluarga, warna, tubuh, cuaca, dan lainnya.",
 		meta: `${VOCAB_THEMES.length} tema`,
-		color: "bg-rose-600/10 text-rose-700",
+		color: "bg-primary/10 text-primary",
 	},
 ];
 

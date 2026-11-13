@@ -14,6 +14,8 @@ export function XpGainToast({ amount, onDone }: XpGainToastProps) {
 	const [isVisible, setIsVisible] = React.useState(false);
 
 	React.useEffect(() => {
+		// Enter transition: the first paint must be hidden for the fade-in to run.
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setIsVisible(true);
 
 		const hideTimer = window.setTimeout(() => {

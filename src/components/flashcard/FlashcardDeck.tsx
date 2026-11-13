@@ -55,12 +55,11 @@ const router = useRouter();
 const [queue, setQueue] = React.useState<DueCard[]>([]);
 const [completedCount, setCompletedCount] = React.useState(0);
 const ratedIdsRef = React.useRef<Set<string>>(new Set());
-const ratingCountsRef = React.useRef<Record<number, number>>({
-0: 0,
-1: 0,
-3: 0,
-5: 0,
-});
+// State, not a ref: the session summary renders these counts. Restored
+// from a saved session on first render (loadSession returns null on the server).
+const [ratingCounts, setRatingCounts] = React.useState<Record<number, number>>(
+() => loadSession()?.ratingCounts ?? { 0: 0, 1: 0, 3: 0, 5: 0 }
+);
 
 React.useEffect(() => {
 if (!data) return;
@@ -68,13 +67,11 @@ if (!data) return;
 const session = loadSession();
 if (session && session.ratedIds.length > 0) {
 ratedIdsRef.current = new Set(session.ratedIds);
-ratingCountsRef.current = session.ratingCounts;
 const remaining = data.filter((card) => !ratedIdsRef.current.has(card.id));
 setQueue(remaining);
 setCompletedCount(session.ratedIds.length);
 } else {
 ratedIdsRef.current = new Set();
-ratingCountsRef.current = { 0: 0, 1: 0, 3: 0, 5: 0 };
 setQueue(data);
 setCompletedCount(0);
 }
@@ -92,7 +89,8 @@ cardId: current.id,
 quality,
 });
 
-ratingCountsRef.current[quality] = (ratingCountsRef.current[quality] ?? 0) + 1;
+const nextCounts = { ...ratingCounts, [quality]: (ratingCounts[quality] ?? 0) + 1 };
+setRatingCounts(nextCounts);
 ratedIdsRef.current.add(current.id);
 
 const newQueue = queue.slice(1);
@@ -100,7 +98,7 @@ setQueue(newQueue);
 setCompletedCount((prev) => prev + 1);
 
 if (newQueue.length > 0) {
-saveSession([...ratedIdsRef.current], ratingCountsRef.current);
+saveSession([...ratedIdsRef.current], nextCounts);
 } else {
 clearSession();
 }
@@ -131,7 +129,6 @@ Coba Lagi
 }
 
 if (!queue.length && completedCount > 0) {
-const ratingCounts = ratingCountsRef.current;
 return (
 <Card className="space-y-4 text-center">
 <p className="text-lg font-semibold text-foreground">Sesi selesai!</p>
@@ -169,8 +166,13 @@ return (
 <span>{queue.length} kartu tersisa</span>
 <span>{completedCount} selesai</span>
 </div>
-<ProgressBar value={progress} />
-<FlashcardItem word={queue[0]!.vocabWord} onRate={handleRate} />
+<ProgressBar value={progress} ariaLabel="Progres sesi review" />
+{/* Keyed per card: each card must start face-down, not inherit the flip. */}
+<FlashcardItem
+key={queue[0]!.id}
+word={queue[0]!.vocabWord}
+onRate={handleRate}
+/>
 </div>
 );
 }

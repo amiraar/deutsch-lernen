@@ -54,6 +54,10 @@ export default function LessonPage() {
 	const answersRef = React.useRef<Array<{ exerciseId: string; answer: string }>>([]);
 	const [showXpToast, setShowXpToast] = React.useState(false);
 	const [isStartingExercises, setIsStartingExercises] = React.useState(false);
+	// Set once the current exercise is answered; the learner reads the feedback
+	// and moves on with "Lanjut" instead of being jumped forward immediately.
+	const [isAnswered, setIsAnswered] = React.useState(false);
+	const [isSubmitting, setIsSubmitting] = React.useState(false);
 	const { toast, showToast, clearToast } = useToastMessage();
 
 	React.useEffect(() => {
@@ -90,7 +94,7 @@ export default function LessonPage() {
 		setPhase("exercises");
 	};
 
-	const handleComplete = async (correct: boolean, userAnswer: string) => {
+	const handleComplete = (correct: boolean, userAnswer: string) => {
 		setCorrectCount((prev) => prev + (correct ? 1 : 0));
 
 		if (current) {
@@ -100,11 +104,17 @@ export default function LessonPage() {
 			];
 		}
 
+		setIsAnswered(true);
+	};
+
+	const handleNext = async () => {
 		if (currentIndex < exercises.length - 1) {
 			setCurrentIndex((prev) => prev + 1);
+			setIsAnswered(false);
 			return;
 		}
 
+		setIsSubmitting(true);
 		try {
 			// No score is sent: the server grades the answers and returns the result.
 			const result = await completeMutation.mutateAsync({
@@ -121,6 +131,8 @@ export default function LessonPage() {
 		} catch {
 			showToast("Gagal menyimpan hasil latihan. Coba lagi.", "error");
 			return;
+		} finally {
+			setIsSubmitting(false);
 		}
 
 		window.setTimeout(() => {
@@ -201,12 +213,23 @@ export default function LessonPage() {
 			<Card variant="elevated" className="min-h-[280px]">
 				{current ? (
 					<ErrorBoundary>
-						<ExerciseBlock exercise={current} onComplete={handleComplete} />
+						{/* Keyed per exercise so answer state never carries over. */}
+						<ExerciseBlock
+							key={current.id}
+							exercise={current}
+							onComplete={handleComplete}
+						/>
 					</ErrorBoundary>
 				) : (
 					<p className="text-sm text-muted-foreground">Tidak ada latihan.</p>
 				)}
 			</Card>
+
+			{isAnswered && !serverResult ? (
+				<Button className="w-full" size="lg" onClick={handleNext} isLoading={isSubmitting}>
+					{currentIndex < exercises.length - 1 ? "Lanjut →" : "Selesaikan pelajaran"}
+				</Button>
+			) : null}
 
 			<Modal
 				isOpen={isModalOpen}

@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
-import NextAuth from "next-auth";
+import { TRPCError } from "@trpc/server";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
@@ -7,11 +8,20 @@ import prisma from "@/lib/prisma";
 import { checkAuthAccountLimit, checkAuthLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/getClientIp";
 import { logSecurityEvent } from "@/lib/securityLog";
+import { emailSchema, emailWhere } from "@/lib/validations/user";
 
 const credentialsSchema = z.object({
-	email: z.string().email(),
+	email: emailSchema,
 	password: z.string().min(1),
 });
+
+/**
+ * Lets the login page tell a rate-limited user to wait instead of showing
+ * "wrong password". The code reaches the client as signIn()'s `code`.
+ */
+class RateLimitedSignin extends CredentialsSignin {
+	code = "rate_limited";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	// 7 days instead of the 30-day default. The cookie is only written at sign-in
@@ -32,11 +42,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				}
 
 				const ip = getClientIp(request);
-				await checkAuthLimit(ip);
-				await checkAuthAccountLimit(parsed.data.email);
+				try {
+					await checkAuthLimit(ip);
+					await checkAuthAccountLimit(parsed.data.email);
+				} catch (error) {
+					if (error instanceof TRPCError && error.code === "TOO_MANY_REQUESTS") {
+						throw new RateLimitedSignin();
+					}
+					throw error;
+				}
 
-				const user = await prisma.user.findUnique({
-					where: { email: parsed.data.email },
+				const user = await prisma.user.findFirst({
+					where: emailWhere(parsed.data.email),
 				});
 
 				if (!user || !user.passwordHash) {
@@ -106,7 +123,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					let fresh: {
 						level: string;
 						xp: number;
-						lastStudiedAt: Date | null;
 						passwordChangedAt: Date | null;
 					} | null = null;
 					let lookupFailed = false;
@@ -117,7 +133,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 							select: {
 								level: true,
 								xp: true,
-								lastStudiedAt: true,
 								passwordChangedAt: true,
 							},
 						});
@@ -153,7 +168,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 						token.level = fresh.level;
 						token.xp = fresh.xp;
-						token.onboardingDone = fresh.lastStudiedAt !== null;
 						token.syncedAt = now;
 					}
 				}
@@ -172,5 +186,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	pages: {
 		signIn: "/login",
 		error: "/login",
+	},
+	logger: {
+		// A failed sign-in (wrong password, rate limited) is an expected outcome,
+		// already recorded by logSecurityEvent; Auth.js would add a stack trace
+		// for each one. Every other auth error is still logged in full.
+		error(error) {
+			if (error instanceof CredentialsSignin) return;
+			console.error(error);
+		},
 	},
 });
